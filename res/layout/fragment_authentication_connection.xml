@@ -1,0 +1,66 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:layout_gravity="center"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/btn_closed"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/btn_closed" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:paddingTop="@dimen/normal_padding"
+        android:text="CONNEXION"
+        android:textColor="@color/black_color"
+        android:textSize="@dimen/normal_text_size" />
+
+    <EditText
+        android:id="@+id/user_email"
+        android:layout_width="@dimen/large_padding"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:inputType="text"
+        android:text="Votre email" />
+"
+
+    <EditText
+        android:id="@+id/user_password"
+        android:layout_width="@dimen/large_padding"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:inputType="text"
+        android:text="Votre mot de passe" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/btn_connection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="25dip"
+            android:background="@drawable/btn_auth_green"
+            android:text="Se connecter" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/btn_fb_connect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_fb_connect" />
+    </LinearLayout>
+
+</LinearLayout>

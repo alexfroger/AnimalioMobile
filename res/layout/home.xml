@@ -1,0 +1,94 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_gravity="top"
+        android:layout_weight="3"
+        android:padding="15dp" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/btn_home_member"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/fotolia_test"
+                android:text="Membres" />
+
+            <Button
+                android:id="@+id/btn_home_photo_gallery"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/fotolia_test"
+                android:layout_weight="1"
+                android:text="Gallerie photo"  />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:text="Membres"  >
+
+            <Button
+                android:id="@+id/btn_home_animalio_live"
+                android:background="@drawable/fotolia_test"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Animalio Live"  />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/btn_home_profil"
+                android:background="@drawable/fotolia_test"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Profil"  />
+
+            <Button
+                android:id="@+id/btn_home_event"
+                android:background="@drawable/fotolia_test"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Events"  />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" 
+        android:layout_weight="1"
+        android:background="@color/black_color">"
+
+        <Button
+            android:id="@+id/btn_photo"
+            android:contentDescription="Test"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:background="@drawable/fotolia_test" />
+    </LinearLayout>
+</LinearLayout>

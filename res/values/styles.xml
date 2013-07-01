@@ -1,0 +1,10 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- This application is for the api lvl15 so all themes and styles are in value-v14 -->
+    <!-- THEMES -->
+    <style name="AppBaseTheme" parent="android:Theme.Light"></style>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme"></style>
+ 	
+    <!-- END THEMES -->
+</resources>

@@ -1,0 +1,123 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+    
+	<LinearLayout
+	    android:layout_width="wrap_content" 
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="center" 
+	    android:orientation="vertical" >
+	    
+	    <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_horizontal"
+	        android:paddingTop="@dimen/normal_padding"
+	        android:text="Nom"
+	        android:textSize="@dimen/normal_text_size"
+	        android:textColor="@color/black_color" />
+	
+	    <EditText
+	        android:id="@+id/registration_lastname"
+	        android:layout_width="@dimen/large_padding"
+	        android:layout_height="wrap_content"
+	        android:inputType="textEmailAddress"
+	        android:layout_gravity="center"
+	        android:gravity="center" />
+	
+	    <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_horizontal"
+	        android:paddingTop="@dimen/normal_padding"
+	        android:textSize="@dimen/normal_text_size"
+	        android:text="Prénom"
+	        android:textColor="@color/black_color" />
+	
+	    <EditText
+	        android:id="@+id/registration_firstname"
+	        android:layout_width="@dimen/large_padding"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center"
+	        android:gravity="center"
+	        android:inputType="text" />
+	    
+	    <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_horizontal"
+	        android:paddingTop="@dimen/normal_padding"
+	        android:textSize="@dimen/normal_text_size"
+	        android:text="Pseudo"
+	        android:textColor="@color/black_color" />
+	
+	    <EditText
+	        android:id="@+id/registration_nickname"
+	        android:layout_width="@dimen/large_padding"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center"
+	        android:gravity="center"
+	        android:inputType="text" />
+	    
+	    <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_horizontal"
+	        android:paddingTop="@dimen/normal_padding"
+	        android:textSize="@dimen/normal_text_size"
+	        android:text="Email"
+	        android:textColor="@color/black_color" />
+	
+	    <EditText
+	        android:id="@+id/registration_password"
+	        android:layout_width="@dimen/large_padding"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center"
+	        android:gravity="center"
+	        android:inputType="textPassword" />
+	    
+	    <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_horizontal"
+	        android:paddingTop="@dimen/normal_padding"
+	        android:textSize="@dimen/normal_text_size"
+	        android:text="Mot de passe"
+	        android:textColor="@color/black_color" />
+	
+	    <EditText
+	        android:id="@+id/registration_password"
+	        android:layout_width="@dimen/large_padding"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center"
+	        android:gravity="center"
+	        android:inputType="textPassword" />
+	    
+	    <LinearLayout 
+	        android:layout_width="fill_parent"
+	  		android:layout_height="fill_parent"
+	  		android:orientation="horizontal" >
+	    <Button
+	        android:background="@drawable/red_button"
+	        android:id="@+id/btn_registration"
+	        android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	      	android:layout_marginLeft="25dip"
+	     	android:layout_marginRight="25dip"
+	        android:text="Inscription"
+	        style="@style/button_auth" />
+	    
+	    <Button
+	        android:background="@drawable/red_button"
+	        android:id="@+id/btn_registration_cancel"
+	        android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	      	android:layout_marginLeft="25dip"
+	      	android:layout_marginRight="25dip"
+	        android:text="Annuler"
+	        style="@style/button_auth" />
+	    </LinearLayout>
+	</LinearLayout>
+</ScrollView>
