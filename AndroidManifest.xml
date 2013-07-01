@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="fr.animaliomobile"
     android:versionCode="1"
@@ -6,12 +7,52 @@
     <uses-sdk
         android:minSdkVersion="15"
         android:targetSdkVersion="17" />
-
+	
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
+    
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/Theme.Animalio">
+        <activity
+            android:name="fr.activity.animaliomobile.Authentication"
+            android:theme="@style/Theme.Animalio.Authentication">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="fr.activity.animaliomobile.Home"
+            android:label="@string/title_activity_home" >
+        </activity>
+        <activity
+            android:name="fr.activity.animaliomobile.MembersList"
+            android:label="@string/title_activity_members_list" >
+        </activity>
+        <activity
+            android:name="fr.activity.animaliomobile.Profiles"
+            android:label="@string/title_activity_profil" >
+        </activity>
+        <activity
+            android:name="fr.activity.animaliomobile.Details"
+            android:label="@string/title_activity_details" >
+        </activity>
+        <activity
+            android:name="fr.activity.animaliomobile.Events"
+            android:label="@string/title_activity_events" >
+        </activity>
+        <activity
+            android:name="fr.activity.animaliomobile.AnimalioLive"
+            android:label="@string/title_activity_animalio_live" >
+        </activity>
+        <activity
+            android:name="fr.activity.animaliomobile.MessagingService"
+            android:label="@string/title_activity_messaging_service" >
+        </activity>
     </application>
 
 </manifest>
