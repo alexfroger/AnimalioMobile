@@ -2,6 +2,7 @@ package fr.library.animaliomobile;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.Gravity;
@@ -18,45 +19,50 @@ import fr.animaliomobile.R;
 
 public class ConnectionDialog extends DialogFragment{
 	private static final int CODE_MAIN_ACTIVITY = 1;
-    private Button btnConnection;
+	private TextView btnConnection;
 	private Button btnConnectionCancel;
 	private TextView emailPseudo;
 	private TextView password;
-	
+
 	//Constructor
-    public ConnectionDialog() {
+	public ConnectionDialog() {
 		super();
 	}
-    
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        //Assigns a theme and style to the Dialog popUp
-        int style = DialogFragment.STYLE_NO_TITLE;
-        int theme = R.style.ThemeAnimalioAuthenticationPopUp;
-        setStyle(style, theme);
-    }
 
 	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) { 
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		//Assigns a theme and style to the Dialog popUp
+		int style = DialogFragment.STYLE_NO_TITLE;
+		int theme = R.style.ThemeAnimalioAuthenticationPopUp;
+		setStyle(style, theme);
+
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) { 
 		View view = inflater.inflate(R.layout.fragment_authentication_connection, container);
 		// instantiate the dialog with the custom Theme  
 
-		btnConnection = (Button)view.findViewById(R.id.btn_connection);
-		btnConnectionCancel = (Button)view.findViewById(R.id.btn_closed);
+		Typeface Lobster = Typeface.createFromAsset(Authentication.context.getAssets(), "Lobster.otf");
+
+		btnConnection = (TextView)view.findViewById(R.id.txv_seConnecter);
+		btnConnection.setTypeface(Lobster);
+
+		
 		emailPseudo = (TextView)view.findViewById(R.id.user_email);
 		password = (TextView)view.findViewById(R.id.user_password);
-		
+		btnConnectionCancel = (Button)view.findViewById(R.id.btn_closed);
 		//Buttons are assigned to the event listener
 		btnConnection.setOnClickListener(eventClick);
 		btnConnectionCancel.setOnClickListener(eventClick);
-        return view;
-    }
-	
+		return view;
+	}
+
 	//On crée un écouteur d'évènement commun au deux Button
-    OnClickListener eventClick = new OnClickListener() {
+	OnClickListener eventClick = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			if(v==btnConnectionCancel){
@@ -91,21 +97,21 @@ public class ConnectionDialog extends DialogFragment{
 
 				String email = emailPseudo.getText().toString();
 				String mdp = password.getText().toString();
-				
+
 				// On démarre l'autre Activity
 				if (email.equals("test") && mdp.equals("test")) {
 					//Start the Activity Home
 					startActivityForResult(intent, CODE_MAIN_ACTIVITY);
-					
+
 					//Close the authentication activity
 					getActivity().finish();
-					
+
 					// Toast reussit
-//					Toast t = Toast.makeText(Authentication.context,
-//							"Vous êtes connecté",
-//							Toast.LENGTH_LONG);
-//					t.setGravity(Gravity.BOTTOM, 0, 40);
-//					t.show();
+					//					Toast t = Toast.makeText(Authentication.context,
+					//							"Vous êtes connecté",
+					//							Toast.LENGTH_LONG);
+					//					t.setGravity(Gravity.BOTTOM, 0, 40);
+					//					t.show();
 				} else {
 					// Toast d'erreur
 					Toast t = Toast.makeText(Authentication.context,
@@ -116,5 +122,5 @@ public class ConnectionDialog extends DialogFragment{
 				}
 			}
 		}
-    };
+	};
 }

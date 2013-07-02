@@ -56,8 +56,8 @@ public class Home extends Activity {
 			if(v==btnHomeMember){
 				//Display the Member Fragment Activity
 				// On créé l'Intent qui va nous permettre d'afficher l'activity Mermber
-				Intent intent = new Intent(Home.context, MembersList.class);
-				startActivityForResult(intent, 0);
+				Intent intent = new Intent(getApplicationContext(), MembersList.class);
+				startActivity(intent);
 			}
 			if(v==btnHomeGallery){
 				// TODO Creer lactivité Gallerie et la redirection vers celle-ci
@@ -67,20 +67,20 @@ public class Home extends Activity {
 			if(v==btnHomeProfil){
 				//Display the Member Fragment Activity
 				// On créé l'Intent qui va nous permettre d'afficher l'activity Mermber
-				Intent intent = new Intent(Home.context, Profiles.class);
-				startActivityForResult(intent, 0);
+				Intent intent = new Intent(getApplicationContext(), Profiles.class);
+				startActivity(intent);
 			}
 			if(v==btnHomeEvent){
 				//Display the Member Fragment Activity
 				// On créé l'Intent qui va nous permettre d'afficher l'activity Mermber
-				Intent intent = new Intent(Home.context, Events.class);
-				startActivityForResult(intent, 0);
+				Intent intent = new Intent(getApplicationContext(), Events.class);
+				startActivity(intent);
 			}
 			if(v==btnHomeLive){
 				//Display the Member Fragment Activity
 				// On créé l'Intent qui va nous permettre d'afficher l'activity Mermber
-				Intent intent = new Intent(Home.context, AnimalioLive.class);
-				startActivityForResult(intent, 0);
+				Intent intent = new Intent(getApplicationContext(), AnimalioLive.class);
+				startActivity(intent);
 			}
 			if(v==btnHomePhoto){
 				// TODO Creer la redirection vers appli photo tel
