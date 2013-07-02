@@ -39,9 +39,11 @@
                     android:layout_below="@id/txv_connexion"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="7dp"
-                    android:gravity="center_horizontal"
-                    android:inputType="text"
-                    android:text="Votre email" />
+                    android:gravity="center_vertical|left"
+                    android:hint="Votre email"
+                    android:inputType="textEmailAddress"
+                    android:textColor="#B5B5B9"
+                    android:textColorHint="#E4E4E4" />
 
                 <EditText
                     android:id="@+id/user_password"
@@ -50,9 +52,11 @@
                     android:layout_below="@id/user_email"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="7dp"
-                    android:gravity="center_horizontal"
-                    android:inputType="text"
-                    android:text="Votre mot de passe" />
+                    android:gravity="center_vertical|left"
+                    android:hint="Votre mot de passe"
+                    android:inputType="textPassword"
+                    android:textColor="#B5B5B9"
+                    android:textColorHint="#E4E4E4" />
 
                 <TextView
                     android:id="@+id/txv_mdpForget"
@@ -79,11 +83,11 @@
                 <Button
                     android:id="@+id/btn_fb_connect"
                     android:layout_width="280dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/txv_seConnecter"
                     android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
                     android:background="@drawable/btn_fb_connect" />
             </RelativeLayout>
         </RelativeLayout>

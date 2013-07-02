@@ -24,6 +24,7 @@ public class ConnectionDialog extends DialogFragment{
 	private Button btnConnectionCancel;
 	private TextView emailPseudo;
 	private TextView password;
+	private TextView txv_mdpForget;
 
 	//Constructor
 	public ConnectionDialog() {
@@ -56,8 +57,13 @@ public class ConnectionDialog extends DialogFragment{
 		txvConnection = (TextView)view.findViewById(R.id.txv_connexion);
 		txvConnection.setTypeface(Arimo);
 		
+		txv_mdpForget = (TextView)view.findViewById(R.id.txv_mdpForget);
+		txv_mdpForget.setTypeface(Arimo);
+		
 		emailPseudo = (TextView)view.findViewById(R.id.user_email);
+		emailPseudo.setTypeface(Arimo);
 		password = (TextView)view.findViewById(R.id.user_password);
+		password.setTypeface(Arimo);
 		btnConnectionCancel = (Button)view.findViewById(R.id.btn_closed);
 		//Buttons are assigned to the event listener
 		btnConnection.setOnClickListener(eventClick);
