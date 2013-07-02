@@ -19,7 +19,8 @@ import fr.animaliomobile.R;
 
 public class ConnectionDialog extends DialogFragment{
 	private static final int CODE_MAIN_ACTIVITY = 1;
-	private TextView btnConnection;
+	private Button btnConnection;
+	private TextView txvConnection;
 	private Button btnConnectionCancel;
 	private TextView emailPseudo;
 	private TextView password;
@@ -47,10 +48,13 @@ public class ConnectionDialog extends DialogFragment{
 		// instantiate the dialog with the custom Theme  
 
 		Typeface Lobster = Typeface.createFromAsset(Authentication.context.getAssets(), "Lobster.otf");
+		Typeface Arimo = Typeface.createFromAsset(Authentication.context.getAssets(), "Arimo-Regular.ttf");
 
-		btnConnection = (TextView)view.findViewById(R.id.txv_seConnecter);
+		btnConnection = (Button)view.findViewById(R.id.txv_seConnecter);
 		btnConnection.setTypeface(Lobster);
-
+		
+		txvConnection = (TextView)view.findViewById(R.id.txv_connexion);
+		txvConnection.setTypeface(Arimo);
 		
 		emailPseudo = (TextView)view.findViewById(R.id.user_email);
 		password = (TextView)view.findViewById(R.id.user_password);
