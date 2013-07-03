@@ -5,88 +5,99 @@
     android:orientation="vertical" >
 
     <RelativeLayout
-        android:layout_width="600dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
         <RelativeLayout
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="7dp"
-            android:background="#888888"
+            android:background="@color/border_authDial"
             android:paddingBottom="5dp" >
 
             <RelativeLayout
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:background="#F5F3F4" >
+                android:background="@drawable/background_authentication_xml"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp" >
 
                 <TextView
                     android:id="@+id/txv_connexion"
-                    android:layout_width="500dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="20dp"
                     android:paddingTop="@dimen/normal_padding"
-                    android:text="CONNEXION"
-                    android:textColor="#A2A8AC"
+                    android:text="@string/title_popup_connexion"
+                    android:textColor="@color/title_authDial"
                     android:textSize="16dp" />
 
                 <EditText
                     android:id="@+id/user_email"
-                    android:layout_width="500dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/txv_connexion"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="7dp"
                     android:gravity="center_vertical|left"
+                    android:hint="@string/hint_email"
                     android:inputType="textEmailAddress"
-                    android:text="Votre email"
-                    android:textColor="#B5B5B9"
-                    android:textColorHint="#E4E4E4" />
+                    android:textColor="@color/textTextField_authDial"
+                    android:textColorHint="@color/hintTextField_authDial" />
 
                 <EditText
                     android:id="@+id/user_password"
-                    android:layout_width="500dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/user_email"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="7dp"
                     android:gravity="center_vertical|left"
-                    android:hint="Votre mot de passe"
+                    android:hint="@string/hint_password"
                     android:inputType="textPassword"
-                    android:textColor="#B5B5B9"
-                    android:textColorHint="#E4E4E4" />
+                    android:textColor="@color/textTextField_authDial"
+                    android:textColorHint="@color/hintTextField_authDial" />
 
                 <TextView
                     android:id="@+id/txv_mdpForget"
-                    android:layout_width="500dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/user_password"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="20dp"
-                    android:text="Mot de passe oublié"
+                    android:text="@string/pwd_forget"
                     android:textColor="@color/black_color"
                     android:textSize="10dp" />
 
-                <Button
-                    android:id="@+id/txv_seConnecter"
-                    style="@style/button_auth"
-                    android:layout_width="180dp"
-                    android:layout_height="50dp"
-                    android:layout_alignLeft="@id/user_password"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_below="@id/txv_mdpForget"
-                    android:layout_marginBottom="15dp"
-                    android:paddingBottom="3dp"
-                    android:text="Se connecter" />
+                    android:orientation="horizontal"
+                    android:weightSum="5" >
 
-                <Button
-                    android:id="@+id/btn_fb_connect"
-                    android:layout_width="280dp"
-                    android:layout_height="50dp"
-                    android:layout_alignRight="@id/user_password"
-                    android:layout_below="@id/txv_mdpForget"
-                    android:background="@drawable/btn_fb_connect" />
+                    <Button
+                        android:id="@+id/txv_seConnecter"
+                        style="@style/button_auth"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="2"
+                        android:paddingBottom="3dp"
+                        android:text="@string/connect" />
+
+                    <Button
+                        android:id="@+id/btn_fb_connect"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:background="@drawable/btn_fb_connect"
+                        android:text="@string/connect_facebook"
+                        android:textColor="@color/white_color" />
+                </LinearLayout>
             </RelativeLayout>
         </RelativeLayout>
 

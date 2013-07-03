@@ -53,6 +53,10 @@
             android:name="fr.activity.animaliomobile.MessagingService"
             android:label="@string/title_activity_messaging_service" >
         </activity>
+        <activity
+            android:name="fr.activity.animaliomobile.Registration"
+            android:label="@string/title_activity_resgistration" >
+        </activity>
     </application>
 
 </manifest>

@@ -1,6 +1,7 @@
 package fr.activity.animaliomobile;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -72,7 +73,9 @@ public class Authentication extends FragmentActivity{
 			}
 			if(v==btnShowRegistration){
 				//Display the RegistrationDialog View
-				showRegistrationDialog();
+				//showRegistrationDialog();
+				Intent i = new Intent(getApplicationContext(), Registration.class);
+				startActivity(i);
 			}
 //			if(v==buttonNotif){
 //				CustomNotification notif = new CustomNotification((NotificationManager)getSystemService(NOTIFICATION_SERVICE), Authentication.context, "test", "test");

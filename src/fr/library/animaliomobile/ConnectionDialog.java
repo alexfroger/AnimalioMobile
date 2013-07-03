@@ -1,5 +1,10 @@
 package fr.library.animaliomobile;
 
+import java.util.ArrayList;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -11,6 +16,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import fr.activity.animaliomobile.Authentication;
@@ -22,10 +28,11 @@ public class ConnectionDialog extends DialogFragment{
 	private Button btnConnection;
 	private TextView txvConnection;
 	private Button btnConnectionCancel;
-	private TextView emailPseudo;
-	private TextView password;
+	private EditText emailPseudo;
+	private EditText password;
 	private TextView txv_mdpForget;
-
+	private static ArrayList<NameValuePair> data = new ArrayList<NameValuePair>(1);
+	
 	//Constructor
 	public ConnectionDialog() {
 		super();
@@ -59,15 +66,17 @@ public class ConnectionDialog extends DialogFragment{
 		
 		txv_mdpForget = (TextView)view.findViewById(R.id.txv_mdpForget);
 		txv_mdpForget.setTypeface(Arimo);
+		txv_mdpForget.setOnClickListener(eventClick);
 		
-		emailPseudo = (TextView)view.findViewById(R.id.user_email);
+		emailPseudo = (EditText)view.findViewById(R.id.user_email);
 		emailPseudo.setTypeface(Arimo);
-		password = (TextView)view.findViewById(R.id.user_password);
+		password = (EditText)view.findViewById(R.id.user_password);
 		password.setTypeface(Arimo);
 		btnConnectionCancel = (Button)view.findViewById(R.id.btn_closed);
 		//Buttons are assigned to the event listener
 		btnConnection.setOnClickListener(eventClick);
 		btnConnectionCancel.setOnClickListener(eventClick);
+		
 		return view;
 	}
 
@@ -75,11 +84,21 @@ public class ConnectionDialog extends DialogFragment{
 	OnClickListener eventClick = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			if(v==txv_mdpForget){
+				
+			}
+			
 			if(v==btnConnectionCancel){
 				//Cancel the view ConnectionDialog
 				getDialog().cancel();
 			}
 			if(v==btnConnection){
+				data.add(new BasicNameValuePair("email_pseudo", emailPseudo.getText().toString()));
+				data.add(new BasicNameValuePair("password", password.getText().toString()));
+				//méthode pour faire la connexion
+				
+				
+				
 				// On créé un objet Bundle, c'est ce qui va nous permetre
 				// d'envoyer des données à l'autre Activity
 				Bundle objetbunble = new Bundle();

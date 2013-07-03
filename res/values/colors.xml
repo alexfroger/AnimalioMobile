@@ -2,4 +2,12 @@
 <resources>
      <color name="black_color">#000</color>
      <color name="white_color">#fff</color>
+     
+     
+     
+     <!-- Couleur liée au pop-up de connexion -->
+     <color name="border_authDial">#888888</color>
+     <color name="title_authDial">#A2A8AC</color>
+     <color name="textTextField_authDial">#B5B5B9</color>
+     <color name="hintTextField_authDial">#E4E4E4</color>
 </resources>
