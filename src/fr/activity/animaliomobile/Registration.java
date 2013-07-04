@@ -82,10 +82,7 @@ public class Registration extends Activity{
 					t.show();
 				} else if (false/*Eventuelle vérification sur le format du mot de passe*/){
 					
-				} else if (false/*Vérification si l'email est déjà enregistré*/) {
-					
-				} else if (false /*Vérification si le pseudo est déjà utilisé*/){
-					
+				
 				} else {
 					//on ajoute les données saisies 
 					data.add(new BasicNameValuePair("lastname", edit_lastname.getText().toString()));

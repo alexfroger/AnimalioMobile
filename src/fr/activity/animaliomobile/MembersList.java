@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -16,7 +17,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -37,12 +40,13 @@ public class MembersList extends FragmentActivity{
 	 * The {@link ViewPager} that will host the section contents.
 	 */
 	ViewPager mViewPager;
-
+	static Context context;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.members_list);
 
+		context = getApplicationContext();
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the app.
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
@@ -51,6 +55,7 @@ public class MembersList extends FragmentActivity{
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
+
 	}
 
 	@Override
@@ -112,7 +117,7 @@ public class MembersList extends FragmentActivity{
 		 */
 		public static final String ARG_SECTION_NUMBER = "section_number";
 		private ListView listeMembre;
-		
+
 		public DummySectionFragment() {
 		}
 
@@ -125,49 +130,58 @@ public class MembersList extends FragmentActivity{
 					.findViewById(R.id.section_label);
 			dummyTextView.setText(Integer.toString(getArguments().getInt(
 					ARG_SECTION_NUMBER)));
-			
-			// Create the listMember
-	        // --- Recuperation de la listview creee dans liste_avec_images_differentes.xml
-			listeMembre = (ListView)rootView.findViewById(R.id.list_members);
-	 
-	        // --- Creation de la ArrayList qui permettra de remplir la listView
-	        List<HashMap<String, Object>> listeItems = new ArrayList<HashMap<String, Object>>();
-	 
-	        // --- Declaration du HashMap qui contiendra les informations pour un item
-	        HashMap<String, Object> hm;
-	 
-	        // --- Creation du HashMap pour inserer les informations du premier item de la listView
-	        hm = new HashMap<String, Object>();
-	        
-	        // --- Insertion d'elements
-	        hm.put("image", R.drawable.fotolia_test);
-	        hm.put("title", "Test 1");
-	        hm.put("description", "Testgsdrg sdrgs drgsd gsdr ");
-	        // --- Ajout du hashMap a l'ArrayList
-	        listeItems.add(hm);
-	 
-	        hm.put("image", R.drawable.ic_launcher);
-	        hm.put("title", "Test 2");
-	        hm.put("description", "sdr gsdr gsdr gsdrg sdrg sdrg sd");
-	        // --- Ajout du hashMap a l'ArrayList    
-	        listeItems.add(hm);
 
-	        // --- Creation d'un SimpleAdapter
-	        SimpleAdapter sa = new SimpleAdapter (inflater.getContext(),
-	        	listeItems, 
-	        	R.layout.members_list_ligne,
-	            new String[] {"image", "title", "description"},
-	            new int[] {R.id.member_ligne_photo, R.id.member_ligne_titre, R.id.member_ligne_description}
-	        );
-	 
-//	        // --- Affectation de l'adapter a la listView
-	        listeMembre.setAdapter(sa); 
-//	        
-//	        // --- Gestion de l'evenement pour la selection
-//	        listeMembre.setOnItemClickListener(this);
-	        
+			// Create the listMember
+			// --- Recuperation de la listview creee dans liste_avec_images_differentes.xml
+			listeMembre = (ListView)rootView.findViewById(R.id.list_members);
+
+			// --- Creation de la ArrayList qui permettra de remplir la listView
+			List<HashMap<String, Object>> listeItems = new ArrayList<HashMap<String, Object>>();
+
+			// --- Declaration du HashMap qui contiendra les informations pour un item
+			HashMap<String, Object> hm;
+
+			// --- Creation du HashMap pour inserer les informations du premier item de la listView
+			hm = new HashMap<String, Object>();
+
+			// --- Insertion d'elements
+			hm.put("image", R.drawable.fotolia_test);
+			hm.put("title", "Test 1");
+			hm.put("description", "Testgsdrg sdrgs drgsd gsdr ");
+			// --- Ajout du hashMap a l'ArrayList
+			listeItems.add(hm);
+
+			hm.put("image", R.drawable.ic_launcher);
+			hm.put("title", "Test 2");
+			hm.put("description", "sdr gsdr gsdr gsdrg sdrg sdrg sd");
+			// --- Ajout du hashMap a l'ArrayList    
+			listeItems.add(hm);
+
+			// --- Creation d'un SimpleAdapter
+			SimpleAdapter sa = new SimpleAdapter (inflater.getContext(),
+					listeItems, 
+					R.layout.members_list_ligne,
+					new String[] {"image", "title", "description"},
+					new int[] {R.id.member_ligne_photo, R.id.member_ligne_titre, R.id.member_ligne_description}
+					);
+
+			//	        // --- Affectation de l'adapter a la listView
+			listeMembre.setAdapter(sa); 
+			//	        
+			//	        // --- Gestion de l'evenement pour la selection
+			listeMembre.setOnItemClickListener(eventClick);
+
 			return rootView;
 		}
+		//		Create Listener event
+		OnItemClickListener eventClick = new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1,int arg2, long arg3) {
+
+				Intent intent = new Intent(MembersList.context, MemberProfiles.class);
+				startActivity(intent);
+
+			}
+		};
 	}
 
 }
