@@ -41,12 +41,10 @@ public class ConnectionDialog extends DialogFragment{
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		//Assigns a theme and style to the Dialog popUp
 		int style = DialogFragment.STYLE_NO_TITLE;
 		int theme = R.style.ThemeAnimalioAuthenticationPopUp;
 		setStyle(style, theme);
-
 	}
 
 	@Override
@@ -128,7 +126,7 @@ public class ConnectionDialog extends DialogFragment{
 				String mdp = password.getText().toString();
 
 				// On démarre l'autre Activity
-				if (email.equals("test") && mdp.equals("test")) {
+				//if (email.equals("test") && mdp.equals("test")) {
 					//Start the Activity Home
 					startActivityForResult(intent, CODE_MAIN_ACTIVITY);
 
@@ -141,14 +139,14 @@ public class ConnectionDialog extends DialogFragment{
 					//							Toast.LENGTH_LONG);
 					//					t.setGravity(Gravity.BOTTOM, 0, 40);
 					//					t.show();
-				} else {
+				//} else {
 					// Toast d'erreur
-					Toast t = Toast.makeText(Authentication.context,
-							"Mot de passe ou Pseudo/Email invalide",
-							Toast.LENGTH_LONG);
-					t.setGravity(Gravity.BOTTOM, 0, 40);
-					t.show();
-				}
+				//	Toast t = Toast.makeText(Authentication.context,
+				//			"Mot de passe ou Pseudo/Email invalide",
+				//			Toast.LENGTH_LONG);
+				//	t.setGravity(Gravity.BOTTOM, 0, 40);
+				//	t.show();
+				//}
 			}
 		}
 	};

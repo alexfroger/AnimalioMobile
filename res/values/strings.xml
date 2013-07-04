@@ -25,6 +25,7 @@
     <string name="title_activity_animalio_live">AnimalioLive</string>
     <string name="title_activity_messaging_service">MessagingService</string>
     <string name="title_activity_resgistration">Inscription</string>
+    <string name="title_activity_member_profiles">Profil du membre</string>
     
     <!-- pop-up connexion -->
      <string name="title_popup_connexion">CONNEXION</string>

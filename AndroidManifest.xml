@@ -57,6 +57,10 @@
             android:name="fr.activity.animaliomobile.Registration"
             android:label="@string/title_activity_resgistration" >
         </activity>
+        <activity
+            android:name="fr.activity.animaliomobile.MemberProfiles"
+            android:label="@string/title_activity_member_profiles" >
+        </activity>
     </application>
 
 </manifest>
