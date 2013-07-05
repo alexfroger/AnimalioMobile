@@ -178,6 +178,13 @@ public class MembersList extends FragmentActivity{
 			public void onItemClick(AdapterView<?> arg0, View arg1,int arg2, long arg3) {
 
 				Intent intent = new Intent(MembersList.context, MemberProfiles.class);
+				boolean isFriend = false;
+				if(arg2==0){
+					isFriend = true;
+					intent.putExtra("isFriend", isFriend);
+				}else{
+					intent.putExtra("isFriend", isFriend);
+				}
 				startActivity(intent);
 
 			}

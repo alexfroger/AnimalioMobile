@@ -39,14 +39,48 @@
             android:weightSum="5" >
 
             <Button
-                android:id="@+id/btn_animals_list"
+                android:id="@+id/btn_send_msg"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|center_horizontal"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/fotolia_test" />
+                android:background="@drawable/fotolia_test"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btn_animal_modification"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/fotolia_test"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btn_msg"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/fotolia_test"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btn_animals_list"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/fotolia_test"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/btn_friends_list"
@@ -57,7 +91,8 @@
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/fotolia_test"
-                android:contentDescription="Test" />
+                android:contentDescription="Test"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/btn_friends_requests"
@@ -65,10 +100,59 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|center_horizontal"
                 android:layout_marginLeft="5dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/fotolia_test"
+                android:contentDescription="Test"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btn_notifications_list"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/fotolia_test"
-                android:contentDescription="Test" />
+                android:contentDescription="Test"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btn_delete_friend"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/fotolia_test"
+                android:contentDescription="Test"
+                android:visibility="gone" />
+            
+            <Button
+                android:id="@+id/btn_delete_animal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/fotolia_test"
+                android:contentDescription="Test"
+                android:visibility="gone" />
+            
+            <Button
+                android:id="@+id/btn_user_modification"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/fotolia_test"
+                android:contentDescription="Test"
+                android:visibility="gone" />
         </LinearLayout>
 
         <ViewFlipper
@@ -89,7 +173,7 @@
                     android:textColor="@color/black_color"
                     android:textSize="24dp" />
             </LinearLayout>
-            
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -103,7 +187,7 @@
                     android:textColor="@color/black_color"
                     android:textSize="24dp" />
             </LinearLayout>
-            
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
