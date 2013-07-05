@@ -24,7 +24,8 @@ public class MemberProfiles extends Activity{
 		btn_friends_list = (Button) findViewById(R.id.btn_friends_list);
 		btn_friends_requests = (Button) findViewById(R.id.btn_friends_requests);
 		vf_member_profil = (ViewFlipper) findViewById(R.id.vf_member_profil);
-		//boutons
+		
+
 		btn_animals_list.setOnClickListener(eventClick);
 		btn_friends_list.setOnClickListener(eventClick);
 		btn_friends_requests.setOnClickListener(eventClick);
