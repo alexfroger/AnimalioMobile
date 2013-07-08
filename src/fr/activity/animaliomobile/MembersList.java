@@ -177,13 +177,14 @@ public class MembersList extends FragmentActivity{
 		OnItemClickListener eventClick = new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1,int arg2, long arg3) {
 
-				Intent intent = new Intent(MembersList.context, MemberProfiles.class);
-				boolean isFriend = false;
+				Intent intent = new Intent(MembersList.context, Profiles.class);
+				int typeProfil;
 				if(arg2==0){
-					isFriend = true;
-					intent.putExtra("isFriend", isFriend);
+					typeProfil = 2;
+					intent.putExtra("typeProfil", typeProfil);
 				}else{
-					intent.putExtra("isFriend", isFriend);
+					typeProfil = 1;
+					intent.putExtra("typeProfil", typeProfil);
 				}
 				startActivity(intent);
 
