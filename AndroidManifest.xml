@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="fr.animaliomobile"
+    android:installLocation="preferExternal"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -58,7 +59,7 @@
             android:label="@string/title_activity_resgistration" >
         </activity>
         <activity
-            android:name="fr.activity.animaliomobile.MemberProfiles"
+            android:name="fr.activity.animaliomobile.Profiles"
             android:label="@string/title_activity_member_profiles" >
         </activity>
         <activity

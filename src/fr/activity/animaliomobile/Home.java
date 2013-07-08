@@ -68,6 +68,7 @@ public class Home extends Activity {
 				//Display the Member Fragment Activity
 				// On créé l'Intent qui va nous permettre d'afficher l'activity Mermber
 				Intent intent = new Intent(getApplicationContext(), Profiles.class);
+				intent.putExtra("typeProfil", 0);
 				startActivity(intent);
 			}
 			if(v==btnHomeEvent){
