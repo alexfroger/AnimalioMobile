@@ -31,54 +31,13 @@
                 android:textSize="18dp" />
         </LinearLayout>
 
-       <include layout="@layout/profil_bouton_bar" />
+        <include layout="@layout/profil_bouton_bar" />
 
         <ViewFlipper
-            android:id="@+id/vf_member_profil"
+            android:id="@+id/vf_profil"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="horizontal" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Ajouter comme ami"
-                    android:textColor="@color/black_color"
-                    android:textSize="24dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="horizontal" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="2"
-                    android:textColor="@color/black_color"
-                    android:textSize="24dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="horizontal" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="3"
-                    android:textColor="@color/black_color"
-                    android:textSize="24dp" />
-            </LinearLayout>
+            android:layout_height="match_parent" 
+            android:background="#C3C3C3">
         </ViewFlipper>
     </LinearLayout>
 
