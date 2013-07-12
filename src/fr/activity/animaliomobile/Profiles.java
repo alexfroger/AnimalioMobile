@@ -259,9 +259,8 @@ public class Profiles extends Activity{
 		{
 			public void onItemClick(AdapterView<?> parent, View view,int position, long id) 
 			{
-				Toast.makeText(getApplicationContext(),
-						"Clic sur :  " + (String) lsv_msg.getAdapter().getItem(position),
-						Toast.LENGTH_LONG).show();
+				Intent intent = new Intent(getApplicationContext(), MessagingService.class);
+				startActivity(intent);
 			}
 		});
 
@@ -322,9 +321,8 @@ public class Profiles extends Activity{
 		{
 			public void onItemClick(AdapterView<?> parent, View view,int position, long id) 
 			{
-				Toast.makeText(getApplicationContext(),
-						"Clic sur :  " + (String) lsv_notifications_list.getAdapter().getItem(position),
-						Toast.LENGTH_LONG).show();
+				Intent intent = new Intent(getApplicationContext(), Details.class);
+				startActivity(intent);
 			}
 		});
 		return lsv_notifications_list;
