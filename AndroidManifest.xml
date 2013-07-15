@@ -59,8 +59,8 @@
             android:label="@string/title_activity_resgistration" >
         </activity>
         <activity
-            android:name="fr.activity.animaliomobile.Profiles"
-            android:label="@string/title_activity_member_profiles" >
+            android:name="fr.activity.animaliomobile.Gallery"
+            android:label="@string/title_activity_gallery" >
         </activity>
         <activity
             android:name="fr.animaliomobile.SplashActivity"

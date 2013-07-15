@@ -60,9 +60,10 @@ public class Home extends Activity {
 				startActivity(intent);
 			}
 			if(v==btnHomeGallery){
-				// TODO Creer lactivité Gallerie et la redirection vers celle-ci
-				//Display the Member Fragment Activity
-				// On créé l'Intent qui va nous permettre d'afficher l'activity Mermber
+				
+				// On créé l'Intent qui va nous permettre d'afficher l'activity Gallery
+				Intent intent = new Intent(getApplicationContext(), Gallery.class);
+				startActivity(intent);
 			}
 			if(v==btnHomeProfil){
 				//Display the Member Fragment Activity
