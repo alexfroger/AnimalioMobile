@@ -1,39 +1,32 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center" >
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical" >
+    android:layout_gravity="center"
+    android:background="@drawable/background_authentication_xml"
+    android:orientation="vertical" >
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/txv_connexion"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
             android:paddingTop="@dimen/normal_padding"
-            android:text="@string/registration_lastname"
-            android:textColor="@color/black_color"
-            android:textSize="@dimen/normal_text_size" />
+            android:text="S&apos;inscrire"
+            android:textColor="@color/title_authDial"
+            android:textSize="16dp" />
 
         <EditText
             android:id="@+id/registration_lastname"
             android:layout_width="@dimen/large_padding"
             android:layout_height="wrap_content"
+            android:layout_below="@id/txv_connexion"
             android:layout_gravity="center"
-            android:gravity="center"
-            android:inputType="textEmailAddress" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:paddingTop="@dimen/normal_padding"
-            android:text="@string/registration_firstname"
-            android:textColor="@color/black_color"
-            android:textSize="@dimen/normal_text_size" />
+            android:layout_marginBottom="7dp"
+            android:gravity="center_vertical|left"
+            android:hint="@string/hint_registration_lastname"
+            android:inputType="textEmailAddress"
+            android:textColor="@color/textTextField_authDial"
+            android:textColorHint="@color/hintTextField_authDial" />
 
         <EditText
             android:id="@+id/registration_firstname"
@@ -43,15 +36,6 @@
             android:gravity="center"
             android:inputType="text" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:paddingTop="@dimen/normal_padding"
-            android:text="@string/registration_nickname"
-            android:textColor="@color/black_color"
-            android:textSize="@dimen/normal_text_size" />
-
         <EditText
             android:id="@+id/registration_nickname"
             android:layout_width="@dimen/large_padding"
@@ -59,15 +43,6 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:inputType="text" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:paddingTop="@dimen/normal_padding"
-            android:text="@string/registration_email"
-            android:textColor="@color/black_color"
-            android:textSize="@dimen/normal_text_size" />
 
         <EditText
             android:id="@+id/registration_email"
@@ -77,15 +52,6 @@
             android:gravity="center"
             android:inputType="textEmailAddress" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:paddingTop="@dimen/normal_padding"
-            android:text="@string/registration_pwd"
-            android:textColor="@color/black_color"
-            android:textSize="@dimen/normal_text_size" />
-
         <EditText
             android:id="@+id/registration_password"
             android:layout_width="@dimen/large_padding"
@@ -93,15 +59,6 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:inputType="textPassword" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:paddingTop="@dimen/normal_padding"
-            android:text="@string/registration_check_pwd"
-            android:textColor="@color/black_color"
-            android:textSize="@dimen/normal_text_size" />
 
         <EditText
             android:id="@+id/registration_check_password"
@@ -138,6 +95,4 @@
                 android:background="@drawable/red_button"
                 android:text="@string/cancel" />
         </LinearLayout>
-    </LinearLayout>
-
-</ScrollView>
+</LinearLayout>

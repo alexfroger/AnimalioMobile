@@ -171,32 +171,14 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 						// en cas d'échec
 			((AbstractHttpClient) httpclient)
 					.setHttpRequestRetryHandler(myRetryHandler);
+			// On définie l'url du webservice en php
 			HttpPost httppost = new HttpPost(
-					"http://m.animalio.fr/Authentication.php"); // On définie
-																// l'url du
-																// webservice en
-																// php
-			httppost.setEntity(new UrlEncodedFormEntity(this.data)); // on passe
-																		// en
-																		// paramètre
-																		// la
-																		// liste
-																		// de
-																		// données
-																		// à
-																		// envoyer
+					"http://m.animalio.fr/Authentication.php");
+			// on passe en paramètre la liste dedonnées à envoyer
+			httppost.setEntity(new UrlEncodedFormEntity(this.data));
 			ResponseHandler<String> responseHandler = new BasicResponseHandler();
-			String response = httpclient.execute(httppost, responseHandler); // on
-																				// envoie
-																				// les
-																				// données
-																				// au
-																				// serveur
-																				// et
-																				// on
-																				// récupère
-																				// sa
-																				// réponse
+			// on envoie les données au serveur et on récupères a réponse
+			String response = httpclient.execute(httppost, responseHandler); 
 		} catch (Exception e) {
 			Log.e("log_tag", "Error:  " + e.toString());
 		}
@@ -207,7 +189,7 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 	 * 
 	 * @param tabChamps
 	 * @param url
-	 * @return ArrayList<ArrayList<String>>
+	 * @return JSONArray
 	 */
 	public JSONArray getServerData(ArrayList<NameValuePair> dataSendTo,
 			String url) {
@@ -216,17 +198,14 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 		String strURL = url;
 		JSONArray resultat = null;// Resultat final
 		// JSONArray jArray = null; //Resultat final
-		ArrayList<NameValuePair> nameValuePairs = dataSendTo; // Data to send to
-																// server
+		ArrayList<NameValuePair> nameValuePairs = dataSendTo; // Data to send to server
 
 		// Envoie de la commande http
 		try {
 			HttpClient httpclient = new DefaultHttpClient();
 			setRetry();
 			((AbstractHttpClient) httpclient)
-					.setHttpRequestRetryHandler(myRetryHandler); // ajout du
-																	// manager
-																	// de
+					.setHttpRequestRetryHandler(myRetryHandler); // ajout du manager de
 																	// réponse
 																	// afin de
 																	// permettre
@@ -299,9 +278,7 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 					System.out.println("java.net.SocketException exception");
 					return true;
 				}
-				if (exception instanceof java.net.SocketTimeoutException) { // retente
-																			// si
-																			// timeOut
+				if (exception instanceof java.net.SocketTimeoutException) { // retente si timeOut
 					System.out
 							.println("java.net.SocketTimeoutException exception");
 					return true;

@@ -34,12 +34,12 @@
     <string name="pwd_forget">Mot de passe oublié</string>
 
     <!-- registration activity -->
-    <string name="registration_lastname">Nom</string>
-    <string name="registration_firstname">Prénom</string>
-    <string name="registration_nickname">Pseudo</string>
-    <string name="registration_email">Email</string>
-    <string name="registration_pwd">Mot de passe</string>
-    <string name="registration_check_pwd">Vérification mot de passe</string>
+    <string name="hint_registration_lastname">Nom</string>
+    <string name="hint_registration_firstname">Prénom</string>
+    <string name="hint_registration_nickname">Pseudo</string>
+    <string name="hint_registration_email">Email</string>
+    <string name="hint_registration_pwd">Mot de passe</string>
+    <string name="hint_registration_check_pwd">Vérification mot de passe</string>
     <string name="register">S\'inscrire</string>
     <string name="cancel">Annuler</string>
     <string name="field_empty">Veuillez remplir tous les champs</string>
