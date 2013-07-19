@@ -6,7 +6,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
-    <string name="title_activity_home">HomeActivity</string>
     <string name="image_content_description">Un Android avec un chien</string>
     <string name="email_nickname">Email / Pseudo</string>
     <string name="password">Mot de passe</string>
@@ -26,6 +25,7 @@
     <string name="title_activity_messaging_service">MessagingService</string>
     <string name="title_activity_resgistration">Inscription</string>
     <string name="title_activity_member_profiles">Profil du membre</string>
+    <string name="title_activity_home">Accueil</string>
 
     <!-- pop-up connexion -->
     <string name="title_popup_connexion">CONNEXION</string>
