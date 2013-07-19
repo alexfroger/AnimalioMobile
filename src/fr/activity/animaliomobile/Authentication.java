@@ -7,11 +7,14 @@ import org.apache.http.message.BasicNameValuePair;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.View;
@@ -41,47 +44,63 @@ public class Authentication extends FragmentActivity{
 //		getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
 //		getActionBar().hide();
 	    
-		setContentView(R.layout.authentication);
+		//On Récupére les préférences utilisateur si elle existe
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		
-		Display display = getWindowManager().getDefaultDisplay(); 
-		int width = display.getWidth();  // deprecated
-		int height = display.getHeight();  // deprecated
-		resolution =  width+"x"+height;
+		String idUser = preferences.getString("idUser", "");
+		String pseudoEmail = preferences.getString("pseudoEmail", "");
+		String password = preferences.getString("password", "");
+		Log.i("log_parseAuthIDUSER", "ID_USER : " + idUser);
+		Log.i("log_parseAuthPseudo", "PSEUDO_EMAIL : " + pseudoEmail);
+		Log.i("log_parseAuthPassword", "Password : " + password);
 		
-		//Recupére la densité de l'ecran utilisateur
-		DisplayMetrics dm = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(dm);
-		switch(dm.densityDpi){
-		case DisplayMetrics.DENSITY_LOW:
-			densite = "ldpi";
-			break;
-		case DisplayMetrics.DENSITY_MEDIUM:
-			densite = "mdpi";
-			break;
-		case DisplayMetrics.DENSITY_HIGH:
-			densite = "hdpi";
-			break;
-		case DisplayMetrics.DENSITY_TV :
-			densite = "tvdpi";
-			break;
-		case DisplayMetrics.DENSITY_XHIGH:
-			densite = "xhdpi";
-			break;
-		case 480: //DENSITY_XXHIGH
-			densite = "xxhdpi";
-			break;
+		//Si l'utilisateur est tjr connecté c'est a dire que c'est préférence existe on va direct à la home
+		if(!idUser.equals("") && !pseudoEmail.equals("") && !password.equals("")){
+			Intent i = new Intent(getApplicationContext(), Home.class);
+			startActivity(i);
+		}else{ //Sinon on se connecte
+			setContentView(R.layout.authentication);
+			
+			Display display = getWindowManager().getDefaultDisplay(); 
+			int width = display.getWidth();  // deprecated
+			int height = display.getHeight();  // deprecated
+			resolution =  width+"x"+height;
+			
+			//Recupére la densité de l'ecran utilisateur
+			DisplayMetrics dm = new DisplayMetrics();
+			getWindowManager().getDefaultDisplay().getMetrics(dm);
+			switch(dm.densityDpi){
+			case DisplayMetrics.DENSITY_LOW:
+				densite = "ldpi";
+				break;
+			case DisplayMetrics.DENSITY_MEDIUM:
+				densite = "mdpi";
+				break;
+			case DisplayMetrics.DENSITY_HIGH:
+				densite = "hdpi";
+				break;
+			case DisplayMetrics.DENSITY_TV :
+				densite = "tvdpi";
+				break;
+			case DisplayMetrics.DENSITY_XHIGH:
+				densite = "xhdpi";
+				break;
+			case 480: //DENSITY_XXHIGH
+				densite = "xxhdpi";
+				break;
+			}
+			
+			//Recover the object ressources
+			context = getApplicationContext();
+			btnShowConnection = (Button)findViewById(R.id.connect);
+			btnShowRegistration = (Button)findViewById(R.id.registration);
+			//buttonNotif = (Button)findViewById(R.id.notif);
+			
+			//Buttons are assigned to the event listener
+			btnShowConnection.setOnClickListener(eventClick);
+			btnShowRegistration.setOnClickListener(eventClick);
+			//buttonNotif.setOnClickListener(eventClick);
 		}
-		
-		//Recover the object ressources
-		context = getApplicationContext();
-		btnShowConnection = (Button)findViewById(R.id.connect);
-		btnShowRegistration = (Button)findViewById(R.id.registration);
-		//buttonNotif = (Button)findViewById(R.id.notif);
-		
-		//Buttons are assigned to the event listener
-		btnShowConnection.setOnClickListener(eventClick);
-		btnShowRegistration.setOnClickListener(eventClick);
-		//buttonNotif.setOnClickListener(eventClick);
 	}
 
 	/**

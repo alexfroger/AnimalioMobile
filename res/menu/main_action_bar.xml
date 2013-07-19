@@ -3,27 +3,23 @@
     <item
         android:id="@+id/menu_search"
         android:icon="@drawable/ic_launcher"
-        android:showAsAction="ifRoom"
+        android:showAsAction="always"
         android:title="menu_search"/>
-    <item
-        android:id="@+id/menu_refresh"
-        android:icon="@drawable/ic_launcher"
-        android:showAsAction="ifRoom"
-        android:title="menu_refresh"/>
-    <item
-        android:id="@+id/menu_help"
-        android:icon="@drawable/ic_launcher"
-        android:showAsAction="ifRoom"
-        android:title="menu_help"/>
-    <item
-        android:id="@+id/menu_about"
-        android:icon="@drawable/ic_launcher"
-        android:showAsAction="never"
-        android:title="menu_about"/>
     <item
         android:id="@+id/menu_settings"
         android:icon="@drawable/ic_launcher"
-        android:showAsAction="never"
+        android:showAsAction="always"
         android:title="menu_settings"/>
+    <item
+        android:id="@+id/menu_refresh"
+        android:icon="@drawable/ic_launcher"
+        android:showAsAction="always"
+        android:title="menu_refresh"/>
+    <!-- Supprimer l'item delete quand le popUp parametre aparrait car se trouvera dans ce popup -->
+    <item
+        android:id="@+id/menu_delete"
+        android:icon="@drawable/ic_launcher"
+        android:showAsAction="never"
+        android:title="menu_delete"/>
 </menu>
 

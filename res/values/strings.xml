@@ -50,5 +50,14 @@
     <string name="title_member_all">Tous</string>
     <string name="title_member_friend">Amis</string>
     <string name="title_activity_splash">SplashActivity</string>
+    
+    <!-- Home Activity -->
+    <string-array name="parameters_array">
+        <item>Aide</item>
+        <item>Nous contactez</item>
+        <item>Conditions, règles</item>
+        <item>Deconnexion</item>
+    </string-array>
+    
 
 </resources>

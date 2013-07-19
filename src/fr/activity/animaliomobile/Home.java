@@ -4,14 +4,18 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 import fr.animaliomobile.R;
 
@@ -22,6 +26,7 @@ public class Home extends Activity {
 	private Button btnHomeEvent;
 	private Button btnHomeLive;
 	private Button btnHomePhoto;
+	private Button popupSettings;
 	
 	public static Context context;
 	
@@ -104,23 +109,21 @@ public class Home extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main_action_bar, menu);
 		
+		popupSettings = (Button) findViewById(R.id.menu_settings);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			ActionBar actionBar = getActionBar();
 			actionBar.setDisplayHomeAsUpEnabled(true);
+			actionBar.setDisplayShowTitleEnabled(false);
 		}
 		return true;
 	}
-	
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch (item.getItemId()) {
     	case android.R.id.home:
+    		// Comportement du bouton "Logo"
 			onBackPressed();
-    	case R.id.menu_about:
-    		// Comportement du bouton "A Propos"
-    		return true;
-    	case R.id.menu_help:
-    		// Comportement du bouton "Aide"
     		return true;
     	case R.id.menu_refresh:
     		// Comportement du bouton "Rafraichir"
@@ -130,6 +133,21 @@ public class Home extends Activity {
     		return true;
     	case R.id.menu_settings:
     		// Comportement du bouton "Paramètres"
+    		return true;
+    	case R.id.menu_delete:
+    		// Comportement du bouton "Delete" A supprimer quand le popup parametre sera creer car dedans
+    		
+			// On créé l'Intent qui va nous permettre d'afficher l'autre Activity
+			Intent intent = new Intent(getApplicationContext(), Authentication.class);
+			// On supprime l'activity de login sinon
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+			startActivity(intent);  
+			
+			//Puis on reset les informations utilisateurs
+				SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+				SharedPreferences.Editor editor = preferences.edit();
+				editor.clear();	
+				editor.commit();
     		return true;
     	default:
     		return super.onOptionsItemSelected(item);

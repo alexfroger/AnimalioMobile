@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-     <color name="black_color">#000</color>
-     <color name="white_color">#fff</color>
+
+    <color name="sa_green">#14a804</color>
+    <color name="stacked_green">#118504</color>
+    <color name="accent_green">#97e08f</color>
+    <color name="pressed">#CC97e08f</color>
+    
+	<color name="black_color">#000</color>
+    <color name="white_color">#fff</color>
      
      
      
@@ -10,4 +16,6 @@
      <color name="title_authDial">#A2A8AC</color>
      <color name="textTextField_authDial">#B5B5B9</color>
      <color name="hintTextField_authDial">#E4E4E4</color>
+    
+
 </resources>
