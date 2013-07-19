@@ -58,7 +58,11 @@ public class Authentication extends FragmentActivity{
 		if(!idUser.equals("") && !pseudoEmail.equals("") && !password.equals("")){
 			Intent i = new Intent(getApplicationContext(), Home.class);
 			startActivity(i);
+<<<<<<< HEAD
 			finish();
+=======
+			this.finish();
+>>>>>>> refs/remotes/origin/master
 		}else{ //Sinon on se connecte
 			setContentView(R.layout.authentication);
 			
