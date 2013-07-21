@@ -7,6 +7,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -14,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import fr.animaliomobile.R;
+import fr.library.animaliomobile.ConnectionWebservicePHP;
 
 public class Registration extends Activity{
 	private Button btnRegistration;
@@ -74,7 +76,7 @@ public class Registration extends Activity{
 					t.setGravity(Gravity.BOTTOM, 0, 40);
 					t.show();
 				//sinon si les deux mdp saisis ne sont pas identiques
-				} else if (!edit_pwd.getText().toString().equals(edit_check_pwd)){
+				} else if (!edit_pwd.getText().toString().equals(edit_check_pwd.getText().toString())){
 					Toast t = Toast.makeText(getApplicationContext(),
 							R.string.different_pwd,
 							Toast.LENGTH_LONG);
@@ -84,6 +86,8 @@ public class Registration extends Activity{
 					
 				
 				} else {
+					// On vide la liste de données à envoyé si existe déjà
+					data.clear();
 					//on ajoute les données saisies 
 					data.add(new BasicNameValuePair("lastname", edit_lastname.getText().toString()));
 					data.add(new BasicNameValuePair("firstname", edit_firstname.getText().toString()));
@@ -92,7 +96,16 @@ public class Registration extends Activity{
 					data.add(new BasicNameValuePair("password", edit_pwd.getText().toString()));
 					data.add(new BasicNameValuePair("check_password", edit_check_pwd.getText().toString()));
 					
-					//méthode d'envoie des données à ajouter en asyncTask
+					// Instancie la connection au webservice en thread
+					// Si connexion existe
+					if (ConnectionWebservicePHP.haveNetworkConnection(v.getContext())) {
+						Log.i("log_parseIDUSER", "ID_USER : " + data);
+						ConnectionWebservicePHP calcul = new ConnectionWebservicePHP(
+								1, "Registration", v.getContext(), data);
+						calcul.execute();
+					} else { // Sinon toast de problème de connexion
+						ConnectionWebservicePHP.haveNetworkConnectionError(v.getContext());
+					}
 				}
 			}
 		}

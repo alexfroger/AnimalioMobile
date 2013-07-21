@@ -40,7 +40,13 @@ public class Home extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
 
-
+		//Si on vient de s'inscrire
+		//On récupère l'objet Bundle envoyé par l'autre Activity
+        Bundle objetbunble  = this.getIntent().getExtras();
+        if (objetbunble != null && objetbunble.containsKey("isRegister")){
+        	Toast.makeText(this, "Incription réussi!",
+					Toast.LENGTH_LONG).show();
+        }
 
 		//Get different Object of the view
 		context = getApplicationContext();

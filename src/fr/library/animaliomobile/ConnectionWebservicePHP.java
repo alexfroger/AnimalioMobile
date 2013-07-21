@@ -33,6 +33,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
@@ -50,6 +51,7 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 	public String domainUrl = "http://m.animalio.fr/";
 	HttpRequestRetryHandler myRetryHandler; // Récupérateur de réponse HTTP
 	public ArrayList<NameValuePair> data = new ArrayList<NameValuePair>();
+	public int resultErrorReturn;
 
 	/**
 	 * Constuctor of Animalio Webservice
@@ -91,71 +93,132 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 
 	@Override
 	protected void onPostExecute(Boolean result) {
-		if (result) {
-			// On créé l'Intent qui va nous permettre d'afficher l'autre
-			// Activity
-			Intent intent = new Intent(this.context, Home.class);
-			// On supprime l'activity de login sinon
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK
-					| Intent.FLAG_ACTIVITY_NEW_TASK);
-			this.context.startActivity(intent);
-		} else {
-			Toast.makeText(this.context, "Login Incorrect!", Toast.LENGTH_SHORT)
-					.show();
+		String connection = this.connectionType;
+
+		// Si le webservice concerne l'authentication
+		if (connection.equals("Authentication")) {
+			if (result) {
+				// On créé l'Intent qui va nous permettre d'afficher l'autre
+				// Activity
+				Intent intent = new Intent(this.context, Home.class);
+				// On supprime l'activity de login sinon
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK
+						| Intent.FLAG_ACTIVITY_NEW_TASK);
+				this.context.startActivity(intent);
+			} else {
+				Toast.makeText(this.context, "Login Incorrect!",
+						Toast.LENGTH_LONG).show();
+			}
+		} else if (connection.equals("Registration")) {
+			if (result) {
+				// On créé l'Intent qui va nous permettre d'afficher l'autre
+				// Activity
+				Bundle bundle = new Bundle();
+				bundle.putString("isRegister", "1");
+				Intent intent = new Intent(this.context, Home.class);
+				// On supprime l'activity d'inscription
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK
+						| Intent.FLAG_ACTIVITY_NEW_TASK);
+				this.context.startActivity(intent.putExtras(bundle));
+			}else{
+				if(this.resultErrorReturn == 0){
+					Toast.makeText(this.context, "pseudo et email existe déjà!",
+							Toast.LENGTH_LONG).show();
+				}else if (this.resultErrorReturn == 2) {
+					Toast.makeText(this.context, "pseudo existe déjà!",
+							Toast.LENGTH_LONG).show();
+				}else if (this.resultErrorReturn == 3) {
+					Toast.makeText(this.context, "email existe déjà!",
+							Toast.LENGTH_LONG).show();
+				}
+			}
 		}
 		// On enleve le loader de chargement
 		pd.dismiss();
 	}
 
 	@Override
-	protected Boolean doInBackground(Void... arg0) { //Actions à exécuter en tache de fond
+	protected Boolean doInBackground(Void... arg0) { // Actions à exécuter en
+														// tache de fond
 		String connection = this.connectionType;
 		Boolean res = false;
-		
-		//Si le webservice concerne l'authentication
-		if(connection.equals("Authentication")){
-			String url = this.domainUrl + "/authentication-mobile.php";
-			//On récupére les info du serveur
-			try{
-				JSONArray infoServerData = getServerData(this.data, url);
-				JSONObject infoWebserviveReturn = infoServerData.getJSONObject(0);
-				// Parse les données JSON
-					if(infoWebserviveReturn.getInt("isOk") == 1){ //Si la connection est correcte
-						res = true;
-						//On stock les infos utilisateurs dans des preferences	
-						SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.context);
-						SharedPreferences.Editor editor = preferences.edit();
-						editor.putString("idUser", infoWebserviveReturn.getString("idUser"));
-						editor.putString("pseudoEmail", infoWebserviveReturn.getString("emailPseudo"));
-						editor.putString("password", infoWebserviveReturn.getString("password"));
-						editor.commit();
-						
-						String idUser = preferences.getString("idUser", "");
-						String pseudoEmail = preferences.getString("pseudoEmail", "");
-						String password = preferences.getString("password", "");
-						Log.i("log_parseIDUSER", "ID_USER : " + idUser);
-						Log.i("log_parseIDUSER", "PSEUDO_EMAIL : " + pseudoEmail);
-						Log.i("log_parseIDUSER", "Password : " + password);
+		resultErrorReturn = 1;
 
-					}else{
-						res = false;
-					}
-			}catch(JSONException e){
+		// Si le webservice concerne l'authentication
+		if (connection.equals("Authentication")) {
+			String url = this.domainUrl + "/authentication-mobile.php";
+			// On récupére les info du serveur
+			try {
+				JSONArray infoServerData = getServerData(this.data, url);
+				JSONObject infoWebserviveReturn = infoServerData
+						.getJSONObject(0);
+				// Parse les données JSON
+				// Si la connection est correcte
+				if (infoWebserviveReturn.getInt("isOk") == 1) { 
+					res = true;
+					// On stock les infos utilisateurs dans des preferences
+					SharedPreferences preferences = PreferenceManager
+							.getDefaultSharedPreferences(this.context);
+					SharedPreferences.Editor editor = preferences.edit();
+					editor.putString("idUser",
+							infoWebserviveReturn.getString("idUser"));
+					editor.putString("pseudoEmail",
+							infoWebserviveReturn.getString("emailPseudo"));
+					editor.putString("password",
+							infoWebserviveReturn.getString("password"));
+					editor.commit();
+				} else {
+					res = false;
+				}
+			} catch (JSONException e) {
 				Log.e("log_tagRecupére", "Error parsing data " + e.toString());
 			}
-		}else if(connection.equals("Registration")){
-			
-		}else if(connection.equals("listMember")){
-			
-		}else if(connection.equals("listEvent")){
-			
-		}else if(connection.equals("photoGalery")){
-			
-		}else if(connection.equals("profilMember")){
-			
-		}else if(connection.equals("profilAnimal")){
+		} else if (connection.equals("Registration")) {
+			String url = this.domainUrl + "/registration-mobile.php";
+			// On récupére les info du serveur
+			try {
+				JSONArray infoServerData = getServerData(this.data, url);
+				JSONObject infoWebserviveReturn = infoServerData
+						.getJSONObject(0);
+				Log.e("log_tagJson", "Error parsing data " + infoServerData);
+				// Parse les données JSON
+				if (infoWebserviveReturn.getInt("isOk") == 1) {//Si l'inscription est bonne
+					res = true;				
+					// On stock les infos utilisateurs dans des preferences
+					SharedPreferences preferences = PreferenceManager
+							.getDefaultSharedPreferences(this.context);
+					SharedPreferences.Editor editor = preferences.edit();
+					editor.putString("idUser",
+							infoWebserviveReturn.getString("idUser"));
+					editor.putString("pseudoEmail",
+							infoWebserviveReturn.getString("email"));
+					editor.putString("password",
+							infoWebserviveReturn.getString("password"));
+					editor.commit();
+				}else if (infoWebserviveReturn.getInt("isOk") == 0){ //Sinon on retourne l'erreur
+					res = false;
+					resultErrorReturn = 0;
+				}else if (infoWebserviveReturn.getInt("isOk") == 2){
+					res = false;
+					resultErrorReturn = 2;
+				}else if (infoWebserviveReturn.getInt("isOk") == 3){
+					res = false;
+					resultErrorReturn = 3;
+				}
+			} catch (JSONException e) {
+				Log.e("log_tagRecupére", "Error parsing data second" + e.toString());
+			}
+		} else if (connection.equals("listMember")) {
+
+		} else if (connection.equals("listEvent")) {
+
+		} else if (connection.equals("photoGalery")) {
+
+		} else if (connection.equals("profilMember")) {
+
+		} else if (connection.equals("profilAnimal")) {
 			System.out.println("charge image élu");
-		}else{
+		} else {
 			res = false;
 		}
 		return res;
@@ -261,7 +324,7 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 		try {
 			resultat = new JSONArray(result);
 		} catch (JSONException e) {
-			Log.e("log_tagRecupére", "Error parsing data " + e.toString());
+			Log.e("log_tagRecupére", "Error parsing data first " + e.toString());
 		}
 
 		return resultat;
