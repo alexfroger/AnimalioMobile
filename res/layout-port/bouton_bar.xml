@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:background="@color/black_color"
+    android:background="@drawable/actionbar_background_xml"
     android:orientation="horizontal"
     android:weightSum="6" >
 
@@ -14,17 +14,17 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="5dp"
         android:layout_weight="1"
-        android:background="@drawable/fotolia_test" />
+        android:background="@drawable/ic_members_xml" />
 
     <Button
-        android:id="@+id/btn_galery"
+        android:id="@+id/btn_gallery"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|center_horizontal"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_weight="1"
-        android:background="@drawable/fotolia_test"
+        android:background="@drawable/ic_gallery_xml"
         android:contentDescription="Test" />
 
     <Button
@@ -35,7 +35,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_weight="1"
-        android:background="@drawable/fotolia_test"
+        android:background="@drawable/ic_profil_xml"
         android:contentDescription="Test" />
 
     <Button
@@ -46,7 +46,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_weight="1"
-        android:background="@drawable/fotolia_test"
+        android:background="@drawable/ic_event_xml"
         android:contentDescription="Test" />
 
     <Button
@@ -57,7 +57,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_weight="1"
-        android:background="@drawable/fotolia_test"
+        android:background="@drawable/ic_live_xml"
         android:contentDescription="Test" />
 
     <Button
@@ -68,7 +68,7 @@
         android:layout_marginLeft="25dp"
         android:layout_marginRight="10dp"
         android:layout_weight="1"
-        android:background="@drawable/fotolia_test"
+        android:background="@drawable/ic_photo_xml"
         android:contentDescription="Test" />
 
 </LinearLayout>

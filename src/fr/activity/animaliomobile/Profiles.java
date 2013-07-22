@@ -1,11 +1,19 @@
 package fr.activity.animaliomobile;
 
 import android.app.ActionBar.LayoutParams;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -18,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 import fr.animaliomobile.R;
+import fr.library.animaliomobile.TypefaceSpan;
 
 public class Profiles extends Activity{
 	private Button btn_animals_list;
@@ -36,6 +45,12 @@ public class Profiles extends Activity{
 	private int[] positionChild = new int[] {0,0,0,0,0,0,0,0,0,0};
 	// 0-Messagerie 1-ListeAnimaux 2-ListeAmis 3-ListeNotification 4-FriendRequest
 	// 5-EnvoyerMessage 6-DeleteFriend 7-UserModification 8-AnimalModification 9-DeleteAnimal
+	private Button btn_members;
+	private Button btn_gallery;
+	private Button btn_profil;
+	private Button btn_events;
+	private Button btn_live;
+	private Button btn_photo;
 
 
 	@Override
@@ -49,7 +64,7 @@ public class Profiles extends Activity{
 		vf_profil = (ViewFlipper) findViewById(R.id.vf_profil);
 		ListView.LayoutParams param_lsv = new ListView.LayoutParams(
 				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-		
+
 
 
 		switch (typeProfil) {
@@ -95,7 +110,7 @@ public class Profiles extends Activity{
 
 			vf_profil.addView(createListNotifications(), param_lsv);
 			positionChild[3]=3;
-			
+
 			vf_profil.addView(createLayout("Modifier le profil"), param_lsv);
 			positionChild[7] = 4;
 
@@ -199,15 +214,30 @@ public class Profiles extends Activity{
 			/*
 			 * Création des éléments du ViewFlipper
 			 */
-			
+
 			vf_profil.addView(createLayout("Modifier l'animal"), param_lsv);
 			positionChild[8] = 0;
-			
+
 			vf_profil.addView(createLayout("Supprimer l'animal"), param_lsv);
 			positionChild[9] = 1;
-			
+
 			break;
 		}
+
+		btn_members = (Button)findViewById(R.id.btn_members);
+		btn_gallery = (Button)findViewById(R.id.btn_gallery);
+		btn_profil = (Button)findViewById(R.id.btn_profil);
+		btn_events = (Button)findViewById(R.id.btn_events);
+		btn_live = (Button)findViewById(R.id.btn_live);
+		btn_photo = (Button)findViewById(R.id.btn_photo);
+
+		btn_profil.setBackgroundResource(R.drawable.ic_profil_pressed);
+
+		btn_members.setOnClickListener(eventClick);
+		btn_gallery.setOnClickListener(eventClick);
+		btn_events.setOnClickListener(eventClick);
+		btn_live.setOnClickListener(eventClick);
+		btn_photo.setOnClickListener(eventClick);
 	}
 
 	OnClickListener eventClick = new OnClickListener() {
@@ -243,6 +273,41 @@ public class Profiles extends Activity{
 			}
 			else if(v==btn_delete_animal){
 				vf_profil.setDisplayedChild(positionChild[9]);
+			}else if(v==btn_members){
+				//Display Gallery Activity
+				Intent intent = new Intent(getApplicationContext(), MembersList.class);
+				startActivity(intent);
+				finish();
+			}
+
+			else if(v==btn_gallery){
+				//Display Gallery Activity
+				Intent intent = new Intent(getApplicationContext(), Gallery.class);
+				startActivity(intent);
+				finish();
+			}
+
+			else if(v==btn_events){
+				//Display Gallery Activity
+				Intent intent = new Intent(getApplicationContext(), Events.class);
+				startActivity(intent);
+				finish();
+			}
+
+			else if(v==btn_live){
+				//Display Gallery Activity
+				Intent intent = new Intent(getApplicationContext(), AnimalioLive.class);
+				startActivity(intent);
+				finish();
+			}
+
+			else if(v==btn_photo){
+				//Display the photo phone application
+				Toast t = Toast.makeText(Home.context,
+						"Faire la redirection vers photo de l'appli",
+						Toast.LENGTH_LONG);
+				t.setGravity(Gravity.BOTTOM, 0, 40);
+				t.show();
 			}
 		}
 	};
@@ -327,7 +392,7 @@ public class Profiles extends Activity{
 		});
 		return lsv_notifications_list;
 	}
-	
+
 	LinearLayout createLayout(String text){
 		LinearLayout.LayoutParams param_txv= new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
 				LayoutParams.WRAP_CONTENT);
@@ -340,7 +405,67 @@ public class Profiles extends Activity{
 		param_txv.gravity=Gravity.CENTER;
 		txv.setLayoutParams(param_txv);
 		layout.addView(txv);
-		
+
 		return layout;
 	}
+
+	/**
+	 * Gestion de l'action bar
+	 */
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main_action_bar, menu);
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			ActionBar actionBar = getActionBar();
+			SpannableString s = new SpannableString(this.getTitle());
+			s.setSpan(new TypefaceSpan(this, "Lobster"), 0, s.length(),
+					Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			actionBar.setTitle(s);
+			actionBar.setDisplayHomeAsUpEnabled(true);
+
+		}
+
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			onBackPressed();
+			// Comportement du bouton "Logo"
+			return true;
+		case R.id.menu_refresh:
+			// Comportement du bouton "Actualiser"
+			Intent i = new Intent (getApplicationContext(), Profiles.class);
+			i.putExtra("typeProfil", typeProfil);
+			startActivity(i);
+			finish();
+			return true;
+		case R.id.menu_settings:
+			// Comportement du bouton "Paramètres"
+			return true;
+		case R.id.menu_delete:
+			// Comportement du bouton "Delete" A supprimer quand le popup parametre sera creer car dedans
+
+			// On créé l'Intent qui va nous permettre d'afficher l'autre Activity
+			Intent intent = new Intent(getApplicationContext(), Authentication.class);
+			// On supprime l'activity de login sinon
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+			startActivity(intent);  
+
+			//Puis on reset les informations utilisateurs
+			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+			SharedPreferences.Editor editor = preferences.edit();
+			editor.clear();	
+			editor.commit();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
+
 }

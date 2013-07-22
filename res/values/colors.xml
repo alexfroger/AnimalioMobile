@@ -5,17 +5,14 @@
     <color name="stacked_green">#118504</color>
     <color name="accent_green">#97e08f</color>
     <color name="pressed">#CC97e08f</color>
-    
-	<color name="black_color">#000</color>
+    <color name="black_color">#000</color>
     <color name="white_color">#fff</color>
-     
-     
-     
-     <!-- Couleur liée au pop-up de connexion -->
-     <color name="border_authDial">#888888</color>
-     <color name="title_authDial">#A2A8AC</color>
-     <color name="textTextField_authDial">#B5B5B9</color>
-     <color name="hintTextField_authDial">#E4E4E4</color>
-    
+    <color name="background_profil">#f6f4f4</color>
+
+    <!-- Couleur liée au pop-up de connexion -->
+    <color name="border_authDial">#888888</color>
+    <color name="title_authDial">#A2A8AC</color>
+    <color name="textTextField_authDial">#B5B5B9</color>
+    <color name="hintTextField_authDial">#E4E4E4</color>
 
 </resources>

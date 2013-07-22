@@ -1,20 +1,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <item
-        android:id="@+id/menu_search"
-        android:icon="@drawable/ic_launcher"
-        android:showAsAction="always"
-        android:title="menu_search"/>
+
     <item
         android:id="@+id/menu_settings"
-        android:icon="@drawable/ic_settings"
+        android:icon="@drawable/ic_settings_xml"
         android:showAsAction="always"
-        android:title="menu_settings"/>
+        android:title="menu_settings">
+        <menu>
+            <item
+                android:id="@+id/menu_delete"
+                android:icon="@drawable/ic_launcher"
+                android:title="menu_delete"/>
+        </menu>
+    </item>
     <!-- Supprimer l'item delete quand le popUp parametre aparrait car se trouvera dans ce popup -->
-    <item
-        android:id="@+id/menu_delete"
-        android:icon="@drawable/ic_launcher"
-       android:showAsAction="never"
-        android:title="menu_delete"/>
 
 </menu>

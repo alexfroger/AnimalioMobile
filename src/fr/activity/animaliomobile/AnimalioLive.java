@@ -2,18 +2,31 @@ package fr.activity.animaliomobile;
 
 import java.util.Locale;
 
+import android.app.ActionBar;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import fr.animaliomobile.R;
+import fr.library.animaliomobile.TypefaceSpan;
 
 public class AnimalioLive extends FragmentActivity {
 
@@ -32,6 +45,13 @@ public class AnimalioLive extends FragmentActivity {
 	 */
 	ViewPager mViewPager;
 
+	private Button btn_members;
+	private Button btn_gallery;
+	private Button btn_profil;
+	private Button btn_events;
+	private Button btn_live;
+	private Button btn_photo;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -46,13 +66,123 @@ public class AnimalioLive extends FragmentActivity {
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 
-	}
+		
+		btn_members = (Button)findViewById(R.id.btn_members);
+		btn_gallery = (Button)findViewById(R.id.btn_gallery);
+		btn_profil = (Button)findViewById(R.id.btn_profil);
+		btn_events = (Button)findViewById(R.id.btn_events);
+		btn_live = (Button)findViewById(R.id.btn_live);
+		btn_photo = (Button)findViewById(R.id.btn_photo);
 
+		btn_live.setBackgroundResource(R.drawable.ic_live_pressed);
+
+		btn_members.setOnClickListener(eventClick);
+		btn_profil.setOnClickListener(eventClick);
+		btn_gallery.setOnClickListener(eventClick);
+		btn_events.setOnClickListener(eventClick);
+		btn_photo.setOnClickListener(eventClick);
+	}
+	
+//	Create Listener event
+	OnClickListener eventClick = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+
+			if(v==btn_members){
+				//Display Gallery Activity
+				Intent intent = new Intent(getApplicationContext(), MembersList.class);
+				startActivity(intent);
+				finish();
+			}
+
+			else if(v==btn_profil){
+				//Display Gallery Activity
+				Intent intent = new Intent(getApplicationContext(), Profiles.class);
+				intent.putExtra("typeProfil", 0);
+				startActivity(intent);
+				finish();
+			}
+
+			else if(v==btn_gallery){
+				//Display Gallery Activity
+				Intent intent = new Intent(getApplicationContext(), Gallery.class);
+				startActivity(intent);
+				finish();
+			}
+
+			else if(v==btn_events){
+				//Display Gallery Activity
+				Intent intent = new Intent(getApplicationContext(), Events.class);
+				startActivity(intent);
+				finish();
+			}
+
+			else if(v==btn_photo){
+				//Display the photo phone application
+				Toast t = Toast.makeText(Home.context,
+						"Faire la redirection vers photo de l'appli",
+						Toast.LENGTH_LONG);
+				t.setGravity(Gravity.BOTTOM, 0, 40);
+				t.show();
+			}
+		}
+	};
+
+	/**
+	 * Gestion de l'action bar
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.animalio_live, menu);
+		getMenuInflater().inflate(R.menu.main_action_bar, menu);
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			ActionBar actionBar = getActionBar();
+			SpannableString s = new SpannableString(this.getTitle());
+			s.setSpan(new TypefaceSpan(this, "Lobster"), 0, s.length(),
+					Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			actionBar.setTitle(s);
+			actionBar.setDisplayHomeAsUpEnabled(true);
+
+		}
+
 		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			onBackPressed();
+			// Comportement du bouton "Logo"
+			return true;
+		case R.id.menu_refresh:
+			// Comportement du bouton "Actualiser"
+			Intent i = new Intent (getApplicationContext(), AnimalioLive.class);
+			startActivity(i);
+			finish();
+			return true;
+		case R.id.menu_settings:
+			// Comportement du bouton "Paramètres"
+			return true;
+		case R.id.menu_delete:
+			// Comportement du bouton "Delete" A supprimer quand le popup parametre sera creer car dedans
+
+			// On créé l'Intent qui va nous permettre d'afficher l'autre Activity
+			Intent intent = new Intent(getApplicationContext(), Authentication.class);
+			// On supprime l'activity de login sinon
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+			startActivity(intent);  
+
+			//Puis on reset les informations utilisateurs
+			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+			SharedPreferences.Editor editor = preferences.edit();
+			editor.clear();	
+			editor.commit();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 	/**

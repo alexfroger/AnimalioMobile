@@ -6,6 +6,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -34,11 +35,17 @@ public class Registration extends Activity{
 		
 		setContentView(R.layout.registration);
 		
+		Typeface Lobster = Typeface.createFromAsset(
+				Authentication.context.getAssets(), "Lobster.otf");
+
+		
 		//instanciation des boutons
 		btnRegistration = (Button) findViewById(R.id.btn_registration);
         btnRegistrationCancel = (Button) findViewById(R.id.btn_registration_cancel);
         btnRegistration.setOnClickListener(eventClick);
 		btnRegistrationCancel.setOnClickListener(eventClick);
+		btnRegistration.setTypeface(Lobster);
+		btnRegistrationCancel.setTypeface(Lobster);
 		
 		//instanciation des champs de saisie
 		edit_lastname = (EditText)findViewById(R.id.registration_lastname);

@@ -14,17 +14,17 @@
         android:layout_marginBottom="3dp"
         android:layout_marginTop="6dp"
         android:layout_weight="1"
-        android:background="@drawable/fotolia_test" />
+        android:background="@drawable/ic_members_xml" />
 
     <Button
-        android:id="@+id/btn_galery"
+        android:id="@+id/btn_gallery"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_gravity="center_vertical|center_horizontal"
         android:layout_marginBottom="3dp"
         android:layout_marginTop="3dp"
         android:layout_weight="1"
-        android:background="@drawable/fotolia_test"
+        android:background="@drawable/ic_gallery_xml"
         android:contentDescription="Test" />
 
     <Button
@@ -35,7 +35,7 @@
         android:layout_marginBottom="3dp"
         android:layout_marginTop="3dp"
         android:layout_weight="1"
-        android:background="@drawable/fotolia_test"
+        android:background="@drawable/ic_profil_xml"
         android:contentDescription="Test" />
 
     <Button
@@ -46,7 +46,7 @@
         android:layout_marginBottom="3dp"
         android:layout_marginTop="3dp"
         android:layout_weight="1"
-        android:background="@drawable/fotolia_test"
+        android:background="@drawable/ic_event_xml"
         android:contentDescription="Test" />
 
     <Button
@@ -57,7 +57,7 @@
         android:layout_marginBottom="3dp"
         android:layout_marginTop="3dp"
         android:layout_weight="1"
-        android:background="@drawable/fotolia_test"
+        android:background="@drawable/ic_live_xml"
         android:contentDescription="Test" />
 
     <Button
@@ -68,7 +68,7 @@
         android:layout_marginBottom="6dp"
         android:layout_marginTop="25dp"
         android:layout_weight="1"
-        android:background="@drawable/fotolia_test"
+        android:background="@drawable/ic_photo_xml"
         android:contentDescription="Test" />
 
 </LinearLayout>

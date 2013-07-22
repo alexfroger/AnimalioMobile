@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,7 +38,7 @@ public class Home extends Activity {
 	private Button btnHomeProfil;
 	private Button btnHomeEvent;
 	private Button btnHomeLive;
-	private Button btnHomePhoto;
+	private ImageView btnHomePhoto;
 	private Button popupSettings;
 	private static ArrayList<NameValuePair> data = new ArrayList<NameValuePair>();
 	public static Context context;
@@ -99,7 +100,7 @@ public class Home extends Activity {
 		btnHomeProfil = (Button)findViewById(R.id.btn_home_profil);
 		btnHomeEvent = (Button)findViewById(R.id.btn_home_event);
 		btnHomeLive = (Button)findViewById(R.id.btn_home_animalio_live);
-		btnHomePhoto = (Button)findViewById(R.id.btn_photo);
+		btnHomePhoto = (ImageView)findViewById(R.id.btn_photo);
 
 		//Buttons are assigned to the event listener
 		btnHomeMember.setOnClickListener(eventClick);
@@ -149,11 +150,16 @@ public class Home extends Activity {
 			if(v==btnHomePhoto){
 				// TODO Creer la redirection vers appli photo tel
 				//Display the photo phone application
+				Toast t = Toast.makeText(Home.context,
+						"Faire la redirection vers photo de l'appli",
+						Toast.LENGTH_LONG);
+				t.setGravity(Gravity.BOTTOM, 0, 40);
+				t.show();
 			}
 		}
 	};
 
-	/**
+		/**
 	 * Gestion de l'action bar
 	 */
 	@Override
@@ -164,15 +170,10 @@ public class Home extends Activity {
 		popupSettings = (Button) findViewById(R.id.menu_settings);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			ActionBar actionBar = getActionBar();
-			actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-			actionBar.setCustomView(R.layout.title_bar);
-			actionBar.setDisplayShowHomeEnabled(true);
-			actionBar.setHomeButtonEnabled(true);
-			TextView title = (TextView)findViewById(R.id.myTitle);
-			title.setText(this.getTitle());
-			Typeface Lobster = Typeface.createFromAsset(
-					this.getAssets(), "Lobster.otf");
-			title.setTypeface(Lobster);
+			SpannableString s = new SpannableString(this.getTitle());
+			s.setSpan(new TypefaceSpan(this, "Lobster"), 0, s.length(),
+			        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			actionBar.setTitle(s);
 		}
 
 		return true;
@@ -183,12 +184,6 @@ public class Home extends Activity {
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			// Comportement du bouton "Logo"
-			return true;
-		case R.id.menu_refresh:
-			// Comportement du bouton "Rafraichir"
-			return true;
-		case R.id.menu_search:
-			// Comportement du bouton "Recherche"
 			return true;
 		case R.id.menu_settings:
 			// Comportement du bouton "Paramètres"

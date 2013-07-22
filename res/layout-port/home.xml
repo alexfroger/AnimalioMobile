@@ -1,23 +1,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" 
-    android:weightSum="5">
+    android:orientation="vertical"
+    android:weightSum="5" >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
+        android:layout_weight="4"
         android:orientation="vertical"
-        android:padding="15dp"
-        android:weightSum="3"
-        android:layout_weight="4" >
+        android:weightSum="3" >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_gravity="center"
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
             android:layout_weight="1"
             android:orientation="horizontal" >
 
@@ -25,26 +24,25 @@
                 android:id="@+id/btn_home_member"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginRight="5dp"
+                android:layout_marginRight="2dp"
                 android:layout_weight="1"
-                android:background="@drawable/fotolia_test"
-                android:text="Membres" />
+                android:background="@drawable/btn_members" />
 
             <Button
                 android:id="@+id/btn_home_photo_gallery"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
+                android:layout_marginLeft="2dp"
                 android:layout_weight="1"
-                android:background="@drawable/fotolia_test"
-                android:text="Gallerie photo" />
+                android:background="@drawable/btn_gallery" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_gravity="center"
-            android:layout_margin="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:layout_weight="1"
             android:orientation="horizontal" >
 
@@ -52,26 +50,24 @@
                 android:id="@+id/btn_home_profil"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginRight="5dp"
+                android:layout_marginRight="2dp"
                 android:layout_weight="1"
-                android:background="@drawable/fotolia_test"
-                android:text="Profil" />
+                android:background="@drawable/btn_profil" />
 
             <Button
                 android:id="@+id/btn_home_event"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
+                android:layout_marginLeft="2dp"
                 android:layout_weight="1"
-                android:background="@drawable/fotolia_test"
-                android:text="Events" />
+                android:background="@drawable/btn_events" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_gravity="center"
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
             android:layout_weight="1"
             android:orientation="vertical" >
 
@@ -79,24 +75,24 @@
                 android:id="@+id/btn_home_animalio_live"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/fotolia_test"
-                android:text="Animalio Live" />
+                android:background="@drawable/btn_live" />
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="65dp"
         android:layout_weight="1"
-        android:background="@color/black_color"
+        android:background="@drawable/actionbar_background_xml"
         android:orientation="vertical" >
 
-        <Button
+        <ImageView
             android:id="@+id/btn_photo"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:background="@drawable/fotolia_test"
+            android:adjustViewBounds="true"
+            android:layout_gravity="center"
+            android:background="@drawable/ic_photo_xml"
             android:contentDescription="Test" />
     </LinearLayout>
 
