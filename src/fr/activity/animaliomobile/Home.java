@@ -1,5 +1,10 @@
 package fr.activity.animaliomobile;
 
+import java.util.ArrayList;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
@@ -11,6 +16,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +28,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 import fr.animaliomobile.R;
+import fr.library.animaliomobile.ConnectionWebservicePHP;
 import fr.library.animaliomobile.TypefaceSpan;
 
 public class Home extends Activity {
@@ -32,14 +39,51 @@ public class Home extends Activity {
 	private Button btnHomeLive;
 	private Button btnHomePhoto;
 	private Button popupSettings;
-
+	private static ArrayList<NameValuePair> data = new ArrayList<NameValuePair>();
 	public static Context context;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
-
+		
+		//On Récupére les préférences utilisateur si elle existe
+		SharedPreferences preferences = PreferenceManager
+				.getDefaultSharedPreferences(getApplicationContext());
+		
+		String idUser = preferences.getString("idUser", "");
+		Boolean doUpdateUserInfo = preferences.getBoolean("doUpdateUserInfo", true);
+		String email = preferences.getString("email", "");
+		String updatedAt = preferences.getString("updatedAt", "");
+		data.add(new BasicNameValuePair("idUser", idUser));
+		data.add(new BasicNameValuePair("email", email));
+		data.add(new BasicNameValuePair("updatedAt", updatedAt));
+		
+		//A supprimer
+		Log.i("log_parseHome", "idUser : " + preferences.getString("idUser", ""));
+		Log.i("log_parseHome", "email : " + preferences.getString("email", ""));
+		Log.i("log_parseHome", "humorID : " + preferences.getString("humorID", ""));
+		Log.i("log_parseHome", "cityID : " + preferences.getString("cityID", ""));
+		Log.i("log_parseHome", "countryID : " + preferences.getString("countryID", ""));
+		Log.i("log_parseHome", "lastname : " + preferences.getString("lastname", ""));
+		Log.i("log_parseHome", "firstname : " + preferences.getString("firstname", ""));
+		Log.i("log_parseHome", "birthday : " + preferences.getString("birthday", ""));
+		Log.i("log_parseHome", "updatedAt : " + preferences.getString("updatedAt", ""));
+		
+		// On test si les informations de profil on changé
+		if (ConnectionWebservicePHP.haveNetworkConnection(this)) { // Si connexion existe
+			if(doUpdateUserInfo){
+				ConnectionWebservicePHP calcul = new ConnectionWebservicePHP(
+						1, "refreshInfoUser", this, data);
+				calcul.execute();
+				
+				SharedPreferences.Editor editor = preferences.edit();
+				editor.putBoolean("doUpdateUserInfo", false);
+				editor.commit();
+			}
+		} else { // Sinon toast de problème
+			ConnectionWebservicePHP.haveNetworkConnectionError(this);
+		}
 		//Si on vient de s'inscrire
 		//On récupère l'objet Bundle envoyé par l'autre Activity
         Bundle objetbunble  = this.getIntent().getExtras();
@@ -47,7 +91,7 @@ public class Home extends Activity {
         	Toast.makeText(this, "Incription réussi!",
 					Toast.LENGTH_LONG).show();
         }
-
+        
 		//Get different Object of the view
 		context = getApplicationContext();
 		btnHomeMember = (Button)findViewById(R.id.btn_home_member);
@@ -105,11 +149,6 @@ public class Home extends Activity {
 			if(v==btnHomePhoto){
 				// TODO Creer la redirection vers appli photo tel
 				//Display the photo phone application
-				Toast t = Toast.makeText(Home.context,
-						"Faire la redirection vers photo de l'appli",
-						Toast.LENGTH_LONG);
-				t.setGravity(Gravity.BOTTOM, 0, 40);
-				t.show();
 			}
 		}
 	};

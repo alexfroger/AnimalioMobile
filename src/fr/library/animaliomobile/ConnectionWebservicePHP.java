@@ -86,6 +86,7 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 	@Override
 	protected void onPreExecute() {
 		super.onPreExecute();
+		String connection = this.connectionType;
 		// On affiche un loader de chargement
 		pd = ProgressDialog.show(this.context, "", "Chargement ...", true);
 		pd.setCancelable(false);
@@ -132,6 +133,22 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 							Toast.LENGTH_LONG).show();
 				}
 			}
+		} else if (connection.equals("refreshInfoUser")) {
+			if (!result) {
+				if(this.resultErrorReturn == 0){
+					Toast.makeText(this.context, "Information utilisateur mis à jour!",
+							Toast.LENGTH_LONG).show();
+				}else if (this.resultErrorReturn == 1) {
+//					Toast.makeText(this.context, "Pas de mise à jour à effectué",
+//							Toast.LENGTH_LONG).show();
+				}else if (this.resultErrorReturn == 2) {
+					Toast.makeText(this.context, "Information utilisateur incorrecte!",
+							Toast.LENGTH_LONG).show();
+				}else if (this.resultErrorReturn == 3) {
+					Toast.makeText(this.context, "Erreur récupération info utilisateur!",
+							Toast.LENGTH_LONG).show();
+				}
+			}
 		}
 		// On enleve le loader de chargement
 		pd.dismiss();
@@ -160,18 +177,32 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 					SharedPreferences preferences = PreferenceManager
 							.getDefaultSharedPreferences(this.context);
 					SharedPreferences.Editor editor = preferences.edit();
-					editor.putString("idUser",
-							infoWebserviveReturn.getString("idUser"));
-					editor.putString("pseudoEmail",
-							infoWebserviveReturn.getString("emailPseudo"));
-					editor.putString("password",
-							infoWebserviveReturn.getString("password"));
+					editor.putString("idUser", infoWebserviveReturn.getString("id_user"));
+					editor.putString("humorID", infoWebserviveReturn.getString("humor_id"));
+					editor.putString("cityID", infoWebserviveReturn.getString("city_id"));
+					editor.putString("countryID", infoWebserviveReturn.getString("country_id"));
+					editor.putString("lastname", infoWebserviveReturn.getString("lastname"));
+					editor.putString("firstname", infoWebserviveReturn.getString("firstname"));
+					editor.putString("nickname", infoWebserviveReturn.getString("nickname"));
+					editor.putString("email", infoWebserviveReturn.getString("email"));
+					editor.putString("avatarName", infoWebserviveReturn.getString("avatar_name"));
+					editor.putString("password", infoWebserviveReturn.getString("password"));
+					editor.putString("civility", infoWebserviveReturn.getString("civility"));
+					editor.putString("birthday", infoWebserviveReturn.getString("birthday"));
+					editor.putString("phone", infoWebserviveReturn.getString("phone"));
+					editor.putString("phoneMobile", infoWebserviveReturn.getString("phone_mobile"));
+					editor.putString("onNewsletter", infoWebserviveReturn.getString("on_newsletter"));
+					editor.putString("onMobile", infoWebserviveReturn.getString("on_mobile"));
+					editor.putString("isLoggedFacebook", infoWebserviveReturn.getString("is_logged_facebook"));
+					editor.putString("isBlacklist", infoWebserviveReturn.getString("is_blacklist"));
+					editor.putString("createdAt", infoWebserviveReturn.getString("created_at"));
+					editor.putString("updatedAt", infoWebserviveReturn.getString("updated_at"));
 					editor.commit();
 				} else {
 					res = false;
 				}
 			} catch (JSONException e) {
-				Log.e("log_tagRecupére", "Error parsing data " + e.toString());
+				Log.e("log_authentication", "Mauvaise connection " + e.toString());
 			}
 		} else if (connection.equals("Registration")) {
 			String url = this.domainUrl + "/registration-mobile.php";
@@ -188,12 +219,26 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 					SharedPreferences preferences = PreferenceManager
 							.getDefaultSharedPreferences(this.context);
 					SharedPreferences.Editor editor = preferences.edit();
-					editor.putString("idUser",
-							infoWebserviveReturn.getString("idUser"));
-					editor.putString("pseudoEmail",
-							infoWebserviveReturn.getString("email"));
-					editor.putString("password",
-							infoWebserviveReturn.getString("password"));
+					editor.putString("idUser", infoWebserviveReturn.getString("id_user"));
+					editor.putString("humorID", infoWebserviveReturn.getString("humor_id"));
+					editor.putString("cityID", infoWebserviveReturn.getString("city_id"));
+					editor.putString("countryID", infoWebserviveReturn.getString("country_id"));
+					editor.putString("lastname", infoWebserviveReturn.getString("lastname"));
+					editor.putString("firstname", infoWebserviveReturn.getString("firstname"));
+					editor.putString("nickname", infoWebserviveReturn.getString("nickname"));
+					editor.putString("email", infoWebserviveReturn.getString("email"));
+					editor.putString("avatarName", infoWebserviveReturn.getString("avatar_name"));
+					editor.putString("password", infoWebserviveReturn.getString("password"));
+					editor.putString("civility", infoWebserviveReturn.getString("civility"));
+					editor.putString("birthday", infoWebserviveReturn.getString("birthday"));
+					editor.putString("phone", infoWebserviveReturn.getString("phone"));
+					editor.putString("phoneMobile", infoWebserviveReturn.getString("phone_mobile"));
+					editor.putString("onNewsletter", infoWebserviveReturn.getString("on_newsletter"));
+					editor.putString("onMobile", infoWebserviveReturn.getString("on_mobile"));
+					editor.putString("isLoggedFacebook", infoWebserviveReturn.getString("is_logged_facebook"));
+					editor.putString("isBlacklist", infoWebserviveReturn.getString("is_blacklist"));
+					editor.putString("createdAt", infoWebserviveReturn.getString("created_at"));
+					editor.putString("updatedAt", infoWebserviveReturn.getString("updated_at"));
 					editor.commit();
 				}else if (infoWebserviveReturn.getInt("isOk") == 0){ //Sinon on retourne l'erreur
 					res = false;
@@ -206,9 +251,61 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 					resultErrorReturn = 3;
 				}
 			} catch (JSONException e) {
-				Log.e("log_tagRecupére", "Error parsing data second" + e.toString());
+				Log.e("log_tagRegistration", "Error parsing data second" + e.toString());
 			}
-		} else if (connection.equals("listMember")) {
+		} else if (connection.equals("refreshInfoUser")) {
+			String url = this.domainUrl + "/refresh-user-mobile.php";
+			// On récupére les info du serveur
+			try {
+				JSONArray infoServerData = getServerData(this.data, url);
+				JSONObject infoWebserviveReturn = infoServerData
+						.getJSONObject(0);
+				
+				// Parse les données JSON
+				//Si la date de modification est différente alors on doit charger les nouvelles données
+				if (infoWebserviveReturn.getInt("isOk") == 1) {
+					if (infoWebserviveReturn.getInt("isUpdated") == 1) {			
+						// On stock les infos utilisateurs dans des preferences
+						SharedPreferences preferences = PreferenceManager
+								.getDefaultSharedPreferences(this.context);
+						SharedPreferences.Editor editor = preferences.edit();
+						editor.putString("idUser", infoWebserviveReturn.getString("id_user"));
+						editor.putString("humorID", infoWebserviveReturn.getString("humor_id"));
+						editor.putString("cityID", infoWebserviveReturn.getString("city_id"));
+						editor.putString("countryID", infoWebserviveReturn.getString("country_id"));
+						editor.putString("lastname", infoWebserviveReturn.getString("lastname"));
+						editor.putString("firstname", infoWebserviveReturn.getString("firstname"));
+						editor.putString("nickname", infoWebserviveReturn.getString("nickname"));
+						editor.putString("email", infoWebserviveReturn.getString("email"));
+						editor.putString("avatarName", infoWebserviveReturn.getString("avatar_name"));
+						editor.putString("password", infoWebserviveReturn.getString("password"));
+						editor.putString("civility", infoWebserviveReturn.getString("civility"));
+						editor.putString("birthday", infoWebserviveReturn.getString("birthday"));
+						editor.putString("phone", infoWebserviveReturn.getString("phone"));
+						editor.putString("phoneMobile", infoWebserviveReturn.getString("phone_mobile"));
+						editor.putString("onNewsletter", infoWebserviveReturn.getString("on_newsletter"));
+						editor.putString("onMobile", infoWebserviveReturn.getString("on_mobile"));
+						editor.putString("isLoggedFacebook", infoWebserviveReturn.getString("is_logged_facebook"));
+						editor.putString("isBlacklist", infoWebserviveReturn.getString("is_blacklist"));
+						editor.putString("createdAt", infoWebserviveReturn.getString("created_at"));
+						editor.putString("updatedAt", infoWebserviveReturn.getString("updated_at"));
+						editor.commit();
+						
+						
+						resultErrorReturn = 0;
+					}else{
+						resultErrorReturn = 1;
+					}
+				}else{
+					resultErrorReturn = 2;
+				}
+				res = false;
+			} catch (JSONException e) {
+				res = false;
+				resultErrorReturn = 3;
+				Log.e("log_refreshUser", "Erreur récupération info utilisateur" + e.toString());
+			}
+		}else if (connection.equals("listMember")) {
 
 		} else if (connection.equals("listEvent")) {
 
@@ -234,32 +331,14 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 						// en cas d'échec
 			((AbstractHttpClient) httpclient)
 					.setHttpRequestRetryHandler(myRetryHandler);
+			// On définie l'url du webservice en php
 			HttpPost httppost = new HttpPost(
-					"http://m.animalio.fr/Authentication.php"); // On définie
-																// l'url du
-																// webservice en
-																// php
-			httppost.setEntity(new UrlEncodedFormEntity(this.data)); // on passe
-																		// en
-																		// paramètre
-																		// la
-																		// liste
-																		// de
-																		// données
-																		// à
-																		// envoyer
+					"http://m.animalio.fr/Authentication.php");
+			// On définie l'url du webservice en php
+			httppost.setEntity(new UrlEncodedFormEntity(this.data));
 			ResponseHandler<String> responseHandler = new BasicResponseHandler();
-			String response = httpclient.execute(httppost, responseHandler); // on
-																				// envoie
-																				// les
-																				// données
-																				// au
-																				// serveur
-																				// et
-																				// on
-																				// récupère
-																				// sa
-																				// réponse
+			// on envoie les données au serveur et on récupère sa réponse
+			String response = httpclient.execute(httppost, responseHandler);
 		} catch (Exception e) {
 			Log.e("log_tag", "Error:  " + e.toString());
 		}
@@ -279,25 +358,16 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 		String strURL = url;
 		JSONArray resultat = null;// Resultat final
 		// JSONArray jArray = null; //Resultat final
-		ArrayList<NameValuePair> nameValuePairs = dataSendTo; // Data to send to
-																// server
+		// Data to send to server
+		ArrayList<NameValuePair> nameValuePairs = dataSendTo; 
 
 		// Envoie de la commande http
 		try {
 			HttpClient httpclient = new DefaultHttpClient();
 			setRetry();
+			// ajout du manager de réponse afin de permettre le retry en fonction de la réponse
 			((AbstractHttpClient) httpclient)
-					.setHttpRequestRetryHandler(myRetryHandler); // ajout du
-																	// manager
-																	// de
-																	// réponse
-																	// afin de
-																	// permettre
-																	// le retry
-																	// en
-																	// fonction
-																	// de la
-																	// réponse
+					.setHttpRequestRetryHandler(myRetryHandler);
 			HttpPost httppost = new HttpPost(strURL);
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			HttpResponse response = httpclient.execute(httppost);
@@ -339,32 +409,23 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 			public boolean retryRequest(IOException exception,
 					int executionCount, HttpContext context) {
 
-				if (executionCount >= 4) { // Si la connexion a échoué plus de 3
-											// fois on arrête de réessayer
+				// Si la connexion a échoué plus de 3 fois on arrête de réessayer
+				if (executionCount >= 4) {
 					System.out.println("retry count");
 					return true;
 				}
-				if (exception instanceof NoHttpResponseException) { // retente
-																	// la
-																	// connexion
-																	// si le
-																	// serveur
-																	// ne répond
-																	// pas
+				// retente la connexion si le serveur ne répond pas
+				if (exception instanceof NoHttpResponseException) {
 					System.out.println("NoHttpResponseException exception");
 					return true;
 				}
-				if (exception instanceof java.net.SocketException) { // retente
-																		// si la
-																		// connexion
-																		// a été
-																		// reset
+				// retente si la connexion a été reset
+				if (exception instanceof java.net.SocketException) {
 					System.out.println("java.net.SocketException exception");
 					return true;
 				}
-				if (exception instanceof java.net.SocketTimeoutException) { // retente
-																			// si
-																			// timeOut
+				 // retente si timeOut
+				if (exception instanceof java.net.SocketTimeoutException) {
 					System.out
 							.println("java.net.SocketTimeoutException exception");
 					return true;
