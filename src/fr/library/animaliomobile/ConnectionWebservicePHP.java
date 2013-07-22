@@ -33,7 +33,6 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
@@ -51,7 +50,6 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 	public String domainUrl = "http://m.animalio.fr/";
 	HttpRequestRetryHandler myRetryHandler; // Récupérateur de réponse HTTP
 	public ArrayList<NameValuePair> data = new ArrayList<NameValuePair>();
-	public int resultErrorReturn;
 
 	/**
 	 * Constuctor of Animalio Webservice
@@ -86,7 +84,6 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 	@Override
 	protected void onPreExecute() {
 		super.onPreExecute();
-		String connection = this.connectionType;
 		// On affiche un loader de chargement
 		pd = ProgressDialog.show(this.context, "", "Chargement ...", true);
 		pd.setCancelable(false);
@@ -94,228 +91,71 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 
 	@Override
 	protected void onPostExecute(Boolean result) {
-		String connection = this.connectionType;
-
-		// Si le webservice concerne l'authentication
-		if (connection.equals("Authentication")) {
-			if (result) {
-				// On créé l'Intent qui va nous permettre d'afficher l'autre
-				// Activity
-				Intent intent = new Intent(this.context, Home.class);
-				// On supprime l'activity de login sinon
-				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK
-						| Intent.FLAG_ACTIVITY_NEW_TASK);
-				this.context.startActivity(intent);
-			} else {
-				Toast.makeText(this.context, "Login Incorrect!",
-						Toast.LENGTH_LONG).show();
-			}
-		} else if (connection.equals("Registration")) {
-			if (result) {
-				// On créé l'Intent qui va nous permettre d'afficher l'autre
-				// Activity
-				Bundle bundle = new Bundle();
-				bundle.putString("isRegister", "1");
-				Intent intent = new Intent(this.context, Home.class);
-				// On supprime l'activity d'inscription
-				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK
-						| Intent.FLAG_ACTIVITY_NEW_TASK);
-				this.context.startActivity(intent.putExtras(bundle));
-			}else{
-				if(this.resultErrorReturn == 0){
-					Toast.makeText(this.context, "pseudo et email existe déjà!",
-							Toast.LENGTH_LONG).show();
-				}else if (this.resultErrorReturn == 2) {
-					Toast.makeText(this.context, "pseudo existe déjà!",
-							Toast.LENGTH_LONG).show();
-				}else if (this.resultErrorReturn == 3) {
-					Toast.makeText(this.context, "email existe déjà!",
-							Toast.LENGTH_LONG).show();
-				}
-			}
-		} else if (connection.equals("refreshInfoUser")) {
-			if (!result) {
-				if(this.resultErrorReturn == 0){
-					Toast.makeText(this.context, "Information utilisateur mis à jour!",
-							Toast.LENGTH_LONG).show();
-				}else if (this.resultErrorReturn == 1) {
-//					Toast.makeText(this.context, "Pas de mise à jour à effectué",
-//							Toast.LENGTH_LONG).show();
-				}else if (this.resultErrorReturn == 2) {
-					Toast.makeText(this.context, "Information utilisateur incorrecte!",
-							Toast.LENGTH_LONG).show();
-				}else if (this.resultErrorReturn == 3) {
-					Toast.makeText(this.context, "Erreur récupération info utilisateur!",
-							Toast.LENGTH_LONG).show();
-				}
-			}
+		if (result) {
+			// On créé l'Intent qui va nous permettre d'afficher l'autre
+			// Activity
+			Intent intent = new Intent(this.context, Home.class);
+			// On supprime l'activity de login sinon
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK
+					| Intent.FLAG_ACTIVITY_NEW_TASK);
+			this.context.startActivity(intent);
+		} else {
+			Toast.makeText(this.context, "Login Incorrect!", Toast.LENGTH_SHORT)
+					.show();
 		}
 		// On enleve le loader de chargement
 		pd.dismiss();
 	}
 
 	@Override
-	protected Boolean doInBackground(Void... arg0) { // Actions à exécuter en
-														// tache de fond
+	protected Boolean doInBackground(Void... arg0) { //Actions à exécuter en tache de fond
 		String connection = this.connectionType;
 		Boolean res = false;
-		resultErrorReturn = 1;
-
-		// Si le webservice concerne l'authentication
-		if (connection.equals("Authentication")) {
+		
+		//Si le webservice concerne l'authentication
+		if(connection.equals("Authentication")){
 			String url = this.domainUrl + "/authentication-mobile.php";
-			// On récupére les info du serveur
-			try {
+			//On récupére les info du serveur
+			try{
 				JSONArray infoServerData = getServerData(this.data, url);
-				JSONObject infoWebserviveReturn = infoServerData
-						.getJSONObject(0);
+				JSONObject infoWebserviveReturn = infoServerData.getJSONObject(0);
 				// Parse les données JSON
-				// Si la connection est correcte
-				if (infoWebserviveReturn.getInt("isOk") == 1) { 
-					res = true;
-					// On stock les infos utilisateurs dans des preferences
-					SharedPreferences preferences = PreferenceManager
-							.getDefaultSharedPreferences(this.context);
-					SharedPreferences.Editor editor = preferences.edit();
-					editor.putString("idUser", infoWebserviveReturn.getString("id_user"));
-					editor.putString("humorID", infoWebserviveReturn.getString("humor_id"));
-					editor.putString("cityID", infoWebserviveReturn.getString("city_id"));
-					editor.putString("countryID", infoWebserviveReturn.getString("country_id"));
-					editor.putString("lastname", infoWebserviveReturn.getString("lastname"));
-					editor.putString("firstname", infoWebserviveReturn.getString("firstname"));
-					editor.putString("nickname", infoWebserviveReturn.getString("nickname"));
-					editor.putString("email", infoWebserviveReturn.getString("email"));
-					editor.putString("avatarName", infoWebserviveReturn.getString("avatar_name"));
-					editor.putString("password", infoWebserviveReturn.getString("password"));
-					editor.putString("civility", infoWebserviveReturn.getString("civility"));
-					editor.putString("birthday", infoWebserviveReturn.getString("birthday"));
-					editor.putString("phone", infoWebserviveReturn.getString("phone"));
-					editor.putString("phoneMobile", infoWebserviveReturn.getString("phone_mobile"));
-					editor.putString("onNewsletter", infoWebserviveReturn.getString("on_newsletter"));
-					editor.putString("onMobile", infoWebserviveReturn.getString("on_mobile"));
-					editor.putString("isLoggedFacebook", infoWebserviveReturn.getString("is_logged_facebook"));
-					editor.putString("isBlacklist", infoWebserviveReturn.getString("is_blacklist"));
-					editor.putString("createdAt", infoWebserviveReturn.getString("created_at"));
-					editor.putString("updatedAt", infoWebserviveReturn.getString("updated_at"));
-					editor.commit();
-				} else {
-					res = false;
-				}
-			} catch (JSONException e) {
-				Log.e("log_authentication", "Mauvaise connection " + e.toString());
-			}
-		} else if (connection.equals("Registration")) {
-			String url = this.domainUrl + "/registration-mobile.php";
-			// On récupére les info du serveur
-			try {
-				JSONArray infoServerData = getServerData(this.data, url);
-				JSONObject infoWebserviveReturn = infoServerData
-						.getJSONObject(0);
-				Log.e("log_tagJson", "Error parsing data " + infoServerData);
-				// Parse les données JSON
-				if (infoWebserviveReturn.getInt("isOk") == 1) {//Si l'inscription est bonne
-					res = true;				
-					// On stock les infos utilisateurs dans des preferences
-					SharedPreferences preferences = PreferenceManager
-							.getDefaultSharedPreferences(this.context);
-					SharedPreferences.Editor editor = preferences.edit();
-					editor.putString("idUser", infoWebserviveReturn.getString("id_user"));
-					editor.putString("humorID", infoWebserviveReturn.getString("humor_id"));
-					editor.putString("cityID", infoWebserviveReturn.getString("city_id"));
-					editor.putString("countryID", infoWebserviveReturn.getString("country_id"));
-					editor.putString("lastname", infoWebserviveReturn.getString("lastname"));
-					editor.putString("firstname", infoWebserviveReturn.getString("firstname"));
-					editor.putString("nickname", infoWebserviveReturn.getString("nickname"));
-					editor.putString("email", infoWebserviveReturn.getString("email"));
-					editor.putString("avatarName", infoWebserviveReturn.getString("avatar_name"));
-					editor.putString("password", infoWebserviveReturn.getString("password"));
-					editor.putString("civility", infoWebserviveReturn.getString("civility"));
-					editor.putString("birthday", infoWebserviveReturn.getString("birthday"));
-					editor.putString("phone", infoWebserviveReturn.getString("phone"));
-					editor.putString("phoneMobile", infoWebserviveReturn.getString("phone_mobile"));
-					editor.putString("onNewsletter", infoWebserviveReturn.getString("on_newsletter"));
-					editor.putString("onMobile", infoWebserviveReturn.getString("on_mobile"));
-					editor.putString("isLoggedFacebook", infoWebserviveReturn.getString("is_logged_facebook"));
-					editor.putString("isBlacklist", infoWebserviveReturn.getString("is_blacklist"));
-					editor.putString("createdAt", infoWebserviveReturn.getString("created_at"));
-					editor.putString("updatedAt", infoWebserviveReturn.getString("updated_at"));
-					editor.commit();
-				}else if (infoWebserviveReturn.getInt("isOk") == 0){ //Sinon on retourne l'erreur
-					res = false;
-					resultErrorReturn = 0;
-				}else if (infoWebserviveReturn.getInt("isOk") == 2){
-					res = false;
-					resultErrorReturn = 2;
-				}else if (infoWebserviveReturn.getInt("isOk") == 3){
-					res = false;
-					resultErrorReturn = 3;
-				}
-			} catch (JSONException e) {
-				Log.e("log_tagRegistration", "Error parsing data second" + e.toString());
-			}
-		} else if (connection.equals("refreshInfoUser")) {
-			String url = this.domainUrl + "/refresh-user-mobile.php";
-			// On récupére les info du serveur
-			try {
-				JSONArray infoServerData = getServerData(this.data, url);
-				JSONObject infoWebserviveReturn = infoServerData
-						.getJSONObject(0);
-				
-				// Parse les données JSON
-				//Si la date de modification est différente alors on doit charger les nouvelles données
-				if (infoWebserviveReturn.getInt("isOk") == 1) {
-					if (infoWebserviveReturn.getInt("isUpdated") == 1) {			
-						// On stock les infos utilisateurs dans des preferences
-						SharedPreferences preferences = PreferenceManager
-								.getDefaultSharedPreferences(this.context);
+					if(infoWebserviveReturn.getInt("isOk") == 1){ //Si la connection est correcte
+						res = true;
+						//On stock les infos utilisateurs dans des preferences	
+						SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.context);
 						SharedPreferences.Editor editor = preferences.edit();
-						editor.putString("idUser", infoWebserviveReturn.getString("id_user"));
-						editor.putString("humorID", infoWebserviveReturn.getString("humor_id"));
-						editor.putString("cityID", infoWebserviveReturn.getString("city_id"));
-						editor.putString("countryID", infoWebserviveReturn.getString("country_id"));
-						editor.putString("lastname", infoWebserviveReturn.getString("lastname"));
-						editor.putString("firstname", infoWebserviveReturn.getString("firstname"));
-						editor.putString("nickname", infoWebserviveReturn.getString("nickname"));
-						editor.putString("email", infoWebserviveReturn.getString("email"));
-						editor.putString("avatarName", infoWebserviveReturn.getString("avatar_name"));
+						editor.putString("idUser", infoWebserviveReturn.getString("idUser"));
+						editor.putString("pseudoEmail", infoWebserviveReturn.getString("emailPseudo"));
 						editor.putString("password", infoWebserviveReturn.getString("password"));
-						editor.putString("civility", infoWebserviveReturn.getString("civility"));
-						editor.putString("birthday", infoWebserviveReturn.getString("birthday"));
-						editor.putString("phone", infoWebserviveReturn.getString("phone"));
-						editor.putString("phoneMobile", infoWebserviveReturn.getString("phone_mobile"));
-						editor.putString("onNewsletter", infoWebserviveReturn.getString("on_newsletter"));
-						editor.putString("onMobile", infoWebserviveReturn.getString("on_mobile"));
-						editor.putString("isLoggedFacebook", infoWebserviveReturn.getString("is_logged_facebook"));
-						editor.putString("isBlacklist", infoWebserviveReturn.getString("is_blacklist"));
-						editor.putString("createdAt", infoWebserviveReturn.getString("created_at"));
-						editor.putString("updatedAt", infoWebserviveReturn.getString("updated_at"));
 						editor.commit();
 						
-						
-						resultErrorReturn = 0;
+						String idUser = preferences.getString("idUser", "");
+						String pseudoEmail = preferences.getString("pseudoEmail", "");
+						String password = preferences.getString("password", "");
+						Log.i("log_parseIDUSER", "ID_USER : " + idUser);
+						Log.i("log_parseIDUSER", "PSEUDO_EMAIL : " + pseudoEmail);
+						Log.i("log_parseIDUSER", "Password : " + password);
+
 					}else{
-						resultErrorReturn = 1;
+						res = false;
 					}
-				}else{
-					resultErrorReturn = 2;
-				}
-				res = false;
-			} catch (JSONException e) {
-				res = false;
-				resultErrorReturn = 3;
-				Log.e("log_refreshUser", "Erreur récupération info utilisateur" + e.toString());
+			}catch(JSONException e){
+				Log.e("log_tagRecupére", "Error parsing data " + e.toString());
 			}
-		}else if (connection.equals("listMember")) {
-
-		} else if (connection.equals("listEvent")) {
-
-		} else if (connection.equals("photoGalery")) {
-
-		} else if (connection.equals("profilMember")) {
-
-		} else if (connection.equals("profilAnimal")) {
+		}else if(connection.equals("Registration")){
+			
+		}else if(connection.equals("listMember")){
+			
+		}else if(connection.equals("listEvent")){
+			
+		}else if(connection.equals("photoGalery")){
+			
+		}else if(connection.equals("profilMember")){
+			
+		}else if(connection.equals("profilAnimal")){
 			System.out.println("charge image élu");
-		} else {
+		}else{
 			res = false;
 		}
 		return res;
@@ -334,11 +174,11 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 			// On définie l'url du webservice en php
 			HttpPost httppost = new HttpPost(
 					"http://m.animalio.fr/Authentication.php");
-			// On définie l'url du webservice en php
+			// on passe en paramètre la liste dedonnées à envoyer
 			httppost.setEntity(new UrlEncodedFormEntity(this.data));
 			ResponseHandler<String> responseHandler = new BasicResponseHandler();
-			// on envoie les données au serveur et on récupère sa réponse
-			String response = httpclient.execute(httppost, responseHandler);
+			// on envoie les données au serveur et on récupères a réponse
+			String response = httpclient.execute(httppost, responseHandler); 
 		} catch (Exception e) {
 			Log.e("log_tag", "Error:  " + e.toString());
 		}
@@ -349,7 +189,7 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 	 * 
 	 * @param tabChamps
 	 * @param url
-	 * @return ArrayList<ArrayList<String>>
+	 * @return JSONArray
 	 */
 	public JSONArray getServerData(ArrayList<NameValuePair> dataSendTo,
 			String url) {
@@ -358,16 +198,22 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 		String strURL = url;
 		JSONArray resultat = null;// Resultat final
 		// JSONArray jArray = null; //Resultat final
-		// Data to send to server
-		ArrayList<NameValuePair> nameValuePairs = dataSendTo; 
+		ArrayList<NameValuePair> nameValuePairs = dataSendTo; // Data to send to server
 
 		// Envoie de la commande http
 		try {
 			HttpClient httpclient = new DefaultHttpClient();
 			setRetry();
-			// ajout du manager de réponse afin de permettre le retry en fonction de la réponse
 			((AbstractHttpClient) httpclient)
-					.setHttpRequestRetryHandler(myRetryHandler);
+					.setHttpRequestRetryHandler(myRetryHandler); // ajout du manager de
+																	// réponse
+																	// afin de
+																	// permettre
+																	// le retry
+																	// en
+																	// fonction
+																	// de la
+																	// réponse
 			HttpPost httppost = new HttpPost(strURL);
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			HttpResponse response = httpclient.execute(httppost);
@@ -394,7 +240,7 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 		try {
 			resultat = new JSONArray(result);
 		} catch (JSONException e) {
-			Log.e("log_tagRecupére", "Error parsing data first " + e.toString());
+			Log.e("log_tagRecupére", "Error parsing data " + e.toString());
 		}
 
 		return resultat;
@@ -409,23 +255,30 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 			public boolean retryRequest(IOException exception,
 					int executionCount, HttpContext context) {
 
-				// Si la connexion a échoué plus de 3 fois on arrête de réessayer
-				if (executionCount >= 4) {
+				if (executionCount >= 4) { // Si la connexion a échoué plus de 3
+											// fois on arrête de réessayer
 					System.out.println("retry count");
 					return true;
 				}
-				// retente la connexion si le serveur ne répond pas
-				if (exception instanceof NoHttpResponseException) {
+				if (exception instanceof NoHttpResponseException) { // retente
+																	// la
+																	// connexion
+																	// si le
+																	// serveur
+																	// ne répond
+																	// pas
 					System.out.println("NoHttpResponseException exception");
 					return true;
 				}
-				// retente si la connexion a été reset
-				if (exception instanceof java.net.SocketException) {
+				if (exception instanceof java.net.SocketException) { // retente
+																		// si la
+																		// connexion
+																		// a été
+																		// reset
 					System.out.println("java.net.SocketException exception");
 					return true;
 				}
-				 // retente si timeOut
-				if (exception instanceof java.net.SocketTimeoutException) {
+				if (exception instanceof java.net.SocketTimeoutException) { // retente si timeOut
 					System.out
 							.println("java.net.SocketTimeoutException exception");
 					return true;

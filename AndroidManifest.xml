@@ -58,6 +58,7 @@
         </activity>
         <activity
             android:name="fr.activity.animaliomobile.Registration"
+            android:theme="@style/Theme.Animalio.Authentication"
             android:label="@string/title_activity_resgistration" >
         </activity>
         <activity

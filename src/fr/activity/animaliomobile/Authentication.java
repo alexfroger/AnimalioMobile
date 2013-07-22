@@ -34,7 +34,7 @@ public class Authentication extends FragmentActivity{
 	private FragmentManager fm;
 	private ConnectionDialog connectionDialog;
 	private RegistrationDialog registrationDialog;
-	private static ArrayList<NameValuePair> data = new ArrayList<NameValuePair>();
+	private static ArrayList<NameValuePair> data = new ArrayList<NameValuePair>(6);
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,28 +48,21 @@ public class Authentication extends FragmentActivity{
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		
 		String idUser = preferences.getString("idUser", "");
-		String email = preferences.getString("email", "");
+		String pseudoEmail = preferences.getString("pseudoEmail", "");
+		String password = preferences.getString("password", "");
+		Log.i("log_parseAuthIDUSER", "ID_USER : " + idUser);
+		Log.i("log_parseAuthPseudo", "PSEUDO_EMAIL : " + pseudoEmail);
+		Log.i("log_parseAuthPassword", "Password : " + password);
 		
-		//Test a supprimer
-		Log.i("log_parseAuth", "idUser : " + idUser);
-		Log.i("log_parseAuth", "email : " + email);
-		Log.i("log_parseAuth", "humorID : " + preferences.getString("humorID", ""));
-		Log.i("log_parseAuth", "cityID : " + preferences.getString("cityID", ""));
-		Log.i("log_parseAuth", "countryID : " + preferences.getString("countryID", ""));
-		Log.i("log_parseAuth", "lastname : " + preferences.getString("lastname", ""));
-		Log.i("log_parseAuth", "firstname : " + preferences.getString("firstname", ""));
-		Log.i("log_parseAuth", "birthday : " + preferences.getString("birthday", ""));
-		Log.i("log_parseAuth", "createdAt : " + preferences.getString("createdAt", ""));
-
 		//Si l'utilisateur est tjr connecté c'est a dire que c'est préférence existe on va direct à la home
-		if(!idUser.equals("") && !email.equals("")){
-			SharedPreferences.Editor editor = preferences.edit();
-			editor.putBoolean("doUpdateUserInfo", true);
-			editor.commit();
-			
+		if(!idUser.equals("") && !pseudoEmail.equals("") && !password.equals("")){
 			Intent i = new Intent(getApplicationContext(), Home.class);
 			startActivity(i);
+<<<<<<< HEAD
+			finish();
+=======
 			this.finish();
+>>>>>>> refs/remotes/origin/master
 		}else{ //Sinon on se connecte
 			setContentView(R.layout.authentication);
 			
