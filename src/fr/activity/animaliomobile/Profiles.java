@@ -20,6 +20,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,6 +29,7 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 import fr.animaliomobile.R;
 import fr.animaliomobile.R.id;
+import fr.library.animaliomobile.RoundedImageView;
 import fr.library.animaliomobile.TypefaceSpan;
 
 public class Profiles extends Activity{
@@ -53,6 +56,8 @@ public class Profiles extends Activity{
 	private Button btn_events;
 	private Button btn_live;
 	private Button btn_photo;
+	private RoundedImageView imv_profil;
+	private ImageView imv_cover;
 
 
 	@Override
@@ -67,8 +72,14 @@ public class Profiles extends Activity{
 		ListView.LayoutParams param_lsv = new ListView.LayoutParams(
 				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
+		imv_profil = (RoundedImageView)findViewById(R.id.imv_profil);
+		imv_profil.setImageDrawable(getResources().getDrawable(R.drawable.img_defaultuser));
 
-
+		imv_cover = (ImageView)findViewById(R.id.imv_cover);
+		imv_cover.setImageDrawable(getResources().getDrawable(R.drawable.img_defaultcover));
+		imv_cover.setScaleType(ScaleType.FIT_XY);
+		
+		
 		switch (typeProfil) {
 		case 0: // Profil utilisateur
 
@@ -437,7 +448,7 @@ public class Profiles extends Activity{
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			ActionBar actionBar = getActionBar();
-			SpannableString s = new SpannableString(this.getTitle());
+			SpannableString s = new SpannableString("Jean Norbert");
 			s.setSpan(new TypefaceSpan(this, "Lobster"), 0, s.length(),
 					Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 			actionBar.setTitle(s);

@@ -2,34 +2,33 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_profil"
     android:orientation="horizontal" >
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:orientation="vertical" >
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:orientation="horizontal" >
+            android:layout_margin="10dp" >
 
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/img_test1" />
+            <ImageView 
+			    android:id="@+id/imv_cover"
+			    android:layout_width="match_parent"
+			    android:layout_height="100dp"
+			    android:adjustViewBounds="true"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="AZERTYUIOPQSDFGHJKLMW"
-                android:textColor="@color/black_color"
-                android:textSize="18dp" />
-        </LinearLayout>
+            <fr.library.animaliomobile.RoundedImageView
+                android:id="@+id/imv_profil"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_centerInParent="true"
+                android:layout_marginRight="10dp" />
+        </RelativeLayout>
 
         <include layout="@layout/profil_bouton_bar" />
 
@@ -38,8 +37,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#C3C3C3" >
-
-           
         </ViewFlipper>
     </LinearLayout>
 
