@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 import fr.animaliomobile.R;
+import fr.animaliomobile.R.id;
 import fr.library.animaliomobile.TypefaceSpan;
 
 public class Profiles extends Activity{
@@ -39,6 +40,7 @@ public class Profiles extends Activity{
 	private Button btn_animal_modification;
 	private Button btn_msg;
 	private Button btn_user_modification;
+	private Button btn_galerie;
 	private ViewFlipper vf_profil;
 	private static int typeProfil;
 	private static ListView.LayoutParams param_lsv;
@@ -74,6 +76,10 @@ public class Profiles extends Activity{
 			 * Création des boutons
 			 */
 
+			// Bouton Galerie
+			btn_galerie = (Button)findViewById(R.id.btn_galerie);
+			btn_galerie.setVisibility(View.VISIBLE);
+			btn_galerie.setOnClickListener(eventClick);
 			// Bouton Messagerie
 			btn_msg = (Button) findViewById(R.id.btn_msg);
 			btn_msg.setVisibility(View.VISIBLE);
@@ -122,6 +128,10 @@ public class Profiles extends Activity{
 			 * Création des boutons
 			 */
 
+			// Bouton Galerie
+			btn_galerie = (Button)findViewById(R.id.btn_galerie);
+			btn_galerie.setVisibility(View.VISIBLE);
+			btn_galerie.setOnClickListener(eventClick);
 			// Bouton Liste animaux
 			btn_animals_list = (Button) findViewById(R.id.btn_animals_list);
 			btn_animals_list.setVisibility(View.VISIBLE);
@@ -155,6 +165,10 @@ public class Profiles extends Activity{
 			 * Création des boutons
 			 */
 
+			// Bouton Galerie
+			btn_galerie = (Button)findViewById(R.id.btn_galerie);
+			btn_galerie.setVisibility(View.VISIBLE);
+			btn_galerie.setOnClickListener(eventClick);
 			// Bouton Envoyer message
 			btn_send_msg = (Button) findViewById(R.id.btn_send_msg);
 			btn_send_msg.setVisibility(View.VISIBLE);
@@ -202,6 +216,10 @@ public class Profiles extends Activity{
 			 * Création des boutons
 			 */
 
+			// Bouton Galerie
+			btn_galerie = (Button)findViewById(R.id.btn_galerie);
+			btn_galerie.setVisibility(View.VISIBLE);
+			btn_galerie.setOnClickListener(eventClick);
 			// Bouton modifier animal
 			btn_animal_modification = (Button) findViewById(R.id.btn_animal_modification);
 			btn_animal_modification.setVisibility(View.VISIBLE);
