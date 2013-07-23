@@ -35,7 +35,7 @@
 
     <!-- pop-up Mot de passe oublié -->
     <string name="title_forget_password">Mot de passe oublié</string>
-    <string name="hint_email_nickname">Email / pseudo</string>
+    <string name="hint_email_nickname">Email</string>
     <string name="pwd_reinitialize">Réinitialiser</string>
     
     <!-- registration activity -->

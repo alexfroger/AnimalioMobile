@@ -84,23 +84,22 @@ public class ForgetPasswordDialog extends DialogFragment {
 				getDialog().cancel();
 			}
 			if (v == btn_pwd_reinitialize) {
-//				// On vide la liste de données à envoyé si existe déjà
-//				data.clear();
-//
-//				// On ajoute les valeurs
-//				data.add(new BasicNameValuePair("email_pseudo", emailPseudo
-//						.getText().toString()));
-//				data.add(new BasicNameValuePair("password", password.getText()
-//						.toString()));
-//
-//				// Instancie la connection au webservice en thread
-//				if (ConnectionWebservicePHP.haveNetworkConnection(v.getContext())) { // Si connexion existe
-//					ConnectionWebservicePHP calcul = new ConnectionWebservicePHP(
-//							1, "Authentication", v.getContext(), data);
-//					calcul.execute();
-//				} else { // Sinon toast de problème
-//					ConnectionWebservicePHP.haveNetworkConnectionError(v.getContext());
-//				}
+				// On vide la liste de données à envoyé si existe déjà
+				data.clear();
+
+				// On ajoute les valeurs
+				data.add(new BasicNameValuePair("email_pseudo", email_nickname_forget
+						.getText().toString()));
+
+				// Instancie la connection au webservice en thread
+				// Si connexion existe
+				if (ConnectionWebservicePHP.haveNetworkConnection(v.getContext())) {
+					ConnectionWebservicePHP calcul = new ConnectionWebservicePHP(
+							1, "ForgetPassword", v.getContext(), data);
+					calcul.execute();
+				} else { // Sinon toast de problème
+					ConnectionWebservicePHP.haveNetworkConnectionError(v.getContext());
+				}
 			}
 		}
 	};

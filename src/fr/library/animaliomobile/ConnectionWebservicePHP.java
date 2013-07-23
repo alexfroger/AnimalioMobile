@@ -161,6 +161,16 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 					this.context.startActivity(intent);
 				}
 			}
+		} else if (connection.equals("ForgetPassword")) {
+			if (result) {
+				Toast.makeText(this.context,
+						"Email envoyé avec succès!",
+						Toast.LENGTH_LONG).show();
+			}else{
+				Toast.makeText(this.context,
+						"Email n'existe pas!",
+						Toast.LENGTH_LONG).show();
+			}
 		}
 		// On enleve le loader de chargement
 		pd.dismiss();
@@ -317,6 +327,25 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 				res = false;
 				resultErrorReturn = 3;
 				Log.e("log_refreshUser", "Erreur de récupération d'information utilisateur" + e.toString());
+			}
+		}else if (connection.equals("ForgetPassword")) {
+			String url = this.domainUrl + "/forget-password-mobile.php";
+			// On récupére les info du serveur
+			try {
+				JSONArray infoServerData = getServerData(this.data, url);
+				JSONObject infoWebserviveReturn = infoServerData
+						.getJSONObject(0);
+				
+				// Parse les données JSON
+				// Si la date de modification est différente alors on doit charger les nouvelles données
+				if (infoWebserviveReturn.getInt("isMailSend") == 1) {
+					res = true;
+				}else{
+					//L'email n'existe pas
+					res = false;
+				}
+			} catch (JSONException e) {
+				Log.e("log_ForgetPassword", "Erreur de récupération de mot de passe perdu" + e.toString());
 			}
 		}else if (connection.equals("listMember")) {
 
