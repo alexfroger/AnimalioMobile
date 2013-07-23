@@ -38,6 +38,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
+import fr.activity.animaliomobile.Authentication;
 import fr.activity.animaliomobile.Home;
 
 public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
@@ -114,13 +115,17 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 			if (result) {
 				// On créé l'Intent qui va nous permettre d'afficher l'autre
 				// Activity
-				Bundle bundle = new Bundle();
-				bundle.putString("isRegister", "1");
+				SharedPreferences preferences = PreferenceManager
+						.getDefaultSharedPreferences(this.context);
+				SharedPreferences.Editor editor = preferences.edit();
+				editor.putBoolean("isRegister", true);
+				editor.commit();
+				
 				Intent intent = new Intent(this.context, Home.class);
 				// On supprime l'activity d'inscription
 				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK
 						| Intent.FLAG_ACTIVITY_NEW_TASK);
-				this.context.startActivity(intent.putExtras(bundle));
+				this.context.startActivity(intent);
 			}else{
 				if(this.resultErrorReturn == 0){
 					Toast.makeText(this.context, "pseudo et email existe déjà!",
@@ -141,12 +146,19 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 				}else if (this.resultErrorReturn == 1) {
 //					Toast.makeText(this.context, "Pas de mise à jour à effectué",
 //							Toast.LENGTH_LONG).show();
-				}else if (this.resultErrorReturn == 2) {
-					Toast.makeText(this.context, "Information utilisateur incorrecte!",
-							Toast.LENGTH_LONG).show();
-				}else if (this.resultErrorReturn == 3) {
-					Toast.makeText(this.context, "Erreur récupération info utilisateur!",
-							Toast.LENGTH_LONG).show();
+				}else{
+					// On retour à la connexio et on supprime les préférence
+					SharedPreferences preferences = PreferenceManager
+							.getDefaultSharedPreferences(this.context);
+					SharedPreferences.Editor editor = preferences.edit();
+					editor.clear();
+					editor.commit();
+					
+					Intent intent = new Intent(this.context, Authentication.class);
+					// On supprime l'activity Home
+					intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK
+							| Intent.FLAG_ACTIVITY_NEW_TASK);
+					this.context.startActivity(intent);
 				}
 			}
 		}
@@ -262,7 +274,7 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 						.getJSONObject(0);
 				
 				// Parse les données JSON
-				//Si la date de modification est différente alors on doit charger les nouvelles données
+				// Si la date de modification est différente alors on doit charger les nouvelles données
 				if (infoWebserviveReturn.getInt("isOk") == 1) {
 					if (infoWebserviveReturn.getInt("isUpdated") == 1) {			
 						// On stock les infos utilisateurs dans des preferences
@@ -297,13 +309,14 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 						resultErrorReturn = 1;
 					}
 				}else{
+					//Utilisateur n'existe pas
 					resultErrorReturn = 2;
 				}
 				res = false;
 			} catch (JSONException e) {
 				res = false;
 				resultErrorReturn = 3;
-				Log.e("log_refreshUser", "Erreur récupération info utilisateur" + e.toString());
+				Log.e("log_refreshUser", "Erreur de récupération d'information utilisateur" + e.toString());
 			}
 		}else if (connection.equals("listMember")) {
 

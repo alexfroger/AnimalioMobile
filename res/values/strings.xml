@@ -33,6 +33,11 @@
     <string name="hint_password">Votre mot de passe</string>
     <string name="pwd_forget">Mot de passe oublié</string>
 
+    <!-- pop-up Mot de passe oublié -->
+    <string name="title_forget_password">Mot de passe oublié</string>
+    <string name="hint_email_nickname">Email / pseudo</string>
+    <string name="pwd_reinitialize">Réinitialiser</string>
+    
     <!-- registration activity -->
     <string name="registration_lastname">Nom</string>
     <string name="registration_firstname">Prénom</string>

@@ -48,7 +48,7 @@ public class Home extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
 		
-		//On Récupére les préférences utilisateur si elle existe
+		//On Récupére les préférences utilisateur si elle existe et d'autres info
 		SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(getApplicationContext());
 		
@@ -56,6 +56,8 @@ public class Home extends Activity {
 		Boolean doUpdateUserInfo = preferences.getBoolean("doUpdateUserInfo", true);
 		String email = preferences.getString("email", "");
 		String updatedAt = preferences.getString("updatedAt", "");
+		Boolean isRegister = preferences.getBoolean("isRegister", false);
+		
 		data.add(new BasicNameValuePair("idUser", idUser));
 		data.add(new BasicNameValuePair("email", email));
 		data.add(new BasicNameValuePair("updatedAt", updatedAt));
@@ -79,18 +81,20 @@ public class Home extends Activity {
 				calcul.execute();
 				
 				SharedPreferences.Editor editor = preferences.edit();
-				editor.putBoolean("doUpdateUserInfo", false);
+				editor.putBoolean("isRegister", false);
 				editor.commit();
 			}
 		} else { // Sinon toast de problème
 			ConnectionWebservicePHP.haveNetworkConnectionError(this);
 		}
+		
 		//Si on vient de s'inscrire
-		//On récupère l'objet Bundle envoyé par l'autre Activity
-        Bundle objetbunble  = this.getIntent().getExtras();
-        if (objetbunble != null && objetbunble.containsKey("isRegister")){
+        if (isRegister == true){
         	Toast.makeText(this, "Incription réussi!",
 					Toast.LENGTH_LONG).show();
+        	SharedPreferences.Editor editor = preferences.edit();
+			editor.putBoolean("doUpdateUserInfo", false);
+			editor.commit();
         }
         
 		//Get different Object of the view
