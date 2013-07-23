@@ -35,8 +35,7 @@
         <ViewFlipper
             android:id="@+id/vf_profil"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#C3C3C3" >
+            android:layout_height="match_parent">
         </ViewFlipper>
     </LinearLayout>
 

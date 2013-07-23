@@ -1,8 +1,13 @@
 package fr.activity.animaliomobile;
 
-import android.app.ActionBar.LayoutParams;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.ActionBar;
+import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -16,19 +21,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 import fr.animaliomobile.R;
-import fr.animaliomobile.R.id;
 import fr.library.animaliomobile.RoundedImageView;
 import fr.library.animaliomobile.TypefaceSpan;
 
@@ -78,8 +85,8 @@ public class Profiles extends Activity{
 		imv_cover = (ImageView)findViewById(R.id.imv_cover);
 		imv_cover.setImageDrawable(getResources().getDrawable(R.drawable.img_defaultcover));
 		imv_cover.setScaleType(ScaleType.FIT_XY);
-		
-		
+
+
 		switch (typeProfil) {
 		case 0: // Profil utilisateur
 
@@ -386,9 +393,16 @@ public class Profiles extends Activity{
 
 	ListView createListFriends(){
 		final ListView lsv_friends_list = new ListView(this);
-		String[] values_friends_list = new String[] { "Friend1", "Friend2", "Friend3", "Friend4", "Friend5", "Friend6", "Friend7", "Friend8", "Friend9", "Friend10" };
-		ArrayAdapter<String> adapter_friends_list = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, android.R.id.text1, values_friends_list);
+
+		Friend friend1 = new Friend (0, "Kikiki le ptit Kiwi", 1);
+		Friend friend2 = new Friend (1, "Hélicoupter Hélicoupter", 2);
+		Friend friend3 = new Friend (2, "Pouick", 3);
+		ArrayList<Friend> friends = new ArrayList<Friend>();
+		friends.add(friend1);
+		friends.add(friend2);
+		friends.add(friend3);
+
+		CustomAdapterFriends adapter_friends_list = new CustomAdapterFriends(this, friends);
 		lsv_friends_list.setAdapter(adapter_friends_list);
 		//Ajout d'un onclick listener sur chaque element
 		lsv_friends_list.setOnItemClickListener(new OnItemClickListener() 
@@ -496,5 +510,113 @@ public class Profiles extends Activity{
 		}
 	}
 
+	//Adapter définissant la façon dont est affiché chaque item de la liste
+	class CustomAdapterViewFriend extends LinearLayout {
 
+		public CustomAdapterViewFriend(Context context, Friend friend){
+			super(context);
+			setId(friend.id);
+			setOrientation(LinearLayout.HORIZONTAL);
+
+			//Instanciation des différents layout de l'adapter
+			RelativeLayout mainLayout = new RelativeLayout(context);
+			mainLayout.setId(666);
+			LinearLayout subLayout = new LinearLayout(context);
+
+			//Instanciation de l'image utilisateur
+			ImageView imv_user = new ImageView(context);
+			imv_user.setImageDrawable(getResources().getDrawable(R.drawable.img_defaultuser));
+			imv_user.setId(777);
+			
+			//Instanciation du nom de l'utilisateur
+			TextView txv_name = new TextView(context);
+			txv_name.setText(friend.name);
+			txv_name.setPadding(10,0,0,0);
+
+			//Instanciation des images messages et connecté
+			ImageView isConnected = new ImageView(context);
+			if(friend.status==1){
+				isConnected.setImageDrawable(getResources().getDrawable(R.drawable.oncomputer));
+			}else if (friend.status==2){
+				isConnected.setImageDrawable(getResources().getDrawable(R.drawable.onapp));
+			}
+			ImageView imv_message = new ImageView(context);
+			imv_message.setImageDrawable(getResources().getDrawable(R.drawable.imv_message));
+
+			subLayout.setOrientation(LinearLayout.VERTICAL);
+			subLayout.setGravity(Gravity.CENTER);
+			
+
+			RelativeLayout.LayoutParams paramTxv = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+			paramTxv.addRule(RelativeLayout.RIGHT_OF,imv_user.getId());
+			paramTxv.addRule(RelativeLayout.CENTER_VERTICAL,mainLayout.getId());
+			LinearLayout.LayoutParams wrap_0 = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, 0);
+			RelativeLayout.LayoutParams paramSubLayout = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+			paramSubLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,mainLayout.getId());
+			paramSubLayout.addRule(RelativeLayout.CENTER_VERTICAL,mainLayout.getId());
+			LinearLayout.LayoutParams sizeImvUser = new LinearLayout.LayoutParams(100, 100);
+			
+			
+			subLayout.setWeightSum(2);
+			wrap_0.weight=1;
+			subLayout.addView(isConnected, wrap_0);
+			subLayout.addView(imv_message , wrap_0);
+
+			mainLayout.addView(imv_user, sizeImvUser);
+			mainLayout.addView(txv_name, paramTxv);
+			mainLayout.addView(subLayout, paramSubLayout);
+			addView(mainLayout);
+
+		}
+
+	}
+
+	//Adapter de la ListView contenant les news
+	class CustomAdapterFriends extends BaseAdapter{
+		private Context context;
+		private List<Friend> friends;
+
+		//Constructeur
+		public CustomAdapterFriends(Context _context, List<Friend> _friends){
+			this.context = _context;
+			this.friends = _friends;
+		}
+
+		public int getCount() {                        
+			return friends.size();
+		}
+
+		public Object getItem(int position) {     
+			return friends.get(position);
+		}
+
+		public long getItemId(int position) {  
+			return position;
+		}
+
+		public View getView(int position, View convertView, ViewGroup parent)
+		{ 
+			Friend friend = friends.get(position);
+			View v = null;
+			//Change la couleur du background de l'item, un item sur deux
+			v = new CustomAdapterViewFriend(this.context, friend);
+			//v.setBackgroundColor((position % 2) == 1 ? Color.rgb(204,204,204) : Color.WHITE);
+			return v;
+		}
+	}
+
+}
+
+class Friend{
+	//Paramètre
+	int id;
+	String name;
+	int status;
+
+	//Constructeur
+	public Friend (int _id, String _name, int _status){
+		this.id = _id;
+		this.name = _name;
+		this.status = _status;
+	}
 }
