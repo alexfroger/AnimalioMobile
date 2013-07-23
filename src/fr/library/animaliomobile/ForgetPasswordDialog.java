@@ -84,21 +84,36 @@ public class ForgetPasswordDialog extends DialogFragment {
 				getDialog().cancel();
 			}
 			if (v == btn_pwd_reinitialize) {
-				// On vide la liste de données à envoyé si existe déjà
-				data.clear();
-
-				// On ajoute les valeurs
-				data.add(new BasicNameValuePair("email_pseudo", email_nickname_forget
-						.getText().toString()));
-
-				// Instancie la connection au webservice en thread
-				// Si connexion existe
-				if (ConnectionWebservicePHP.haveNetworkConnection(v.getContext())) {
-					ConnectionWebservicePHP calcul = new ConnectionWebservicePHP(
-							1, "ForgetPassword", v.getContext(), data);
-					calcul.execute();
-				} else { // Sinon toast de problème
-					ConnectionWebservicePHP.haveNetworkConnectionError(v.getContext());
+				if(email_nickname_forget.getText().toString().equals("")){
+					Toast t = Toast.makeText(v.getContext(),
+							R.string.field_empty,
+							Toast.LENGTH_LONG);
+					t.setGravity(Gravity.BOTTOM, 0, 40);
+					t.show();
+				}else if(!android.util.Patterns.EMAIL_ADDRESS.matcher(email_nickname_forget.getText().toString()).matches()){
+					//sinon si l'adresse email n'est pas un format valide
+					Toast t = Toast.makeText(v.getContext(),
+							R.string.invalid_email,
+							Toast.LENGTH_LONG);
+					t.setGravity(Gravity.BOTTOM, 0, 40);
+					t.show();
+				}else{
+					// On vide la liste de données à envoyé si existe déjà
+					data.clear();
+	
+					// On ajoute les valeurs
+					data.add(new BasicNameValuePair("email_pseudo", email_nickname_forget
+							.getText().toString()));
+	
+					// Instancie la connection au webservice en thread
+					// Si connexion existe
+					if (ConnectionWebservicePHP.haveNetworkConnection(v.getContext())) {
+						ConnectionWebservicePHP calcul = new ConnectionWebservicePHP(
+								1, "ForgetPassword", v.getContext(), data);
+						calcul.execute();
+					} else { // Sinon toast de problème
+						ConnectionWebservicePHP.haveNetworkConnectionError(v.getContext());
+					}
 				}
 			}
 		}
