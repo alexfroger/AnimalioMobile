@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -65,6 +66,7 @@ public class Profiles extends Activity{
 	private Button btn_photo;
 	private RoundedImageView imv_profil;
 	private ImageView imv_cover;
+	private Typeface Arimo;
 
 
 	@Override
@@ -86,6 +88,8 @@ public class Profiles extends Activity{
 		imv_cover.setImageDrawable(getResources().getDrawable(R.drawable.img_defaultcover));
 		imv_cover.setScaleType(ScaleType.FIT_XY);
 
+		Arimo = Typeface.createFromAsset(
+			getApplicationContext().getAssets(), "Arimo-Regular.ttf");
 
 		switch (typeProfil) {
 		case 0: // Profil utilisateur
@@ -531,7 +535,10 @@ public class Profiles extends Activity{
 			//Instanciation du nom de l'utilisateur
 			TextView txv_name = new TextView(context);
 			txv_name.setText(friend.name);
-			txv_name.setPadding(10,0,0,0);
+			txv_name.setPadding(15,0,0,0);
+			txv_name.setTextColor(getResources().getColor(R.color.grey_color));
+			txv_name.setTypeface(Arimo);
+			txv_name.setTextSize(20);
 
 			//Instanciation des images messages et connecté
 			ImageView isConnected = new ImageView(context);
@@ -539,10 +546,14 @@ public class Profiles extends Activity{
 				isConnected.setImageDrawable(getResources().getDrawable(R.drawable.oncomputer));
 			}else if (friend.status==2){
 				isConnected.setImageDrawable(getResources().getDrawable(R.drawable.onapp));
+			}else{
+				isConnected.setImageDrawable(getResources().getDrawable(R.drawable.blank));
 			}
+			isConnected.setPadding(0,10,10,0);
 			ImageView imv_message = new ImageView(context);
 			imv_message.setImageDrawable(getResources().getDrawable(R.drawable.imv_message));
-
+			imv_message.setPadding(0,0,10,0);
+			
 			subLayout.setOrientation(LinearLayout.VERTICAL);
 			subLayout.setGravity(Gravity.CENTER);
 			
@@ -554,7 +565,7 @@ public class Profiles extends Activity{
 			RelativeLayout.LayoutParams paramSubLayout = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
 			paramSubLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,mainLayout.getId());
 			paramSubLayout.addRule(RelativeLayout.CENTER_VERTICAL,mainLayout.getId());
-			LinearLayout.LayoutParams sizeImvUser = new LinearLayout.LayoutParams(100, 100);
+			LinearLayout.LayoutParams sizeImvUser = new LinearLayout.LayoutParams(120, 120);
 			
 			
 			subLayout.setWeightSum(2);
