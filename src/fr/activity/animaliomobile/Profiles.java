@@ -89,7 +89,7 @@ public class Profiles extends Activity{
 		imv_cover.setScaleType(ScaleType.FIT_XY);
 
 		Arimo = Typeface.createFromAsset(
-			getApplicationContext().getAssets(), "Arimo-Regular.ttf");
+				getApplicationContext().getAssets(), "Arimo-Regular.ttf");
 
 		switch (typeProfil) {
 		case 0: // Profil utilisateur
@@ -178,7 +178,7 @@ public class Profiles extends Activity{
 			positionChild[2] = 1;
 
 			vf_profil.addView(createLayout("Envoyer une demande d'ami"), param_lsv);
-			positionChild[4] = 2;
+			positionChild[4] = 2; 
 
 			break;
 		case 2: // Profil ami
@@ -354,10 +354,23 @@ public class Profiles extends Activity{
 
 	ListView createListMsg(){
 		final ListView lsv_msg = new ListView(this);
-		String[] values_msg = new String[] { "Message1", "Message2", "Message3", "Message4", "Message5", "Message6",
-				"Message7", "Message8", "Message9", "Message10"};
-		ArrayAdapter<String> adapter_msg = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, android.R.id.text1, values_msg);
+		
+		Message message1 = new Message (0, "Arthur", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean fermentum.");
+		Message message2 = new Message (1, "Leodagan", "Duis tincidunt tempor ligula, a ultrices enim fringilla a. Pellentesque. ");
+		Message message3 = new Message (2, "Perceval", "Lorem ipsum dolor sit amet.");
+		Message message4 = new Message (3, "Karadoc", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent convallis ultricies ipsum, et cursus felis.");
+		Message message5 = new Message (4, "Yvain", "Maecenas congue facilisis elit, at.");
+		Message message6 = new Message (5, "Gauvain", "Aenean sed erat turpis. Quisque.");
+		
+		ArrayList<Message> messages = new ArrayList<Message>();
+		messages.add(message1);
+		messages.add(message2);
+		messages.add(message3);
+		messages.add(message4);
+		messages.add(message5);
+		messages.add(message6);
+		
+		CustomAdapterMessages adapter_msg = new CustomAdapterMessages(this, messages);
 		lsv_msg.setAdapter(adapter_msg);
 		//Ajout d'un onclick listener sur chaque element
 		lsv_msg.setOnItemClickListener(new OnItemClickListener() 
@@ -374,10 +387,27 @@ public class Profiles extends Activity{
 
 	ListView createListAnimals(){
 		final ListView lsv_animals_list = new ListView(this);
-		String[] values_animals_list = new String[] { "Animal1", "Animal2", "Animal3", "Animal4", "Animal5", "Animal6", "Animal7", "Animal8", "Animal9", "Animal10"};
-		ArrayAdapter<String> adapter_animals_list = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, android.R.id.text1, values_animals_list);
+
+		Animal animal1 = new Animal(0, "Titi");
+		Animal animal2 = new Animal(1, "Grosminet");
+		Animal animal3 = new Animal(2, "Daffy Duck");
+		Animal animal4 = new Animal(3, "Bugs Bunny");
+		Animal animal5 = new Animal(4, "Tom");
+		Animal animal6 = new Animal(5, "Jerry");
+		Animal animal7 = new Animal(6, "Taz");
+
+		ArrayList<Animal> animals = new ArrayList<Animal>();
+		animals.add(animal1);
+		animals.add(animal2);
+		animals.add(animal3);
+		animals.add(animal4);
+		animals.add(animal5);
+		animals.add(animal6);
+		animals.add(animal7);
+
+		CustomAdapterAnimals adapter_animals_list = new CustomAdapterAnimals(this, animals);
 		lsv_animals_list.setAdapter(adapter_animals_list);
+
 		//Ajout d'un onclick listener sur chaque element
 		lsv_animals_list.setOnItemClickListener(new OnItemClickListener() 
 		{
@@ -392,6 +422,21 @@ public class Profiles extends Activity{
 				startActivity(intent);
 			}
 		});
+		
+		/*RelativeLayout lay_animal = new RelativeLayout(this);
+		lay_animal.setId(101);
+		Button addAnimal = new Button(this);
+		addAnimal.setText("Ajouter un animal");
+		addAnimal.setId(102);
+		RelativeLayout.LayoutParams paramButton = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, 50);
+		paramButton.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, lay_animal.getId());
+		RelativeLayout.LayoutParams paramList = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		paramButton.addRule(RelativeLayout.ALIGN_PARENT_TOP, lay_animal.getId());
+		paramButton.addRule(RelativeLayout.ABOVE, addAnimal.getId());
+		
+		lay_animal.addView(lsv_animals_list, paramList);
+		lay_animal.addView(addAnimal, paramButton);*/
+		
 		return lsv_animals_list;
 	}
 
@@ -531,7 +576,7 @@ public class Profiles extends Activity{
 			ImageView imv_user = new ImageView(context);
 			imv_user.setImageDrawable(getResources().getDrawable(R.drawable.img_defaultuser));
 			imv_user.setId(777);
-			
+
 			//Instanciation du nom de l'utilisateur
 			TextView txv_name = new TextView(context);
 			txv_name.setText(friend.name);
@@ -553,10 +598,10 @@ public class Profiles extends Activity{
 			ImageView imv_message = new ImageView(context);
 			imv_message.setImageDrawable(getResources().getDrawable(R.drawable.imv_message));
 			imv_message.setPadding(0,0,10,0);
-			
+
 			subLayout.setOrientation(LinearLayout.VERTICAL);
 			subLayout.setGravity(Gravity.CENTER);
-			
+
 
 			RelativeLayout.LayoutParams paramTxv = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
 			paramTxv.addRule(RelativeLayout.RIGHT_OF,imv_user.getId());
@@ -566,8 +611,8 @@ public class Profiles extends Activity{
 			paramSubLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,mainLayout.getId());
 			paramSubLayout.addRule(RelativeLayout.CENTER_VERTICAL,mainLayout.getId());
 			LinearLayout.LayoutParams sizeImvUser = new LinearLayout.LayoutParams(120, 120);
-			
-			
+
+
 			subLayout.setWeightSum(2);
 			wrap_0.weight=1;
 			subLayout.addView(isConnected, wrap_0);
@@ -582,7 +627,7 @@ public class Profiles extends Activity{
 
 	}
 
-	//Adapter de la ListView contenant les news
+
 	class CustomAdapterFriends extends BaseAdapter{
 		private Context context;
 		private List<Friend> friends;
@@ -616,6 +661,157 @@ public class Profiles extends Activity{
 		}
 	}
 
+	//Adapter définissant la façon dont est affiché chaque item de la liste
+	class CustomAdapterViewAnimal extends LinearLayout {
+
+		public CustomAdapterViewAnimal(Context context, Animal animal){
+			super(context);
+			setId(animal.id);
+			setOrientation(LinearLayout.HORIZONTAL);
+
+			//Instanciation de l'image utilisateur
+			ImageView imv_user = new ImageView(context);
+			imv_user.setImageDrawable(getResources().getDrawable(R.drawable.img_defaultanimal));
+
+			//Instanciation du nom de l'utilisateur
+			TextView txv_name = new TextView(context);
+			txv_name.setText(animal.name);
+			txv_name.setPadding(15,0,0,0);
+			txv_name.setTextColor(getResources().getColor(R.color.grey_color));
+			txv_name.setTypeface(Arimo);
+			txv_name.setTextSize(20);
+			txv_name.setGravity(Gravity.CENTER_VERTICAL);
+
+			LinearLayout.LayoutParams paramTxv = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+
+			LinearLayout.LayoutParams sizeImvUser = new LinearLayout.LayoutParams(120, 120);
+
+			addView(imv_user, sizeImvUser);
+			addView(txv_name, paramTxv);
+
+		}
+
+	}
+
+	//Adapter de la ListView contenant les animaux
+	class CustomAdapterAnimals extends BaseAdapter{
+		private Context context;
+		private List<Animal> animals;
+
+		//Constructeur
+		public CustomAdapterAnimals(Context _context, List<Animal> _animals){
+			this.context = _context;
+			this.animals = _animals;
+		}
+
+		public int getCount() {                        
+			return animals.size();
+		}
+
+		public Object getItem(int position) {     
+			return animals.get(position);
+		}
+
+		public long getItemId(int position) {  
+			return position;
+		}
+
+		public View getView(int position, View convertView, ViewGroup parent)
+		{ 
+			Animal animal = animals.get(position);
+			View v = null;
+			//Change la couleur du background de l'item, un item sur deux
+			v = new CustomAdapterViewAnimal(this.context, animal);
+			//v.setBackgroundColor((position % 2) == 1 ? Color.rgb(204,204,204) : Color.WHITE);
+			return v;
+		}
+	}
+
+	//Adapter définissant la façon dont est affiché chaque item de la liste
+	class CustomAdapterViewMessage extends LinearLayout {
+
+		public CustomAdapterViewMessage(Context context, Message message){
+			super(context);
+			setId(message.id);
+			setOrientation(LinearLayout.HORIZONTAL);
+
+			LinearLayout textLayout = new LinearLayout(context);
+			textLayout.setOrientation(LinearLayout.VERTICAL);
+			
+			//Instanciation de l'image utilisateur
+			ImageView imv_user = new ImageView(context);
+			imv_user.setImageDrawable(getResources().getDrawable(R.drawable.img_defaultuser));
+
+			//Instanciation du nom du destinataire
+			TextView txv_name = new TextView(context);
+			txv_name.setText(message.name);
+			txv_name.setPadding(15,0,0,0);
+			txv_name.setTextColor(getResources().getColor(R.color.grey_color));
+			txv_name.setTypeface(Arimo);
+			txv_name.setTextSize(20);
+			
+			//Instanciation du contenu du message
+			TextView txv_content = new TextView(context);
+			String content2 = "";
+			if(message.content.length()>=37){
+				content2 = message.content.substring(0, 37) + "...";
+			}else{
+				content2 = message.content;
+			}
+			txv_content.setText(content2);
+			txv_content.setPadding(15,0,0,0);
+			txv_content.setTextColor(getResources().getColor(R.color.grey_color));
+			txv_content.setTypeface(Arimo);
+			txv_content.setTextSize(14);
+
+			LinearLayout.LayoutParams paramTxv = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			LinearLayout.LayoutParams paramTxv2 = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+			LinearLayout.LayoutParams sizeImvUser = new LinearLayout.LayoutParams(120, 120);
+
+			addView(imv_user, sizeImvUser);
+			textLayout.addView(txv_name, paramTxv);
+			textLayout.addView(txv_content, paramTxv);
+			textLayout.setGravity(Gravity.CENTER_VERTICAL);
+			addView(textLayout, paramTxv2);
+
+		}
+
+	}
+
+	//Adapter de la ListView contenant les animaux
+	class CustomAdapterMessages extends BaseAdapter{
+		private Context context;
+		private List<Message> messages;
+
+		//Constructeur
+		public CustomAdapterMessages(Context _context, List<Message> _messages){
+			this.context = _context;
+			this.messages = _messages;
+		}
+
+		public int getCount() {                        
+			return messages.size();
+		}
+
+		public Object getItem(int position) {     
+			return messages.get(position);
+		}
+
+		public long getItemId(int position) {  
+			return position;
+		}
+
+		public View getView(int position, View convertView, ViewGroup parent)
+		{ 
+			Message message = messages.get(position);
+			View v = null;
+			//Change la couleur du background de l'item, un item sur deux
+			v = new CustomAdapterViewMessage(this.context, message);
+			//v.setBackgroundColor((position % 2) == 1 ? Color.rgb(204,204,204) : Color.WHITE);
+			return v;
+		}
+	}
+
 }
 
 class Friend{
@@ -629,5 +825,32 @@ class Friend{
 		this.id = _id;
 		this.name = _name;
 		this.status = _status;
+	}
+}
+
+
+class Animal{
+	//Paramètre
+	int id;
+	String name;
+
+	//Constructeur
+	public Animal (int _id, String _name){
+		this.id = _id;
+		this.name = _name;
+	}
+}
+
+class Message{
+	//Paramètre
+	int id;
+	String name;
+	String content;
+
+	//Constructeur
+	public Message (int _id, String _name, String _content){
+		this.id = _id;
+		this.name = _name;
+		this.content = _content;
 	}
 }
