@@ -1,0 +1,89 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+
+    <ImageView
+        android:id="@+id/imageWho"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentLeft="true" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="70dp"
+        android:layout_toRightOf="@id/imageWho"
+        android:orientation="vertical" 
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/textWho"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:paddingLeft="7dp"
+            android:textColor="@color/grey_color"
+            android:textSize="16dp" />
+
+        <TextView
+            android:id="@+id/textWhom"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:paddingLeft="7dp"
+            android:textColor="@color/grey_color"
+            android:textSize="12dp" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageWhom"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentRight="true" />
+
+    <TextView
+        android:id="@+id/textDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/imageWhom"
+        android:paddingRight="7dp"
+        android:textColor="@color/grey_color"
+        android:paddingTop="7dp"
+        android:textSize="10dp" />
+
+    <LinearLayout
+        android:id="@+id/layoutSocial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textDate"
+        android:layout_toLeftOf="@+id/imageWhom"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom ="true"
+        android:paddingBottom="7dp"
+        android:paddingRight="7dp" >
+
+        <ImageView
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/imglike" />
+
+        <TextView
+            android:id="@+id/textLike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/grey_color"
+            android:textSize="10dp" />
+
+        <ImageView
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/imgcomm" />
+
+        <TextView
+            android:id="@+id/textComm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/grey_color"
+            android:textSize="10dp" />
+    </LinearLayout>
+
+</RelativeLayout>
