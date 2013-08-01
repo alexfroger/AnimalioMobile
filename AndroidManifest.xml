@@ -53,7 +53,8 @@
         </activity>
         <activity
             android:name="fr.activity.animaliomobile.MessagingService"
-            android:label="@string/title_activity_messaging_service" >
+            android:label="@string/title_activity_messaging_service"
+            android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
             android:name="fr.activity.animaliomobile.Registration"

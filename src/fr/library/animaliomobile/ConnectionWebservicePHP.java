@@ -14,11 +14,9 @@ import org.apache.http.NameValuePair;
 import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.AbstractHttpClient;
-import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
@@ -30,16 +28,26 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 import fr.activity.animaliomobile.Authentication;
 import fr.activity.animaliomobile.Home;
+import fr.activity.animaliomobile.MessagingService;
+import fr.animaliomobile.R;
 
 public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 
@@ -48,11 +56,15 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 	private String connectionType; // affiche le type de connexion à effectué
 	public Context context; // affiche le context de la vue ou la connexion au
 							// webservice est nécessaire
+	public RelativeLayout layMessage;
+	public ScrollView layScrollview;
 	private ProgressDialog pd;
+	private JSONArray arrayInfoWebservice;
 	public String domainUrl = "http://m.animalio.fr/";
 	HttpRequestRetryHandler myRetryHandler; // Récupérateur de réponse HTTP
 	public ArrayList<NameValuePair> data = new ArrayList<NameValuePair>();
 	public int resultErrorReturn;
+	public int nbMsgMin;
 
 	/**
 	 * Constuctor of Animalio Webservice
@@ -83,7 +95,27 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 		this.connectionType = _connectionType;
 		this.context = _context;
 	}
-
+	
+	/**
+	 * Constuctor of Animalio Webservice with RelativeLayout
+	 * 
+	 * @param int _loaderType
+	 * @param String _connectionType
+	 * @param Context _context
+	 * @param ArrayList<NameValuePair> _data
+	 * @param RelativeLayout _layMessage
+	 */
+	public ConnectionWebservicePHP(int _loaderType, String _connectionType,
+			Context _context, ArrayList<NameValuePair> _data, RelativeLayout _layMessage, ScrollView _layScrollview, int _nbMsgMin) {
+		this.loaderType = _loaderType;
+		this.connectionType = _connectionType;
+		this.context = _context;
+		this.data = _data;
+		this.layMessage = _layMessage;
+		this.layScrollview = _layScrollview;
+		this.nbMsgMin = _nbMsgMin;
+	}
+	
 	@Override
 	protected void onPreExecute() {
 		super.onPreExecute();
@@ -171,7 +203,110 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 						"Email n'existe pas!",
 						Toast.LENGTH_LONG).show();
 			}
-		}
+		} else if (connection.equals("MessagingService")) {
+			if (!result) {
+					Toast.makeText(this.context,
+							"Pas de nouveau message",
+							Toast.LENGTH_LONG).show();
+			} else {
+				// On récupére les info du serveur
+				try {
+					RelativeLayout lay_message_current = (RelativeLayout) this.layMessage
+							.findViewById(R.id.lay_message);
+					// On Récupére les préférences utilisateur si elle existe
+					SharedPreferences preferences = PreferenceManager
+							.getDefaultSharedPreferences(this.context);
+
+					String idUserCurrent = preferences.getString("idUser", "");
+					
+					for (int i = 0; i < this.arrayInfoWebservice.length(); i++) {
+						JSONObject infoWebserviveReturn = this.arrayInfoWebservice
+								.getJSONObject(i);
+						Log.i("log_int", "int : " + nbMsgMin);
+						if (infoWebserviveReturn.getString("user_id").equals(idUserCurrent)) {
+							LinearLayout lay_msgSender1 = new LinearLayout(this.context);
+							lay_msgSender1.setId(nbMsgMin+1);
+							lay_msgSender1.setBackgroundColor(Color.parseColor("#b7eeeb"));
+
+							TextView txv_msgSender1 = new TextView(this.context);
+							txv_msgSender1.setText(Html.fromHtml("<b><i>" + infoWebserviveReturn.getString("created_at_format") + "</i></b> : ") + infoWebserviveReturn.getString("message"));
+							lay_msgSender1.addView(txv_msgSender1);
+
+							if (i == 0 && nbMsgMin == 0) {
+								RelativeLayout.LayoutParams placement1 = new RelativeLayout.LayoutParams(
+										ViewGroup.LayoutParams.WRAP_CONTENT,
+										ViewGroup.LayoutParams.WRAP_CONTENT);
+								placement1.addRule(RelativeLayout.ALIGN_BASELINE, lay_message_current.getId());
+								placement1.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, lay_message_current.getId());
+								placement1.setMargins(50, 20, 0, 20);
+								lay_msgSender1.setLayoutParams(placement1);
+								lay_msgSender1.setPadding(10, 10, 50, 10);
+								lay_message_current.addView(lay_msgSender1);
+							} else {
+								RelativeLayout.LayoutParams placement1 = new RelativeLayout.LayoutParams(
+										ViewGroup.LayoutParams.WRAP_CONTENT,
+										ViewGroup.LayoutParams.WRAP_CONTENT);
+								placement1.addRule(RelativeLayout.BELOW, nbMsgMin);
+								placement1.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, lay_message_current.getId());
+								placement1.setMargins(50, 20, 0, 20);
+								lay_msgSender1.setLayoutParams(placement1);
+								lay_msgSender1.setPadding(10, 10, 50, 10);
+								lay_message_current.addView(lay_msgSender1);
+							}
+						} else {
+							LinearLayout lay_msgReceiver1 = new LinearLayout(
+									this.context);
+							lay_msgReceiver1.setId(nbMsgMin+1);
+							lay_msgReceiver1.setBackgroundColor(Color
+									.parseColor("#b7eec0"));
+
+							TextView txv_msgReceiver1 = new TextView(
+									this.context);
+							txv_msgReceiver1.setText(Html.fromHtml("<b><i>" + infoWebserviveReturn.getString("created_at_format") + "</i></b> : ") + infoWebserviveReturn.getString("message"));
+							lay_msgReceiver1.addView(txv_msgReceiver1);
+
+							if (i == 0 && nbMsgMin == 0) {
+								RelativeLayout.LayoutParams placement2 = new RelativeLayout.LayoutParams(
+										ViewGroup.LayoutParams.WRAP_CONTENT,
+										ViewGroup.LayoutParams.WRAP_CONTENT);
+								placement2.addRule(RelativeLayout.ALIGN_BASELINE, lay_message_current.getId());
+								placement2.addRule(RelativeLayout.ALIGN_PARENT_LEFT, lay_message_current.getId());
+								placement2.setMargins(0, 20, 50, 20);
+								lay_msgReceiver1.setLayoutParams(placement2);
+								lay_msgReceiver1.setPadding(50, 10, 10, 10);
+								lay_message_current.addView(lay_msgReceiver1);
+							} else {
+								RelativeLayout.LayoutParams placement2 = new RelativeLayout.LayoutParams(
+										ViewGroup.LayoutParams.WRAP_CONTENT,
+										ViewGroup.LayoutParams.WRAP_CONTENT);
+								placement2.addRule(RelativeLayout.BELOW, nbMsgMin);
+								placement2.addRule(RelativeLayout.ALIGN_PARENT_LEFT, lay_message_current.getId());
+								placement2.setMargins(0, 20, 50, 20);
+								lay_msgReceiver1.setLayoutParams(placement2);
+								lay_msgReceiver1.setPadding(50, 10, 10, 10);
+								lay_message_current.addView(lay_msgReceiver1);
+							}
+						}						
+						nbMsgMin++;
+					}				
+				} catch (JSONException e) {
+					Log.e("log_MessagingService_post",
+							"Erreur d'affichage des messages : " + e.toString());
+				}
+			}
+		} else if (connection.equals("MessagingSend")) {
+			if (result){
+				// A defaut de trouvé un meilleur ajout des nouveaux messages dynamiquement
+				Intent intent = new Intent(this.context, MessagingService.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+				this.context.startActivity(intent);
+			}else{
+				Toast.makeText(this.context,
+						"Erreur d'envoie message",
+						Toast.LENGTH_LONG).show();
+			}
+		
+		} 
 		// On enleve le loader de chargement
 		pd.dismiss();
 	}
@@ -347,8 +482,52 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 			} catch (JSONException e) {
 				Log.e("log_ForgetPassword", "Erreur de récupération de mot de passe perdu" + e.toString());
 			}
-		}else if (connection.equals("listMember")) {
+		}else if(connection.equals("MessagingService")){
+			String url = this.domainUrl + "/messaging-service-mobile.php";
+			// On récupére les info du serveur
+			try {
+				this.arrayInfoWebservice = getServerData(this.data, url);
+				JSONObject infoWebserviveReturnError = arrayInfoWebservice
+						.getJSONObject(0);
+				
+				Boolean errorMessageReceive = infoWebserviveReturnError.isNull("isOk");
 
+				if(errorMessageReceive){ //On affiche la liste des messages
+					res=true;
+				}else{ //Sinon plus de message à afficher
+					res=false;
+				}
+			} catch (Exception e) {
+				res = false;
+				Log.e("log_MessagingService", "Erreur de récupération des messages" + e.toString());
+			}
+		}else if(connection.equals("MessagingSend")){
+			//Envoie d'une message à un ami
+			String url = this.domainUrl + "/messaging-service-mobile.php";
+			// On récupére les info du serveur
+			try {
+				JSONArray infoServerData = getServerData(this.data, url);
+				JSONObject infoWebserviveReturn = infoServerData
+						.getJSONObject(0);
+				Log.e("infoWebserviveReturn", "Erreur d'envoie de message" + infoWebserviveReturn);
+				// Parse les données JSON
+				// Si la date de modification est différente alors on doit charger les nouvelles données
+				if (infoWebserviveReturn.getInt("isOk") == 1) {
+					res = true;
+				}else{
+					res = false;
+				}
+			} catch (Exception e) {
+				res = false;
+				Log.e("log_MessagingSend", "Erreur d'envoie de message" + e.toString());
+			}
+		}else if (connection.equals("listObject")){
+			//Envoie d'une message à un ami
+			String url = this.domainUrl + "/list-object.php";
+			// On récupére les info du serveur
+			Log.e("log_listMsgConnction", "Affichage msg : " + this.arrayInfoWebservice);
+			this.arrayInfoWebservice = getServerData(this.data, url);
+			res = false;
 		} else if (connection.equals("listEvent")) {
 
 		} else if (connection.equals("photoGalery")) {
@@ -361,29 +540,6 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 			res = false;
 		}
 		return res;
-	}
-
-	/**
-	 * Set information to server Animalio
-	 */
-	public void postData() {
-		try { // Création du client http
-			HttpClient httpclient = new DefaultHttpClient();
-			setRetry(); // On lui donne la possibilité de retenter la connexion
-						// en cas d'échec
-			((AbstractHttpClient) httpclient)
-					.setHttpRequestRetryHandler(myRetryHandler);
-			// On définie l'url du webservice en php
-			HttpPost httppost = new HttpPost(
-					"http://m.animalio.fr/Authentication.php");
-			// On définie l'url du webservice en php
-			httppost.setEntity(new UrlEncodedFormEntity(this.data));
-			ResponseHandler<String> responseHandler = new BasicResponseHandler();
-			// on envoie les données au serveur et on récupère sa réponse
-			String response = httpclient.execute(httppost, responseHandler);
-		} catch (Exception e) {
-			Log.e("log_tag", "Error:  " + e.toString());
-		}
 	}
 
 	/**
@@ -521,5 +677,10 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 				Toast.LENGTH_LONG);
 		t.setGravity(Gravity.BOTTOM, 0, 40);
 		t.show();
+	}
+	
+	/*GETTER & SETTER*/
+	public JSONArray getArrayInfoWebservice() {
+		return arrayInfoWebservice;
 	}
 }

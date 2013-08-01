@@ -1,0 +1,178 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity" 
+    android:background="@drawable/background_authentication_xml">
+
+    
+    <Button
+        android:id="@+id/btn_registration"
+        style="@style/button_auth"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="Modifier" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/btn_registration" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp" >
+            
+            <TextView
+                android:id="@+id/update_txtView_lastname"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="8dp"
+	            android:layout_marginBottom="6dp"
+	            android:text="Nom* :"
+	            android:textColor="#808080"
+	            android:textSize="18sp" />
+            
+            <EditText
+                android:id="@+id/update_lastname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical|left"
+                android:inputType="text"
+                android:layout_marginBottom="5dp"
+                android:hint="Nom"/>
+            
+            <TextView
+                android:id="@+id/update_txtView_firstname"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="8dp"
+	            android:layout_marginBottom="6dp"
+	            android:text="Prénom* :"
+	            android:textColor="#808080"
+	            android:textSize="18sp" />
+            
+            <EditText
+                android:id="@+id/update_firstname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical|left"
+                android:inputType="text"
+                android:layout_marginBottom="5dp"
+                android:hint="Prénom" />
+            
+            <TextView
+                android:id="@+id/update_txtView_email"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="8dp"
+	            android:layout_marginBottom="6dp"
+	            android:text="Email :"
+	            android:textColor="#808080"
+	            android:textSize="18sp" />
+            
+            <EditText
+                android:id="@+id/update_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false" 
+		        android:cursorVisible="false" 
+		        android:focusable="false" 
+		        android:focusableInTouchMode="false"
+                android:layout_gravity="center"
+                android:gravity="center_vertical|left"
+                android:inputType="text"
+                android:layout_marginBottom="5dp"
+                android:hint="Email"/>
+            
+            <TextView
+                android:id="@+id/update_txtView_nickname"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="8dp"
+	            android:layout_marginBottom="6dp"
+	            android:text="Pseudo* :"
+	            android:textColor="#808080"
+	            android:textSize="18sp" />
+            
+            <EditText
+                android:id="@+id/update_nickname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical|left"
+                android:inputType="text"
+                android:layout_marginBottom="5dp"
+                android:hint="Pseudo"/>
+            
+            <TextView
+                android:id="@+id/update_txtView_birthday"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="8dp"
+	            android:layout_marginBottom="6dp"
+	            android:text="Date de naissance :"
+	            android:textColor="#808080"
+	            android:textSize="18sp" />
+            
+            <EditText
+                android:id="@+id/update_birthday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical|left"
+                android:layout_marginBottom="5dp"
+                android:hint="Date de naissance"/>
+            
+            <TextView
+                android:id="@+id/update_txtView_phone"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="8dp"
+	            android:layout_marginBottom="6dp"
+	            android:text="Tél. :"
+	            android:textColor="#808080"
+	            android:textSize="18sp" />
+            
+            <EditText
+                android:id="@+id/update_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical|left"
+                android:inputType="phone"
+                android:layout_marginBottom="5dp"
+                android:hint="Numéro fixe" />
+            
+            <TextView
+                android:id="@+id/update_txtView_mobile"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="8dp"
+	            android:layout_marginBottom="6dp"
+	            android:text="Port. :"
+	            android:textColor="#808080"
+	            android:textSize="18sp" />
+            
+            <EditText
+                android:id="@+id/update_phone_mobile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical|left"
+                android:inputType="phone"
+                android:layout_marginBottom="5dp"
+                android:imeOptions="actionGo"
+                android:hint="Numéro mobile"/>
+            
+           
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

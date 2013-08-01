@@ -3,7 +3,7 @@
     <!--
         Base application theme for API 14+. This theme completely replaces
         AppBaseTheme from BOTH res/values/styles.xml and
-        res/values-v11/styles.xml on API 14+ devices.
+        res/values-v11/styles.xml on API 14+ devices.
     -->
     <!-- THEMES -->
     <style name="Theme.Animalio" parent="android:Theme.Holo.Light.DarkActionBar">
@@ -17,6 +17,7 @@
         <item name="android:actionDropDownStyle">@style/DropDownNav</item>
         <item name="android:spinnerDropDownItemStyle">@style/DropDownItem</item>
         <item name="android:spinnerItemStyle">@style/SpinnerItem</item>
+        <item name="android:editTextStyle">@style/animalio_editText</item>
     </style>
 
     <!-- Action Bar Style -->
@@ -88,6 +89,16 @@
         <item name="android:shadowRadius">2</item>
         <item name="android:background">@drawable/btn_auth_green</item>
     </style>
-
+    
+    <style name="animalio_editText">
+        <item name="android:focusable">true</item>
+	 	<item name="android:focusableInTouchMode">true</item>
+	 	<item name="android:clickable">true</item>
+	 	<item name="android:textColor">#550000</item>
+	 	<item name="android:gravity">center_vertical</item>
+		<item name="android:background">@drawable/edit_text_xml</item>
+		<item name="android:textColorHint">@color/hintTextField_authDial</item>
+		<item name="android:padding">10dp</item>
+    </style>
 
 </resources>

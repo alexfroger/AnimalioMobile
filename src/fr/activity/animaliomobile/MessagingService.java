@@ -1,133 +1,292 @@
 package fr.activity.animaliomobile;
 
-import fr.animaliomobile.R;
-import android.os.Bundle;
+import java.util.ArrayList;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
+import android.app.ActionBar;
 import android.app.Activity;
-import android.graphics.Color;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
-import android.view.ViewGroup;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.ScrollView;
+import android.widget.Toast;
+import fr.animaliomobile.R;
+import fr.library.animaliomobile.ConnectionWebservicePHP;
+import fr.library.animaliomobile.TypefaceSpan;
 
-public class MessagingService extends Activity {
+public class MessagingService extends Activity{
 
+	private Button btn_members;
+	private Button btn_gallery;
+	private Button btn_profil;
+	private Button btn_events;
+	private Button btn_live;
+	private Button btn_photo;
+	
 	private LinearLayout.LayoutParams param_sender;
 	private LinearLayout.LayoutParams param_receiver;
+	private static ArrayList<NameValuePair> data = new ArrayList<NameValuePair>();
 	private RelativeLayout lay_message;
+	private ScrollView lay_scrollview;
+	private Button btn_msg_message;
+	private static EditText edt_message;
+	
+	//Nombre de message à afficher, 20 messages par chargement
+	private int nbMsgMin = 0 ;
+	private int nbMsgMax = 20;
+	private static int idUser;
+	private static int idFriend;
+	private static String friendName;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.messaging_service);
 		
-		lay_message = (RelativeLayout) findViewById(R.id.lay_message);
+		//On récupère les varaibles passer par une autre vue 
+		Bundle extra = getIntent().getExtras();
+		this.idFriend = extra.getInt("idFriend");
+		this.friendName = extra.getString("friendName");
 		
-		LinearLayout lay_msgSender1 = new LinearLayout(this);
-		LinearLayout lay_msgSender2 = new LinearLayout(this);
-		LinearLayout lay_msgSender3 = new LinearLayout(this);
-		LinearLayout lay_msgSender4 = new LinearLayout(this);
-		LinearLayout lay_msgReceiver1 = new LinearLayout(this);
-		LinearLayout lay_msgReceiver2 = new LinearLayout(this);
-		LinearLayout lay_msgReceiver3 = new LinearLayout(this);
-		
-		lay_msgSender1.setId(1);
-		lay_msgSender2.setId(2);
-		lay_msgSender3.setId(3);
-		lay_msgSender4.setId(4);
-		lay_msgReceiver1.setId(5);
-		lay_msgReceiver2.setId(6);
-		lay_msgReceiver3.setId(7);
-		
-		lay_msgSender1.setBackgroundColor(Color.parseColor("#b7eeeb"));
-		lay_msgSender2.setBackgroundColor(Color.parseColor("#b7eeeb"));
-		lay_msgSender3.setBackgroundColor(Color.parseColor("#b7eeeb"));
-		lay_msgSender4.setBackgroundColor(Color.parseColor("#b7eeeb"));
-		lay_msgReceiver1.setBackgroundColor(Color.parseColor("#b7eec0"));
-		lay_msgReceiver2.setBackgroundColor(Color.parseColor("#b7eec0"));
-		lay_msgReceiver3.setBackgroundColor(Color.parseColor("#b7eec0"));
-		
-		TextView txv_msgSender1 = new TextView(this);
-		TextView txv_msgSender2 = new TextView(this);
-		TextView txv_msgSender3 = new TextView(this);
-		TextView txv_msgSender4 = new TextView(this);
-		TextView txv_msgReceiver1 = new TextView(this);
-		TextView txv_msgReceiver2 = new TextView(this);
-		TextView txv_msgReceiver3 = new TextView(this);
-		
-		txv_msgSender1.setText("Message envoyé 1 : Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam interdum purus in orci ultricies, sit amet porta justo aliquam. Proin.");
-		txv_msgSender2.setText("Message envoyé 2 : Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum interdum orci in diam imperdiet laoreet. Curabitur id eleifend sem. Aliquam. ");
-		txv_msgSender3.setText("Message envoyé 3 : Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent et mauris iaculis justo pellentesque tempus. Phasellus luctus quis nisl a. ");
-		txv_msgSender4.setText("Message envoyé 4 : Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla imperdiet risus id viverra fringilla. Praesent in congue turpis. Maecenas faucibus. ");
-		txv_msgReceiver1.setText("Message reçu 1 : Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut vel felis placerat, consectetur arcu eget, aliquet enim. Nulla a adipiscing. ");
-		txv_msgReceiver2.setText("Message reçu 2 : Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas a elit arcu. Ut convallis eros eu urna hendrerit hendrerit. Praesent. ");
-		txv_msgReceiver3.setText("Message reçu 3 : Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur facilisis gravida iaculis. Mauris risus nunc, blandit et lacus a, viverra. ");
-		
-		lay_msgSender1.addView(txv_msgSender1);
-		lay_msgSender2.addView(txv_msgSender2);
-		lay_msgSender3.addView(txv_msgSender3);
-		lay_msgSender4.addView(txv_msgSender4);
-		lay_msgReceiver1.addView(txv_msgReceiver1);
-		lay_msgReceiver2.addView(txv_msgReceiver2);
-		lay_msgReceiver3.addView(txv_msgReceiver3);
-		
-		RelativeLayout.LayoutParams placement1 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-		placement1.addRule(RelativeLayout.ALIGN_PARENT_TOP, lay_message.getId());
-		placement1.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, lay_message.getId());	
-		placement1.setMargins(50, 20, 0, 20);
-		lay_msgSender1.setLayoutParams(placement1);
-		lay_message.addView(lay_msgSender1);
-		
-		RelativeLayout.LayoutParams placement2 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-		placement2.addRule(RelativeLayout.BELOW, lay_msgSender1.getId());
-		placement2.addRule(RelativeLayout.ALIGN_PARENT_LEFT, lay_message.getId());
-		placement2.setMargins(0, 20, 50, 20);
-		lay_msgReceiver1.setLayoutParams(placement2);
-		lay_message.addView(lay_msgReceiver1);
+		//On Récupére les préférences utilisateur si elle existe
+		SharedPreferences preferences = PreferenceManager
+				.getDefaultSharedPreferences(getApplicationContext());
 
-		RelativeLayout.LayoutParams placement3 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-		placement3.addRule(RelativeLayout.BELOW, lay_msgReceiver1.getId());
-		placement3.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, lay_message.getId());
-		placement3.setMargins(50, 20, 0, 20);
-		lay_msgSender2.setLayoutParams(placement3);
-		lay_message.addView(lay_msgSender2);
+		this.idUser = Integer.parseInt(preferences.getString("idUser", ""));
 		
-		RelativeLayout.LayoutParams placement4 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-		placement4.addRule(RelativeLayout.BELOW, lay_msgSender2.getId());
-		placement4.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, lay_message.getId());
-		placement4.setMargins(50, 20, 0, 20);
-		lay_msgSender3.setLayoutParams(placement4);
-		lay_message.addView(lay_msgSender3);
+		//On récupére les layout nécessaire
+		lay_message = (RelativeLayout) findViewById(R.id.lay_message);
+		lay_scrollview = (ScrollView) findViewById(R.id.lay_scrollview);
+		btn_msg_message = (Button) findViewById(R.id.btn_message);
+		edt_message = (EditText) findViewById(R.id.edt_message);
 		
-		RelativeLayout.LayoutParams placement5 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-		placement5.addRule(RelativeLayout.BELOW, lay_msgSender3.getId());
-		placement5.addRule(RelativeLayout.ALIGN_PARENT_LEFT, lay_message.getId());
-		placement5.setMargins(0, 20, 50, 20);
-		lay_msgReceiver2.setLayoutParams(placement5);
-		lay_message.addView(lay_msgReceiver2);
+		//On affiche les 20 premier messages
+		getMessageWebservice(this.idUser, this.idFriend, nbMsgMin, nbMsgMax, lay_message, lay_scrollview);
 		
-		RelativeLayout.LayoutParams placement6 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-		placement6.addRule(RelativeLayout.BELOW, lay_msgReceiver2.getId());
-		placement6.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, lay_message.getId());
-		placement6.setMargins(50, 20, 0, 20);
-		lay_msgSender4.setLayoutParams(placement6);
-		lay_message.addView(lay_msgSender4);
+		//On afffecte les actions lors du click
+		btn_msg_message.setOnClickListener(eventClick);
 		
-		RelativeLayout.LayoutParams placement7 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-		placement7.addRule(RelativeLayout.BELOW, lay_msgSender4.getId());
-		placement7.addRule(RelativeLayout.ALIGN_PARENT_LEFT, lay_message.getId());
-		placement7.setMargins(0, 20, 50, 20);
-		lay_msgReceiver3.setLayoutParams(placement7);
-		lay_message.addView(lay_msgReceiver3);
+		lay_scrollview.setOnTouchListener(new OnTouchListener() {
+			int action;
+			float startY = 0;
+			float endY = 0;
+			int diff = 0;
+
+			public boolean onTouch(View v, MotionEvent event) {
+				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					action = 1;
+					startY = event.getAxisValue(MotionEvent.AXIS_Y);
+				}
+				if (event.getAction() == MotionEvent.ACTION_MOVE) {
+					action++;
+				}
+				if (event.getAction() == MotionEvent.ACTION_UP) {
+					endY = event.getAxisValue(MotionEvent.AXIS_Y);
+					diff = lay_scrollview.getHeight() - (lay_message.getHeight() - v.getScrollY());
+					
+					if((endY - startY) < 0){ //Si on scroll vers le bas
+						//Et qu'il y a pas de scroll
+						if(v.getScrollY() == 0 && action >= 5){
+							nbMsgMin += 20;
+							// Instancie la connection au webservice en thread
+							getMessageWebservice(idUser, idFriend, nbMsgMin, nbMsgMax, lay_message, lay_scrollview);
+						}else if(diff == 0 && action >= 5){
+							//Et si on est arrivé en bas
+							nbMsgMin += 20;
+							// Instancie la connection au webservice en thread
+							getMessageWebservice(idUser, idFriend, nbMsgMin, nbMsgMax, lay_message, lay_scrollview);
+						}
+						//Et si on est arrivé en bas
+					}
+				}
+				
+				return false;
+			}
+		});
+		
+		btn_members = (Button)findViewById(R.id.btn_members);
+		btn_gallery = (Button)findViewById(R.id.btn_gallery);
+		btn_profil = (Button)findViewById(R.id.btn_profil);
+		btn_events = (Button)findViewById(R.id.btn_events);
+		btn_live = (Button)findViewById(R.id.btn_live);
+		btn_photo = (Button)findViewById(R.id.btn_photo);
+		
+		btn_gallery.setOnClickListener(eventClick);
+		btn_profil.setOnClickListener(eventClick);
+		btn_events.setOnClickListener(eventClick);
+		btn_live.setOnClickListener(eventClick);
+		btn_photo.setOnClickListener(eventClick);
+		btn_members.setOnClickListener(eventClick);
 	}
 	
-	
+	/**
+	 * Return message into user and his friend
+	 * @param Int idUser
+	 * @param Int idFriend
+	 * @param Int nbMsgMin
+	 * @param Int nbMsgMax
+	 * @return void
+	 */
+	public void getMessageWebservice (int idUser, int idFriend, int nbMsgMin, int nbMsgMax, RelativeLayout layMessage, ScrollView layScrollView){
+		// On vide la liste de données à envoyé si existe déjà
+		data.clear();
 
+		// On ajoute les valeurs
+		data.add(new BasicNameValuePair("id_user", String.valueOf(idUser)));
+		data.add(new BasicNameValuePair("id_friend", String.valueOf(idFriend)));
+		data.add(new BasicNameValuePair("nb_msg_min", String.valueOf(nbMsgMin)));
+		data.add(new BasicNameValuePair("nb_msg_max", String.valueOf(nbMsgMax)));
+
+		// Instancie la connection au webservice en thread
+		if (ConnectionWebservicePHP.haveNetworkConnection(this)) { // Si connexion existe
+			ConnectionWebservicePHP calcul = new ConnectionWebservicePHP(
+					1, "MessagingService", this, data, layMessage, layScrollView, nbMsgMin);
+			calcul.execute();
+		} else { // Sinon toast de problème
+			ConnectionWebservicePHP.haveNetworkConnectionError(this);
+		}
+	}
+	
+//	Create Listener event
+    OnClickListener eventClick = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			if(v==btn_msg_message){
+				if(edt_message.getText().toString().equals("")){
+					Toast.makeText(getApplicationContext(), "Le message est vide",
+							Toast.LENGTH_LONG).show();
+				}else{
+					// On vide la liste de données à envoyé si existe déjà
+					data.clear();
+	
+					// On ajoute les valeurs
+					data.add(new BasicNameValuePair("id_user", String.valueOf(idUser)));
+					data.add(new BasicNameValuePair("id_friend", String.valueOf(idFriend)));
+					data.add(new BasicNameValuePair("send_msg", "1"));
+					data.add(new BasicNameValuePair("msg", edt_message.getText().toString()));
+					
+					// Instancie la connection au webservice en thread
+					if (ConnectionWebservicePHP.haveNetworkConnection(v.getContext())) { // Si connexion existe
+						ConnectionWebservicePHP calcul = new ConnectionWebservicePHP(
+								1, "MessagingSend", v.getContext(), data);
+						calcul.execute();
+					} else { // Sinon toast de problème
+						ConnectionWebservicePHP.haveNetworkConnectionError(v.getContext());
+					}
+				}
+			}else if(v==btn_gallery){
+				//Display Gallery Activity
+				Intent intent = new Intent(getApplicationContext(), Gallery.class);
+				startActivity(intent);
+				finish();
+				
+			}else if(v==btn_members){
+				Intent intent = new Intent(getApplicationContext(), MembersList.class);
+				startActivity(intent);
+				finish();
+			}else if(v==btn_profil){
+				//Display Gallery Activity
+				onBackPressed();
+			}
+			
+			else if(v==btn_events){
+				//Display Gallery Activity
+				Intent intent = new Intent(getApplicationContext(), Events.class);
+				startActivity(intent);
+				finish();
+			}
+			
+			else if(v==btn_live){
+				//Display Gallery Activity
+				Intent intent = new Intent(getApplicationContext(), AnimalioLive.class);
+				startActivity(intent);
+				finish();
+			}
+			
+			else if(v==btn_photo){
+				//Display the photo phone application
+				Toast t = Toast.makeText(Home.context,
+						"Faire la redirection vers photo de l'appli",
+						Toast.LENGTH_LONG);
+				t.setGravity(Gravity.BOTTOM, 0, 40);
+				t.show();
+			}
+		}
+    };
+    
+    /**
+	 * Gestion de l'action bar
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.messaging, menu);
+		getMenuInflater().inflate(R.menu.main_action_bar, menu);
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			ActionBar actionBar = getActionBar();
+			SpannableString s = new SpannableString(friendName);
+			s.setSpan(new TypefaceSpan(this, "Lobster"), 0, s.length(),
+					Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			actionBar.setTitle(s);
+			actionBar.setDisplayHomeAsUpEnabled(true);
+
+		}
+
 		return true;
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			onBackPressed();
+			// Comportement du bouton "Logo"
+			return true;
+		case R.id.menu_refresh:
+			// Comportement du bouton "Actualiser"
+			Intent i = new Intent (getApplicationContext(), MessagingService.class);
+			startActivity(i);
+			finish();
+			return true;
+		case R.id.menu_settings:
+			// Comportement du bouton "Paramètres"
+			return true;
+		case R.id.menu_delete:
+			// Comportement du bouton "Delete" A supprimer quand le popup parametre sera creer car dedans
+
+			// On créé l'Intent qui va nous permettre d'afficher l'autre Activity
+			Intent intent = new Intent(getApplicationContext(), Authentication.class);
+			// On supprime l'activity de login sinon
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+			startActivity(intent);  
+
+			//Puis on reset les informations utilisateurs
+			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+			SharedPreferences.Editor editor = preferences.edit();
+			editor.clear();	
+			editor.commit();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
 }
