@@ -68,16 +68,4 @@
     </string-array>
 
     <string name="title_activity_image_upload">ImageUpload</string>
-	
-    <!-- Profil animal -->
-    <string-array name="type_animal">
-        <item>Malaysia</item>
-        <item>United States</item>
-        <item>Indonesia</item>
-        <item>France</item>
-        <item>Italy</item>
-        <item>Singapore</item>
-        <item>New Zealand</item>
-        <item>India</item>
-    </string-array>
 </resources>

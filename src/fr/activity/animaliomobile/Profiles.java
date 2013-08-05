@@ -19,6 +19,7 @@ import android.app.ActionBar;
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -43,6 +44,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -52,6 +54,7 @@ import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -421,9 +424,6 @@ public class Profiles extends Activity {
 			 */
 			vf_profil.addView(createModificationAnimal(), param_lsv);
 			positionChild[8] = 0;
-
-			vf_profil.addView(createLayout("Supprimer l'animal"), param_lsv);
-			positionChild[9] = 1;
 			
 			//TextView
 			txt_an_lastname = (TextView) findViewById(R.id.update_txtView_an_lastname);
@@ -534,6 +534,9 @@ public class Profiles extends Activity {
 			String dateFormatBirthdayFormmated = new SimpleDateFormat("dd-MM-yyyy").format(dateFormatBirthday);
 			String dateFormatDeathFormmated = new SimpleDateFormat("dd-MM-yyyy").format(dateFormatDeath);
 			
+			//On ajoute les types et race au spinner type et race
+			addItemsTypeOnSpinner(infoAnimal.id);
+			
 			edt_upd_an_birthday.setHint(dateFormatBirthdayFormmated);
 			edt_upd_an_death.setHint(dateFormatDeathFormmated);
 			edt_upd_an_lastname.setHint(infoAnimal.name);
@@ -585,7 +588,11 @@ public class Profiles extends Activity {
 			} else if (v == btn_animal_modification) {
 				vf_profil.setDisplayedChild(positionChild[8]);
 			} else if (v == btn_delete_animal) {
-				vf_profil.setDisplayedChild(positionChild[9]);
+				Toast t = Toast.makeText(getApplicationContext(),
+						"Acitver la suppresion de l'animal",
+						Toast.LENGTH_LONG);
+				t.setGravity(Gravity.BOTTOM, 0, 40);
+				t.show();
 			} else if (v == btn_upd_animal){
 				//Modification du profil
 				//si ou ou plusieurs champs sont vides
@@ -1677,6 +1684,32 @@ public class Profiles extends Activity {
 		}
 	}
 
+	/**
+	 *  Add items into spinner Type
+	 */
+	public void addItemsTypeOnSpinner(int idType) {
+		//TODO Faire l'ajout des type dynamiquement par la suite.
+		Spinner spinner2 = (Spinner) findViewById(R.id.update_spinner_type_id);
+		List<String> list = new ArrayList<String>();
+		list.add("Chien");
+		list.add("Chat");
+		list.add("Furet");
+		list.add("Rongeur et lapin");
+		list.add("Oiseau");
+		list.add("Reptile");
+		list.add("Cheval");
+		list.add("Poisson");
+		list.add("Basse-cour");
+		list.add("Autres");
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, list);
+		dataAdapter
+				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		spinner2.setAdapter(dataAdapter);
+		spinner2.setSelection(idType, true);
+	}
+	  
+	  
 	private class ViewHolder {
 		ImageView imageWho;
 		ImageView imageWhom;
@@ -1687,8 +1720,9 @@ public class Profiles extends Activity {
 		TextView date;
 		TextView nbComm;
 		TextView nbLike;
-	}
+	}	
 }
+
 
 class Friend {
 	// Paramètre
