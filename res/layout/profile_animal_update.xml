@@ -1,0 +1,128 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity" 
+    android:background="@drawable/background_authentication_xml">
+
+    
+    <Button
+        android:id="@+id/btn_update_animal"
+        style="@style/button_auth"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="Modifier" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/btn_update_animal" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp" >
+            
+            <TextView
+                android:id="@+id/update_txtView_an_lastname"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="8dp"
+	            android:layout_marginBottom="6dp"
+	            android:text="Nom* :"
+	            android:textColor="#808080"
+	            android:textSize="18sp" />
+            
+            <EditText
+                android:id="@+id/update_an_lastname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical|left"
+                android:inputType="text"
+                android:layout_marginBottom="5dp"
+                android:hint="Description"/>
+            
+            <TextView
+                android:id="@+id/update_txtView_an_description"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="8dp"
+	            android:layout_marginBottom="6dp"
+	            android:text="Description :"
+	            android:textColor="#808080"
+	            android:textSize="18sp" />
+            
+            <EditText
+                android:id="@+id/update_an_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical|left"
+                android:inputType="textMultiLine"
+                android:layout_marginBottom="5dp"
+                android:hint="Description de votre animal" />    
+            
+             <TextView
+                android:id="@+id/update_type_id"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="8dp"
+	            android:layout_marginBottom="6dp"
+	            android:text="Type* :"
+	            android:textColor="#808080"
+	            android:textSize="18sp" />
+            
+            <Spinner
+		        android:id="@+id/update_spinner_type_id"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:entries="@array/type_animal" />
+            
+            <TextView
+                android:id="@+id/update_txtView_an_birthday"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="8dp"
+	            android:layout_marginBottom="6dp"
+	            android:text="Date de naissance* :"
+	            android:textColor="#808080"
+	            android:textSize="18sp" />
+            
+            <EditText
+                android:id="@+id/update_an_birthday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical|left"
+                android:layout_marginBottom="5dp"
+                android:hint="Date de naissance"/>
+            
+            <TextView
+                android:id="@+id/update_txtView_an_death"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="8dp"
+	            android:layout_marginBottom="6dp"
+	            android:text="Date de Décès :"
+	            android:textColor="#808080"
+	            android:textSize="18sp" />
+            
+            <EditText
+                android:id="@+id/update_an_death"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical|left"
+                android:layout_marginBottom="5dp"
+                android:hint="Date de décès"/>
+            
+           
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

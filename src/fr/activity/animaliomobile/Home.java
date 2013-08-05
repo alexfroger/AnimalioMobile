@@ -10,23 +10,18 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
-import android.widget.TextView;
 import android.widget.Toast;
 import fr.animaliomobile.R;
 import fr.library.animaliomobile.ConnectionWebservicePHP;
@@ -152,18 +147,20 @@ public class Home extends Activity {
 				startActivity(intent);
 			}
 			if(v==btnHomePhoto){
-				// TODO Creer la redirection vers appli photo tel
 				//Display the photo phone application
-				Toast t = Toast.makeText(Home.context,
-						"Faire la redirection vers photo de l'appli",
-						Toast.LENGTH_LONG);
-				t.setGravity(Gravity.BOTTOM, 0, 40);
-				t.show();
+//				Toast t = Toast.makeText(Home.context,
+//						"Faire la redirection vers photo de l'appli",
+//						Toast.LENGTH_LONG);
+//				t.setGravity(Gravity.BOTTOM, 0, 40);
+//				t.show();
+				
+				Intent intent = new Intent(getApplicationContext(), ImageUpload.class);
+				startActivity(intent);
 			}
 		}
 	};
-
-		/**
+	
+	/**
 	 * Gestion de l'action bar
 	 */
 	@Override

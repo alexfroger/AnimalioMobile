@@ -40,6 +40,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
@@ -72,6 +73,7 @@ public class Profiles extends Activity {
 	private Button btn_user_modification;
 	private Button btn_galerie;
 	private Button btn_profil_update;
+	private Button btn_upd_animal;
 	private ViewFlipper vf_profil;
 	private static int typeProfil;
 	private static ListView.LayoutParams param_lsv;
@@ -91,10 +93,13 @@ public class Profiles extends Activity {
 	private Button btn_events;
 	private Button btn_live;
 	private Button btn_photo;
+	
 	private RoundedImageView imv_profil;
 	private ImageView imv_cover;
+	
 	private Typeface Arimo;
 	private Typeface Lobster;
+	
 	private EditText upd_lastname;
 	private EditText upd_firstname;
 	private EditText upd_email;
@@ -102,7 +107,19 @@ public class Profiles extends Activity {
 	private EditText upd_birthday;
 	private EditText upd_phone;
 	private EditText upd_phone_mobile;
+	private EditText edt_upd_an_birthday;
+	private EditText edt_upd_an_death;
+	private EditText edt_upd_an_lastname;
+	private EditText edt_upd_an_description;
 
+    private TextView txt_an_lastname;
+    private TextView txt_an_description;
+    private TextView txt_an_birthday;
+    private TextView txt_an_death;
+	
+	private Calendar myCalendar;
+	private DatePickerDialog.OnDateSetListener date;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -123,17 +140,37 @@ public class Profiles extends Activity {
 		ListView.LayoutParams param_lsv = new ListView.LayoutParams(
 				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		
-		imv_profil = (RoundedImageView)findViewById(R.id.imv_profil);
-		imv_profil.setImageDrawable(getResources().getDrawable(R.drawable.img_defaultuser));
+//		imv_profil = (RoundedImageView)findViewById(R.id.imv_profil);
+//		imv_profil.setImageDrawable(getResources().getDrawable(R.drawable.ic_profil_undefined));
 
 		imv_cover = (ImageView)findViewById(R.id.imv_cover);
-		imv_cover.setImageDrawable(getResources().getDrawable(R.drawable.img_defaultcover));
+		imv_cover.setImageDrawable(getResources().getDrawable(R.drawable.profil_test));
 		imv_cover.setScaleType(ScaleType.FIT_XY);
 
 		Arimo = Typeface.createFromAsset(
 				getApplicationContext().getAssets(), "Arimo-Regular.ttf");
 		Lobster = Typeface.createFromAsset(
 				getApplicationContext().getAssets(), "Lobster.otf");
+		
+		myCalendar = Calendar.getInstance();
+
+		date = new DatePickerDialog.OnDateSetListener() {
+
+		    @Override
+		    public void onDateSet(DatePicker view, int year, int monthOfYear,
+		            int dayOfMonth) {
+		        myCalendar.set(Calendar.YEAR, year);
+		        myCalendar.set(Calendar.MONTH, monthOfYear);
+		       
+		        myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+		        String myFormat = "dd-MM-yyyy"; //In which you need put here
+			    SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+	
+			    upd_birthday.setText(sdf.format(myCalendar.getTime()));
+		    }
+
+		};
 		
 		switch (typeProfil) {
 		case 0: // Profil utilisateur
@@ -234,7 +271,6 @@ public class Profiles extends Activity {
 			try {
 				dateFormat = new SimpleDateFormat("yyyy-MM-dd").parse(user_birthday);
 			} catch (ParseException e1) {
-				// TODO Auto-generated catch block
 				Log.e("log_profilModif",
 						"Date Formatted : " + user_birthday);
 				e1.printStackTrace();
@@ -258,26 +294,6 @@ public class Profiles extends Activity {
 			updBirthday.setTypeface(Lobster);
 			updPhone.setTypeface(Lobster);
 			updPhoneMobile.setTypeface(Lobster);
-			
-			final Calendar myCalendar = Calendar.getInstance();
-
-			final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-
-			    @Override
-			    public void onDateSet(DatePicker view, int year, int monthOfYear,
-			            int dayOfMonth) {
-			        myCalendar.set(Calendar.YEAR, year);
-			        myCalendar.set(Calendar.MONTH, monthOfYear);
-			       
-			        myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-			        String myFormat = "dd-MM-yyyy"; //In which you need put here
-				    SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-		
-				    upd_birthday.setText(sdf.format(myCalendar.getTime()));
-			    }
-
-			};
 			
 			upd_birthday.setOnTouchListener(new OnTouchListener() {
 
@@ -362,7 +378,7 @@ public class Profiles extends Activity {
 			btn_delete_friend = (Button) findViewById(R.id.btn_delete_friend);
 			btn_delete_friend.setVisibility(View.VISIBLE);
 			btn_delete_friend.setOnClickListener(eventClick);
-
+		
 			/*
 			 * Création des éléments du ViewFlipper
 			 */
@@ -380,11 +396,9 @@ public class Profiles extends Activity {
 			positionChild[3]=3;
 
 			vf_profil.addView(createModification(), param_lsv);
-			positionChild[6] = 4;
-
+			positionChild[6] = 4;			
 			break;
-		case 3: //Profil animal
-
+		case 3: //Profil animal		
 			/*
 			 * Création des boutons
 			 */
@@ -405,12 +419,61 @@ public class Profiles extends Activity {
 			/*
 			 * Création des éléments du ViewFlipper
 			 */
-
-			vf_profil.addView(createLayout("Modifier l'animal"), param_lsv);
+			vf_profil.addView(createModificationAnimal(), param_lsv);
 			positionChild[8] = 0;
 
 			vf_profil.addView(createLayout("Supprimer l'animal"), param_lsv);
 			positionChild[9] = 1;
+			
+			//TextView
+			txt_an_lastname = (TextView) findViewById(R.id.update_txtView_an_lastname);
+			txt_an_description = (TextView) findViewById(R.id.update_txtView_an_description);
+			txt_an_birthday = (TextView) findViewById(R.id.update_txtView_an_birthday);
+			txt_an_death = (TextView) findViewById(R.id.update_txtView_an_death);
+			
+			//EditText
+			edt_upd_an_birthday = (EditText) findViewById(R.id.update_an_birthday);
+			edt_upd_an_death = (EditText) findViewById(R.id.update_an_death);
+			edt_upd_an_lastname = (EditText) findViewById(R.id.update_an_lastname);
+			edt_upd_an_description = (EditText) findViewById(R.id.update_an_description);
+			
+			//Button
+			btn_upd_animal = (Button) findViewById(R.id.btn_update_animal);
+		    
+			//On met la police au textview
+			txt_an_lastname.setTypeface(Lobster);
+		    txt_an_description.setTypeface(Lobster);
+		    txt_an_birthday.setTypeface(Lobster);
+		    txt_an_death.setTypeface(Lobster);
+			
+			//Event à la touche ou au click propre a cette vue
+			btn_upd_animal.setOnClickListener(eventClick);
+
+			edt_upd_an_birthday.setOnTouchListener(new OnTouchListener() {
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					if (event.getAction() == KeyEvent.ACTION_UP){
+						new DatePickerDialog(v.getContext(), date, myCalendar
+								.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+								myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+					}
+					return false;
+				}
+
+			});
+			
+			edt_upd_an_death.setOnTouchListener(new OnTouchListener() {
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					if (event.getAction() == KeyEvent.ACTION_UP){
+						new DatePickerDialog(v.getContext(), date, myCalendar
+								.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+								myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+					}
+					return false;
+				}
+
+			});
 			
 			// On vide la liste de données à envoyé si existe déjà
 			data.clear();
@@ -457,6 +520,24 @@ public class Profiles extends Activity {
 			} else { // Sinon toast de problème
 				ConnectionWebservicePHPProfile.haveNetworkConnectionError(this);
 			}
+			
+			//Formattage de la date de naissance et de décès
+			Date dateFormatBirthday = null;
+			Date dateFormatDeath = null;
+			try {
+				dateFormatBirthday = new SimpleDateFormat("yyyy-MM-dd").parse(infoAnimal.birthday);
+				dateFormatDeath = new SimpleDateFormat("yyyy-MM-dd").parse(infoAnimal.death);
+			} catch (ParseException e1) {
+				Log.e("log_profilModif",
+						"Date Formatted : " + e1.toString());
+			}
+			String dateFormatBirthdayFormmated = new SimpleDateFormat("dd-MM-yyyy").format(dateFormatBirthday);
+			String dateFormatDeathFormmated = new SimpleDateFormat("dd-MM-yyyy").format(dateFormatDeath);
+			
+			edt_upd_an_birthday.setHint(dateFormatBirthdayFormmated);
+			edt_upd_an_death.setHint(dateFormatDeathFormmated);
+			edt_upd_an_lastname.setHint(infoAnimal.name);
+			edt_upd_an_description.setHint(infoAnimal.description);
 			break;
 		}
 
@@ -470,12 +551,15 @@ public class Profiles extends Activity {
 		btn_profil.setBackgroundResource(R.drawable.ic_profil_pressed);
 		
 		//Evt click
-		
 		btn_members.setOnClickListener(eventClick);
 		btn_gallery.setOnClickListener(eventClick);
 		btn_events.setOnClickListener(eventClick);
 		btn_live.setOnClickListener(eventClick);
 		btn_photo.setOnClickListener(eventClick);
+		
+		//On empeche le clavier de s'afficher
+		getWindow().setSoftInputMode(
+		         WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 	}
 
 	OnClickListener eventClick = new OnClickListener() {
@@ -502,7 +586,85 @@ public class Profiles extends Activity {
 				vf_profil.setDisplayedChild(positionChild[8]);
 			} else if (v == btn_delete_animal) {
 				vf_profil.setDisplayedChild(positionChild[9]);
-			} else if(v == btn_profil_update){
+			} else if (v == btn_upd_animal){
+				//Modification du profil
+				//si ou ou plusieurs champs sont vides
+				if(edt_upd_an_lastname.getText().toString().equals("") || edt_upd_an_birthday.getText().toString().equals("")){
+					Toast t = Toast.makeText(getApplicationContext(),
+							"Veuillez remplir les champs obligatoires",
+							Toast.LENGTH_LONG);
+					t.setGravity(Gravity.BOTTOM, 0, 40);
+					t.show();
+				}else{
+					// On vide la liste de données à envoyé si existe déjà
+					data.clear();
+	
+					// On ajoute les valeurs
+					data.add(new BasicNameValuePair("id_user", idUser));
+					data.add(new BasicNameValuePair("list_name", "updateProfilAnimal"));
+					data.add(new BasicNameValuePair("upd_an_birthday", edt_upd_an_birthday.getText().toString()));
+					data.add(new BasicNameValuePair("upd_an_death", edt_upd_an_death.getText().toString()));
+					data.add(new BasicNameValuePair("upd_an_description", edt_upd_an_description.getText().toString()));
+					data.add(new BasicNameValuePair("upd_an_lastname", edt_upd_an_lastname.getText().toString()));
+					data.add(new BasicNameValuePair("upd_animalId", String.valueOf(infoAnimal.id)));
+					
+					// Instancie la connection au webservice en thread
+					if (ConnectionWebservicePHPProfile.haveNetworkConnection(v.getContext())) { 
+						ConnectionWebservicePHPProfile calcul = new ConnectionWebservicePHPProfile(
+								1, "listObject", v.getContext(), data);
+						calcul.execute();
+						try {
+							arrayInfoWebservice = calcul.get();
+							
+							JSONObject infoWebserviveReturn;
+							try {
+								infoWebserviveReturn = arrayInfoWebservice
+										.getJSONObject(0);
+								
+								if (infoWebserviveReturn.getInt("isOk") == 0) {
+									//Erreur de modification du profil
+									Toast.makeText(v.getContext(),
+											"Erreur d'enregistrement",
+											Toast.LENGTH_LONG).show();
+								} else { // Profil modifié
+									// On stock les infos utilisateurs dans des preferences
+									Toast.makeText(v.getContext(),
+											"Profil mis à jour avec succès",
+											Toast.LENGTH_LONG).show();
+									
+									//Formattage de la date de naissance et de décès
+									Date dateFormatBirthday = null;
+									Date dateFormatDeath = null;
+									try {
+										dateFormatBirthday = new SimpleDateFormat("yyyy-MM-dd").parse(infoWebserviveReturn.getString("an_birthday"));
+										dateFormatDeath = new SimpleDateFormat("yyyy-MM-dd").parse(infoWebserviveReturn.getString("an_death"));
+									} catch (ParseException e1) {
+										Log.e("log_profilModif",
+												"Date Formatted : " + e1.toString());
+									}
+									String dateFormatBirthdayFormmated = new SimpleDateFormat("dd-MM-yyyy").format(dateFormatBirthday);
+									String dateFormatDeathFormmated = new SimpleDateFormat("dd-MM-yyyy").format(dateFormatDeath);
+									
+									edt_upd_an_birthday.setHint(dateFormatBirthdayFormmated);
+									edt_upd_an_death.setHint(dateFormatDeathFormmated);
+									edt_upd_an_lastname.setHint(infoWebserviveReturn.getString("an_name"));
+									edt_upd_an_description.setHint(infoWebserviveReturn.getString("an_description"));
+								}
+							} catch (JSONException e) {
+								e.printStackTrace();
+							}
+						} catch (InterruptedException e) {
+							Log.e("log_listObjectMessage",
+									"Erreur 1 Interrupted :" + e.toString());
+						} catch (ExecutionException e) {
+							Log.e("log_listObjectMessage",
+									"Erreur 2 Execution :" + e.toString());
+						}
+					} else { // Sinon toast de problème
+						ConnectionWebservicePHPProfile.haveNetworkConnectionError(v.getContext());
+					}
+				}
+			}else if(v == btn_profil_update){
 				//Modification du profil
 				//si ou ou plusieurs champs sont vides
 				if(upd_lastname.getText().toString().equals("")||upd_firstname.getText().toString().equals("")
@@ -642,6 +804,15 @@ public class Profiles extends Activity {
 		return displayView;
 	}
 
+	View createModificationAnimal() {
+		LayoutInflater inflater = (LayoutInflater) this
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+		View displayView = inflater.inflate(R.layout.profile_animal_update, null);
+
+		return displayView;
+	}
+	
 	ListView createListMsg() {
 		final ListView lsv_msg = new ListView(this);
 		ArrayList<Message> messages = new ArrayList<Message>();
@@ -654,9 +825,7 @@ public class Profiles extends Activity {
 		data.add(new BasicNameValuePair("nb_msg_min", "0"));
 		data.add(new BasicNameValuePair("nb_msg_max", "20"));
 		// Instancie la connection au webservice en thread
-		if (ConnectionWebservicePHPProfile.haveNetworkConnection(this)) { // Si
-																			// connexion
-																			// existe
+		if (ConnectionWebservicePHPProfile.haveNetworkConnection(this)) { // Si connexion existe
 			ConnectionWebservicePHPProfile calcul = new ConnectionWebservicePHPProfile(
 					1, "listObject", this, data);
 			calcul.execute();
@@ -1543,10 +1712,10 @@ class Animal {
 	// Paramètre
 	int id;
 	int userId = 0;
-	int RaceId = 0;
+	int raceId = 0;
 	String name;
-	String Description = "";
-	String Birthday = "";
+	String description = "";
+	String birthday = "";
 	String death = "";
 	String createdAt = "";
 	String updatedAt = "";
@@ -1562,47 +1731,47 @@ class Animal {
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setName(String _name) {
+		this.name = _name;
 	}
 
 	public int getUserId() {
-		return userId;
+		return this.userId;
 	}
 
-	public void setUserId(int userId) {
-		this.userId = userId;
+	public void setUserId(int _userId) {
+		this.userId = _userId;
 	}
 
 	public int getRaceId() {
-		return RaceId;
+		return this.raceId;
 	}
 
-	public void setRaceId(int raceId) {
-		RaceId = raceId;
+	public void setRaceId(int _raceId) {
+		this.raceId = _raceId;
 	}
 
 	public String getDescription() {
-		return Description;
+		return this.description;
 	}
 
-	public void setDescription(String description) {
-		Description = description;
+	public void setDescription(String _description) {
+		this.description = _description;
 	}
 
 	public String getBirthday() {
-		return Birthday;
+		return this.birthday;
 	}
 
-	public void setBirthday(String birthday) {
-		Birthday = birthday;
+	public void setBirthday(String _birthday) {
+		this.birthday = _birthday;
 	}
 
 	public String getDeath() {
-		return death;
+		return this.death;
 	}
 
 	public void setDeath(String death) {
@@ -1610,19 +1779,19 @@ class Animal {
 	}
 
 	public String getCreatedAt() {
-		return createdAt;
+		return this.createdAt;
 	}
 
-	public void setCreatedAt(String createdAt) {
-		this.createdAt = createdAt;
+	public void setCreatedAt(String _createdAt) {
+		this.createdAt = _createdAt;
 	}
 
 	public String getUpdatedAt() {
-		return updatedAt;
+		return this.updatedAt;
 	}
 
-	public void setUpdatedAt(String updatedAt) {
-		this.updatedAt = updatedAt;
+	public void setUpdatedAt(String _updatedAt) {
+		this.updatedAt = _updatedAt;
 	}
 
 }

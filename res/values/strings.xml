@@ -37,7 +37,7 @@
     <string name="title_forget_password">Mot de passe oublié</string>
     <string name="hint_email_nickname">Email</string>
     <string name="pwd_reinitialize">Réinitialiser</string>
-    
+
     <!-- registration activity -->
     <string name="registration_lastname">Nom</string>
     <string name="registration_firstname">Prénom</string>
@@ -56,6 +56,9 @@
     <string name="title_member_friend">Amis</string>
     <string name="title_activity_splash">SplashActivity</string>
     
+    <!-- Menu -->
+    <string name="menu_delete">Deconnexion</string>
+
     <!-- Home Activity -->
     <string-array name="parameters_array">
         <item>Aide</item>
@@ -63,6 +66,18 @@
         <item>Conditions, règles</item>
         <item>Deconnexion</item>
     </string-array>
-    
 
+    <string name="title_activity_image_upload">ImageUpload</string>
+	
+    <!-- Profil animal -->
+    <string-array name="type_animal">
+        <item>Malaysia</item>
+        <item>United States</item>
+        <item>Indonesia</item>
+        <item>France</item>
+        <item>Italy</item>
+        <item>Singapore</item>
+        <item>New Zealand</item>
+        <item>India</item>
+    </string-array>
 </resources>

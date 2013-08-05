@@ -1,9 +1,14 @@
 package fr.library.animaliomobile;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 import org.apache.http.HttpEntity;
@@ -36,8 +41,6 @@ import android.preference.PreferenceManager;
 import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -57,6 +60,7 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 	public Context context; // affiche le context de la vue ou la connexion au
 							// webservice est nécessaire
 	public RelativeLayout layMessage;
+	public File fileUpload;
 	public ScrollView layScrollview;
 	private ProgressDialog pd;
 	private JSONArray arrayInfoWebservice;
@@ -93,6 +97,22 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 			Context _context) {
 		this.loaderType = _loaderType;
 		this.connectionType = _connectionType;
+		this.context = _context;
+	}
+	
+	/**
+	 * Constuctor of Animalio Webservice for upload image
+	 * 
+	 * @param _loaderType
+	 * @param _connectionType
+	 * @param _FileUpload
+	 * @param _context
+	 */
+	public ConnectionWebservicePHP(int _loaderType, String _connectionType, File _fileUpload,
+			Context _context) {
+		this.loaderType = _loaderType;
+		this.connectionType = _connectionType;
+		this.fileUpload = _fileUpload;
 		this.context = _context;
 	}
 	
@@ -305,8 +325,57 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 						"Erreur d'envoie message",
 						Toast.LENGTH_LONG).show();
 			}
-		
+		}else if (connection.equals("uploadPicture")) {
+			if (result){
+				JSONObject infoWebserviveReturn;
+				try {
+					infoWebserviveReturn = arrayInfoWebservice
+							.getJSONObject(0);
+					
+					// Parse les données JSON
+					if (infoWebserviveReturn.getInt("isOk") == 1) { 
+						Toast t = Toast.makeText(Home.context,
+								"Le fichier à été enregistré",
+								Toast.LENGTH_SHORT);
+						t.setGravity(Gravity.TOP, 0, 90);
+						t.show();
+					}else if (infoWebserviveReturn.getInt("isOk") == 2){
+						Toast t = Toast.makeText(Home.context,
+								"Problème de chargement de la photo. Merci de recommencer!",
+								Toast.LENGTH_SHORT);
+						t.setGravity(Gravity.TOP, 0, 90);
+						t.show();
+					}else if (infoWebserviveReturn.getInt("isOk") == 0){
+						Toast t = Toast.makeText(Home.context,
+								"Impossible de charger la photo!",
+								Toast.LENGTH_SHORT);
+						t.setGravity(Gravity.TOP, 0, 90);
+						t.show();
+					}else if (infoWebserviveReturn.getInt("isOk") == 3){
+						Toast t = Toast.makeText(Home.context,
+								"Mauvaise extension de l'image!",
+								Toast.LENGTH_SHORT);
+						t.setGravity(Gravity.TOP, 0, 90);
+						t.show();
+					}else if (infoWebserviveReturn.getInt("isOk") == 4){
+						Toast t = Toast.makeText(Home.context,
+								"La photo existe déjà, Merci de changer de photo!",
+								Toast.LENGTH_SHORT);
+						t.setGravity(Gravity.TOP, 0, 90);
+						t.show();
+					}
+				} catch (JSONException e) {
+					Log.e("log_ImgUpload", "Mauvaise connection " + e.toString());
+				}
+			}else{
+				Toast t = Toast.makeText(Home.context,
+						"Erreur d'enregistrement de l'image. Merci de nous contacter!",
+						Toast.LENGTH_SHORT);
+				t.setGravity(Gravity.TOP, 0, 90);
+				t.show();
+			}
 		} 
+
 		// On enleve le loader de chargement
 		pd.dismiss();
 	}
@@ -509,7 +578,6 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 				JSONArray infoServerData = getServerData(this.data, url);
 				JSONObject infoWebserviveReturn = infoServerData
 						.getJSONObject(0);
-				Log.e("infoWebserviveReturn", "Erreur d'envoie de message" + infoWebserviveReturn);
 				// Parse les données JSON
 				// Si la date de modification est différente alors on doit charger les nouvelles données
 				if (infoWebserviveReturn.getInt("isOk") == 1) {
@@ -525,10 +593,22 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 			//Envoie d'une message à un ami
 			String url = this.domainUrl + "/list-object.php";
 			// On récupére les info du serveur
-			Log.e("log_listMsgConnction", "Affichage msg : " + this.arrayInfoWebservice);
 			this.arrayInfoWebservice = getServerData(this.data, url);
 			res = false;
-		} else if (connection.equals("listEvent")) {
+		} else if (connection.equals("uploadPicture")){
+			//Envoie d'une image sur le serveur
+			String url = this.domainUrl + "/upload-picture-mobile.php";
+			// On récupére les info du serveur
+			try {
+				this.arrayInfoWebservice = getServerDataUploadImage(fileUpload, url);
+			
+				Log.i("log_ImageUpload", "ImageUpload : " + arrayInfoWebservice);
+				res = true;
+			} catch (Exception e) {
+				res = false;
+				Log.e("log_ImageUpload", "Erreur d'envoie de l'image" + e.toString());
+			}
+		}else if (connection.equals("listEvent")) {
 
 		} else if (connection.equals("photoGalery")) {
 
@@ -598,6 +678,123 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 		return resultat;
 	}
 
+	/**
+	 * Méthode d'upload d'image et de retour d'information sur l'upload
+	 * 
+	 * @param Uri myImage
+	 * @param String url
+	 * @return ArrayList<ArrayList<String>>
+	 */
+	public JSONArray getServerDataUploadImage(File fileUpload,
+			String urlTo) {		
+		JSONArray resultat = null;// Resultat final
+		try
+		{	// Création du client http
+//			HttpClient httpclient = new DefaultHttpClient();
+//			setRetry(); // On lui donne la possibilité de retenter la connexion en cas d'échec
+//			((AbstractHttpClient) httpclient).setHttpRequestRetryHandler(myRetryHandler); 
+//			HttpPost httppost = new HttpPost(urlTo); // On définie l'url du script php
+//			httppost.setEntity(new UrlEncodedFormEntity(dataSendTo)); // on passe en paramètre la liste de données à envoyer
+//			ResponseHandler<String> responseHandler=new BasicResponseHandler();
+//			String  response = httpclient.execute(httppost, responseHandler); // on envoie les données au serveur et on récupère sa réponse
+
+			// si une photo a été prise
+			HttpURLConnection connection = null;
+			DataOutputStream outputStream = null;
+
+			// On définie l'url du script PHP
+			String urlServer = urlTo;
+			String lineEnd = "\r\n";
+			String twoHyphens = "--";
+			String boundary = "*****";
+
+			int bytesRead, bytesAvailable, bufferSize;
+			byte[] buffer;
+			int maxBufferSize = 1 * 1024 * 1024;
+			try {
+				// On passe la photo a un flux de données
+				FileInputStream fileInputStream = new FileInputStream(new File(
+						fileUpload.toString()));
+				// On ouvre la connexion au serveur
+				URL url = new URL(urlServer);
+				connection = (HttpURLConnection) url.openConnection();
+
+				// On autorise les Inputs et les Outputs
+				connection.setDoInput(true);
+				connection.setDoOutput(true);
+				connection.setUseCaches(false);
+
+				// On active la méthode POST
+				connection.setRequestMethod("POST");
+				// On maintient la connexion ouverte
+				connection.setRequestProperty("Connection", "Keep-Alive");
+				connection.setRequestProperty("Content-Type",
+						"multipart/form-data;boundary=" + boundary);
+				// On récupère le flux sortant
+				outputStream = new DataOutputStream(
+						connection.getOutputStream());
+				outputStream.writeBytes(twoHyphens + boundary + lineEnd);
+				outputStream
+						.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\""
+								+ fileUpload.toString() + "\"" + lineEnd);
+				outputStream.writeBytes(lineEnd);
+
+				bytesAvailable = fileInputStream.available();
+				bufferSize = Math.min(bytesAvailable, maxBufferSize);
+				buffer = new byte[bufferSize];
+
+				// On lit le fichier
+				bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+				while (bytesRead > 0) {
+					outputStream.write(buffer, 0, bufferSize);
+					bytesAvailable = fileInputStream.available();
+					bufferSize = Math.min(bytesAvailable, maxBufferSize);
+					bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+				}
+
+				outputStream.writeBytes(lineEnd);
+				outputStream.writeBytes(twoHyphens + boundary + twoHyphens
+						+ lineEnd);
+
+				// On récupère le echo retourner par le script PHP
+				InputStream in = connection.getInputStream();
+				StringBuffer sb = new StringBuffer();
+				String reply;
+				try {
+					int chr;
+					while ((chr = in.read()) != -1) {
+						sb.append((char) chr);
+					}
+					reply = sb.toString();
+				} finally {
+					in.close();
+				}
+				// On vide et ferme les flux
+				fileInputStream.close();
+				outputStream.flush();
+				outputStream.close();
+				// On met à jour la réponse
+				// Récupére un array de json
+				try {
+					resultat = new JSONArray(reply);
+				} catch (JSONException e) {
+					Log.e("log_tagRecupére", "Error parsing data first Image" + e.toString());
+				}
+				
+			} catch (Exception e) {
+				Log.e("log_tag", "Error:  " + e.toString());
+			}
+			// On ferme la fenêtre informant l'usager de l'envoie des données
+		}
+		catch(Exception e) 
+		{
+			Log.e("log_tag", "Error:  "+e.toString());
+		}  
+		
+		return resultat;
+	}
+	
 	/**
 	 * Méthode permettant de retenter la connexion en cas d'échec
 	 */
