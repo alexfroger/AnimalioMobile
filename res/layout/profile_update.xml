@@ -112,6 +112,52 @@
                 android:hint="Pseudo"/>
             
             <TextView
+                android:id="@+id/update_p_pays_id"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="8dp"
+	            android:layout_marginBottom="6dp"
+	            android:text="Pays* :"
+	            android:textColor="#808080"
+	            android:textSize="18sp" />
+            
+            <Spinner
+		        android:id="@+id/update_spinner_p_pays_id"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content" />
+            
+            <!--
+            <TextView
+                android:id="@+id/update_p_dep_id"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="8dp"
+	            android:layout_marginBottom="6dp"
+	            android:text="Département* :"
+	            android:textColor="#808080"
+	            android:textSize="18sp" />
+            
+            <Spinner
+		        android:id="@+id/update_spinner_p_dep_id"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content" />
+            
+            <TextView
+                android:id="@+id/update_p_ville_id"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="8dp"
+	            android:layout_marginBottom="6dp"
+	            android:text="Ville* :"
+	            android:textColor="#808080"
+	            android:textSize="18sp" />
+            
+            <Spinner
+		        android:id="@+id/update_spinner_p_ville_id"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content" />
+            -->
+            <TextView
                 android:id="@+id/update_txtView_birthday"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"

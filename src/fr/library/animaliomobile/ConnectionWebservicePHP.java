@@ -33,6 +33,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -425,6 +427,11 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 					editor.putString("updatedAt", infoWebserviveReturn.getString("updated_at"));
 					editor.commit();
 					
+					//A la premiere connexion on charge les bdd si n'existe pas			
+					InstallSQLiteBase firstInstallBdd = new InstallSQLiteBase(this.context);
+					SQLiteDatabase formationDB = firstInstallBdd.getWritableDatabase(); 
+					firstInstallBdd.close();
+					Log.i("log_CreateDB", "Create DB : " + formationDB);
 				} else {
 					res = false;
 				}

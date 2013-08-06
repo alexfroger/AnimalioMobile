@@ -8,8 +8,4 @@ public class Cities {
 	public Cities() {
 		super();
 	}
-	
-	public ArrayList<String> getAllCity(){
-		
-	}
 }

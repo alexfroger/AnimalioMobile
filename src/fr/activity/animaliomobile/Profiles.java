@@ -19,10 +19,11 @@ import android.app.ActionBar;
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -59,7 +60,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 import fr.animaliomobile.R;
+import fr.library.animaliomobile.Animal;
 import fr.library.animaliomobile.ConnectionWebservicePHPProfile;
+import fr.library.animaliomobile.Friend;
+import fr.library.animaliomobile.InstallSQLiteBase;
+import fr.library.animaliomobile.Message;
+import fr.library.animaliomobile.Notification;
 import fr.library.animaliomobile.RoundedImageView;
 import fr.library.animaliomobile.TypefaceSpan;
 
@@ -77,6 +83,14 @@ public class Profiles extends Activity {
 	private Button btn_galerie;
 	private Button btn_profil_update;
 	private Button btn_upd_animal;
+	
+	private Button btn_members;
+	private Button btn_gallery;
+	private Button btn_profil;
+	private Button btn_events;
+	private Button btn_live;
+	private Button btn_photo;
+	
 	private ViewFlipper vf_profil;
 	private static int typeProfil;
 	private static ListView.LayoutParams param_lsv;
@@ -90,12 +104,6 @@ public class Profiles extends Activity {
 	// 4-FriendRequest
 	// 5-EnvoyerMessage 6-DeleteFriend 7-UserModification 8-AnimalModification
 	// 9-DeleteAnimal
-	private Button btn_members;
-	private Button btn_gallery;
-	private Button btn_profil;
-	private Button btn_events;
-	private Button btn_live;
-	private Button btn_photo;
 	
 	private RoundedImageView imv_profil;
 	private ImageView imv_cover;
@@ -107,6 +115,11 @@ public class Profiles extends Activity {
 	private EditText upd_firstname;
 	private EditText upd_email;
 	private EditText upd_nickname;
+	
+	private Spinner upd_pays;
+	private Spinner upd_dep;
+	private Spinner upd_ville;
+	
 	private EditText upd_birthday;
 	private EditText upd_phone;
 	private EditText upd_phone_mobile;
@@ -256,6 +269,9 @@ public class Profiles extends Activity {
 		    TextView updFirstname = (TextView)findViewById(R.id.update_txtView_firstname);
 		    TextView updEmail = (TextView)findViewById(R.id.update_txtView_email);
 		    TextView updNickname = (TextView)findViewById(R.id.update_txtView_nickname);
+		    TextView updPays = (TextView)findViewById(R.id.update_p_pays_id);
+//		    TextView updDep = (TextView)findViewById(R.id.update_p_dep_id);
+//		    TextView updVille = (TextView)findViewById(R.id.update_p_ville_id);
 		    TextView updBirthday = (TextView)findViewById(R.id.update_txtView_birthday);
 		    TextView updPhone = (TextView)findViewById(R.id.update_txtView_phone);
 		    TextView updPhoneMobile = (TextView)findViewById(R.id.update_txtView_mobile);
@@ -269,6 +285,11 @@ public class Profiles extends Activity {
 			upd_phone = (EditText) findViewById(R.id.update_phone);
 			upd_phone_mobile = (EditText) findViewById(R.id.update_phone_mobile);
 			
+			//Spinner
+		    upd_pays = (Spinner) findViewById(R.id.update_spinner_p_pays_id);
+//		    upd_dep = (Spinner) findViewById(R.id.update_spinner_p_dep_id);
+//		    upd_ville = (Spinner) findViewById(R.id.update_p_ville_id);
+		    
 			//Formattage de la date de naissance
 			Date dateFormat = null;
 			try {
@@ -281,10 +302,13 @@ public class Profiles extends Activity {
 			String birthdayFormmated = new SimpleDateFormat("dd-MM-yyyy").format(dateFormat);
 		
 			
+//			String user_cityID = preferences.getString("cityID", "");
+//			String user_countryID = preferences.getString("countryID", "");
+			
 			upd_lastname.setText(user_lastname);
 			upd_firstname.setText(user_firstname);
 			upd_email.setHint(user_email);
-		    upd_nickname.setText(user_nickname);
+		    upd_nickname.setText(user_nickname);	    
 			upd_birthday.setText(birthdayFormmated);
 		    upd_phone.setText(user_phone);
 		    upd_phone_mobile.setText(user_phoneMobile);
@@ -294,9 +318,15 @@ public class Profiles extends Activity {
 		    updFirstname.setTypeface(Lobster);
 			updEmail.setTypeface(Lobster);
 			updNickname.setTypeface(Lobster);
+			updPays.setTypeface(Lobster);
+//			updDep.setTypeface(Lobster);
+//			updVille.setTypeface(Lobster);
 			updBirthday.setTypeface(Lobster);
 			updPhone.setTypeface(Lobster);
 			updPhoneMobile.setTypeface(Lobster);
+			
+			//On ajoute les informations des spinners
+			addItemsCountryOnSpinner(Integer.parseInt(user_countryID));
 			
 			upd_birthday.setOnTouchListener(new OnTouchListener() {
 
@@ -1724,7 +1754,33 @@ public class Profiles extends Activity {
 		spinner2.setAdapter(dataAdapter);
 	}
 	  
-	  
+	/**
+	 *  Add items into spinner Type
+	 */
+	public void addItemsCountryOnSpinner(int idCountry) {
+		Spinner spinner2 = (Spinner) findViewById(R.id.update_spinner_p_pays_id);
+		
+		//Connexion a la bdd interne
+		InstallSQLiteBase firstInstallBdd = new InstallSQLiteBase(getApplicationContext());
+		SQLiteDatabase formationDB = firstInstallBdd.getReadableDatabase(); 
+		Cursor curseur = formationDB.rawQuery("SELECT * FROM country", null);
+		
+		List<String> list = new ArrayList<String>();
+		
+		while(curseur.moveToNext()) {
+			list.add(curseur.getString(1));
+		}
+		
+		firstInstallBdd.close();
+		
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, list);
+		dataAdapter
+				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		spinner2.setAdapter(dataAdapter);
+		spinner2.setSelection(idCountry, true);
+	}
+	
 	private class ViewHolder {
 		ImageView imageWho;
 		ImageView imageWhom;
@@ -1736,171 +1792,4 @@ public class Profiles extends Activity {
 		TextView nbComm;
 		TextView nbLike;
 	}	
-}
-
-
-class Friend {
-	// Paramètre
-	int id;
-	String name;
-	int status;
-
-	// Constructeur
-	public Friend(int _id, String _name, int _status) {
-		this.id = _id;
-		this.name = _name;
-		this.status = _status;
-	}
-
-	public int getFriendId() {
-		return this.id;
-	}
-}
-
-class Animal {
-	// Paramètre
-	int id;
-	int userId = 0;
-	int raceId = 0;
-	String name;
-	String description = "";
-	String birthday = "";
-	String death = "";
-	String createdAt = "";
-	String updatedAt = "";
-
-	// Constructeur
-	public Animal(int _id, String _name) {
-		this.id = _id;
-		this.name = _name;
-	}
-
-	public int getAnimalId() {
-		return this.id;
-	}
-
-	public String getName() {
-		return this.name;
-	}
-
-	public void setName(String _name) {
-		this.name = _name;
-	}
-
-	public int getUserId() {
-		return this.userId;
-	}
-
-	public void setUserId(int _userId) {
-		this.userId = _userId;
-	}
-
-	public int getRaceId() {
-		return this.raceId;
-	}
-
-	public void setRaceId(int _raceId) {
-		this.raceId = _raceId;
-	}
-
-	public String getDescription() {
-		return this.description;
-	}
-
-	public void setDescription(String _description) {
-		this.description = _description;
-	}
-
-	public String getBirthday() {
-		return this.birthday;
-	}
-
-	public void setBirthday(String _birthday) {
-		this.birthday = _birthday;
-	}
-
-	public String getDeath() {
-		return this.death;
-	}
-
-	public void setDeath(String death) {
-		this.death = death;
-	}
-
-	public String getCreatedAt() {
-		return this.createdAt;
-	}
-
-	public void setCreatedAt(String _createdAt) {
-		this.createdAt = _createdAt;
-	}
-
-	public String getUpdatedAt() {
-		return this.updatedAt;
-	}
-
-	public void setUpdatedAt(String _updatedAt) {
-		this.updatedAt = _updatedAt;
-	}
-
-}
-
-class Message {
-	// Paramètre
-	int id;
-	String name;
-	String content;
-
-	// Constructeur
-	public Message(int _id, String _name, String _content) {
-		this.id = _id;
-		this.name = _name;
-		this.content = _content;
-	}
-
-	public int getId() {
-		return this.id;
-	};
-}
-
-class Notification {
-	// paramètres
-	int id;
-	String who;
-	String toWhom;
-	int type;
-	int nbLike;
-	int nbComm;
-	String date;
-	String hour;
-	String event;
-	String detail_event;
-
-	// Constructeur
-	public Notification(int _id, String _who, String _toWhom, int _type,
-			int _nbLike, int _nbComm, String _date, String _hour) {
-		this.id = _id;
-		this.who = _who;
-		this.toWhom = _toWhom;
-		this.type = _type;
-		this.nbLike = _nbLike;
-		this.nbComm = _nbComm;
-		this.date = _date;
-		this.hour = _hour;
-	}
-
-	public Notification(int _id, String _who, String _toWhom, int _type,
-			int _nbLike, int _nbComm, String _date, String _hour,
-			String _event, String _detail_event) {
-		this.id = _id;
-		this.who = _who;
-		this.toWhom = _toWhom;
-		this.type = _type;
-		this.nbLike = _nbLike;
-		this.nbComm = _nbComm;
-		this.date = _date;
-		this.hour = _hour;
-		this.event = _event;
-		this.detail_event = _detail_event;
-	}
 }

@@ -1,278 +1,238 @@
--- phpMyAdmin SQL Dump
--- version 2.11.11.1
--- http://www.phpmyadmin.net
---
--- Serveur: 10.0.225.96
--- Généré le : Lun 05 Août 2013 à 18:10
--- Version du serveur: 5.1.31
--- Version de PHP: 5.2.9
-
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-
---
--- Base de données: `animalio_mobile`
---
-
--- --------------------------------------------------------
-
---
--- Structure de la table `country`
---
-
-CREATE TABLE IF NOT EXISTS `country` (
-  `id_country` int(11) NOT NULL AUTO_INCREMENT,
-  `country_name` varchar(255) DEFAULT NULL,
-  `country_name_uppercase` varchar(255) NOT NULL,
-  `country_slug` varchar(255) DEFAULT NULL,
-  `code` varchar(2) DEFAULT NULL,
-  PRIMARY KEY (`id_country`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=238 ;
-
---
--- Contenu de la table `country`
---
-
-INSERT INTO `country` (`id_country`, `country_name`, `country_name_uppercase`, `country_slug`, `code`) VALUES
-(1, 'France', 'FRANCE', 'france', 'fr'),
-(2, 'Afghanistan', 'AFGHANISTAN', 'afghanistan', 'af'),
-(3, 'Afrique du sud', 'AFRIQUE DU SUD', 'afrique-du-sud', 'za'),
-(4, 'Albanie', 'ALBANIE', 'albanie', 'al'),
-(5, 'Algérie', 'ALGÉRIE', 'algerie', 'dz'),
-(6, 'Allemagne', 'ALLEMAGNE', 'allemagne', 'de'),
-(7, 'Arabie saoudite', 'ARABIE SAOUDITE', 'arabie-saoudite', 'sa'),
-(8, 'Argentine', 'ARGENTINE', 'argentine', 'ar'),
-(9, 'Australie', 'AUSTRALIE', 'australie', 'au'),
-(10, 'Autriche', 'AUTRICHE', 'autriche', 'at'),
-(11, 'Belgique', 'BELGIQUE', 'belgique', 'be'),
-(12, 'Brésil', 'BRÉSIL', 'bresil', 'br'),
-(13, 'Bulgarie', 'BULGARIE', 'bulgarie', 'bg'),
-(14, 'Canada', 'CANADA', 'canada', 'ca'),
-(15, 'Chili', 'CHILI', 'chili', 'cl'),
-(16, 'Chine (Rép. pop.)', 'CHINE (RÉP. POP.)', 'chine-rep-pop', 'cn'),
-(17, 'Colombie', 'COLOMBIE', 'colombie', 'co'),
-(18, 'Corée, Sud', 'CORÉE, SUD', 'coree-sud', 'kr'),
-(19, 'Costa Rica', 'COSTA RICA', 'costa-rica', 'cr'),
-(20, 'Croatie', 'CROATIE', 'croatie', 'hr'),
-(21, 'Danemark', 'DANEMARK', 'danemark', 'dk'),
-(22, 'Égypte', 'ÉGYPTE', 'egypte', 'eg'),
-(23, 'Émirats arabes unis', 'ÉMIRATS ARABES UNIS', 'emirats-arabes-unis', 'ae'),
-(24, 'Équateur', 'ÉQUATEUR', 'equateur', 'ec'),
-(25, 'États-Unis', 'ÉTATS-UNIS', 'etats-unis', 'us'),
-(26, 'El Salvador', 'EL SALVADOR', 'el-salvador', 'sv'),
-(27, 'Espagne', 'ESPAGNE', 'espagne', 'es'),
-(28, 'Finlande', 'FINLANDE', 'finlande', 'fi'),
-(29, 'Grèce', 'GRÈCE', 'grece', 'gr'),
-(30, 'Hong Kong', 'HONG KONG', 'hong-kong', 'hk'),
-(31, 'Hongrie', 'HONGRIE', 'hongrie', 'hu'),
-(32, 'Inde', 'INDE', 'inde', 'in'),
-(33, 'Indonésie', 'INDONÉSIE', 'indonesie', 'id'),
-(34, 'Irlande', 'IRLANDE', 'irlande', 'ie'),
-(35, 'Israël', 'ISRAËL', 'israel', 'il'),
-(36, 'Italie', 'ITALIE', 'italie', 'it'),
-(37, 'Japon', 'JAPON', 'japon', 'jp'),
-(38, 'Jordanie', 'JORDANIE', 'jordanie', 'jo'),
-(39, 'Liban', 'LIBAN', 'liban', 'lb'),
-(40, 'Malaisie', 'MALAISIE', 'malaisie', 'my'),
-(41, 'Maroc', 'MAROC', 'maroc', 'ma'),
-(42, 'Mexique', 'MEXIQUE', 'mexique', 'mx'),
-(43, 'Norvège', 'NORVÈGE', 'norvege', 'no'),
-(44, 'Nouvelle-Zélande', 'NOUVELLE-ZÉLANDE', 'nouvelle-zelande', 'nz'),
-(45, 'Pérou', 'PÉROU', 'perou', 'pe'),
-(46, 'Pakistan', 'PAKISTAN', 'pakistan', 'pk'),
-(47, 'Pays-Bas', 'PAYS-BAS', 'pays-bas', 'nl'),
-(48, 'Philippines', 'PHILIPPINES', 'philippines', 'ph'),
-(49, 'Pologne', 'POLOGNE', 'pologne', 'pl'),
-(50, 'Porto Rico', 'PORTO RICO', 'porto-rico', 'pr'),
-(51, 'Portugal', 'PORTUGAL', 'portugal', 'pt'),
-(52, 'République tchèque', 'RÉPUBLIQUE TCHÈQUE', 'republique-tcheque', 'cz'),
-(53, 'Roumanie', 'ROUMANIE', 'roumanie', 'ro'),
-(54, 'Royaume-Uni', 'ROYAUME-UNI', 'royaume-uni', 'uk'),
-(55, 'Russie', 'RUSSIE', 'russie', 'ru'),
-(56, 'Singapour', 'SINGAPOUR', 'singapour', 'sg'),
-(57, 'Suède', 'SUÈDE', 'suede', 'se'),
-(58, 'Suisse', 'SUISSE', 'suisse', 'ch'),
-(59, 'Taiwan', 'TAIWAN', 'taiwan', 'tw'),
-(60, 'Thailande', 'THAILANDE', 'thailande', 'th'),
-(61, 'Turquie', 'TURQUIE', 'turquie', 'tr'),
-(62, 'Ukraine', 'UKRAINE', 'ukraine', 'ua'),
-(63, 'Venezuela', 'VENEZUELA', 'venezuela', 've'),
-(64, 'Yougoslavie', 'YOUGOSLAVIE', 'yougoslavie', 'yu'),
-(65, 'Samoa', 'SAMOA', 'samoa', 'as'),
-(66, 'Andorre', 'ANDORRE', 'andorre', 'ad'),
-(67, 'Angola', 'ANGOLA', 'angola', 'ao'),
-(68, 'Anguilla', 'ANGUILLA', 'anguilla', 'ai'),
-(69, 'Antarctique', 'ANTARCTIQUE', 'antarctique', 'aq'),
-(70, 'Antigua et Barbuda', 'ANTIGUA ET BARBUDA', 'antigua-et-barbuda', 'ag'),
-(71, 'Arménie', 'ARMÉNIE', 'armenie', 'am'),
-(72, 'Aruba', 'ARUBA', 'aruba', 'aw'),
-(73, 'Azerbaïdjan', 'AZERBAÏDJAN', 'azerbaidjan', 'az'),
-(74, 'Bahamas', 'BAHAMAS', 'bahamas', 'bs'),
-(75, 'Bahrain', 'BAHRAIN', 'bahrain', 'bh'),
-(76, 'Bangladesh', 'BANGLADESH', 'bangladesh', 'bd'),
-(77, 'Biélorussie', 'BIÉLORUSSIE', 'bielorussie', 'by'),
-(78, 'Belize', 'BELIZE', 'belize', 'bz'),
-(79, 'Benin', 'BENIN', 'benin', 'bj'),
-(80, 'Bermudes (Les)', 'BERMUDES (LES)', 'bermudes-les', 'bm'),
-(81, 'Bhoutan', 'BHOUTAN', 'bhoutan', 'bt'),
-(82, 'Bolivie', 'BOLIVIE', 'bolivie', 'bo'),
-(83, 'Bosnie-Herzégovine', 'BOSNIE-HERZÉGOVINE', 'bosnie-herzegovine', 'ba'),
-(84, 'Botswana', 'BOTSWANA', 'botswana', 'bw'),
-(85, 'Bouvet (Îles)', 'BOUVET (ÎLES)', 'bouvet-iles', 'bv'),
-(86, 'Territoire britannique de l''océan Indien', 'TERRITOIRE BRITANNIQUE DE L''OCÉAN INDIEN', 'territoire-britannique-de-locean-indien', 'io'),
-(87, 'Vierges britanniques (Îles)', 'VIERGES BRITANNIQUES (ÎLES)', 'vierges-britanniques-iles', 'vg'),
-(88, 'Brunei', 'BRUNEI', 'brunei', 'bn'),
-(89, 'Burkina Faso', 'BURKINA FASO', 'burkina-faso', 'bf'),
-(90, 'Burundi', 'BURUNDI', 'burundi', 'bi'),
-(91, 'Cambodge', 'CAMBODGE', 'cambodge', 'kh'),
-(92, 'Cameroun', 'CAMEROUN', 'cameroun', 'cm'),
-(93, 'Cap Vert', 'CAP VERT', 'cap-vert', 'cv'),
-(94, 'Cayman (Îles)', 'CAYMAN (ÎLES)', 'cayman-iles', 'ky'),
-(95, 'République centrafricaine', 'RÉPUBLIQUE CENTRAFRICAINE', 'republique-centrafricaine', 'cf'),
-(96, 'Tchad', 'TCHAD', 'tchad', 'td'),
-(97, 'Christmas (Île)', 'CHRISTMAS (ÎLE)', 'christmas-ile', 'cx'),
-(98, 'Cocos (Îles)', 'COCOS (ÎLES)', 'cocos-iles', 'cc'),
-(99, 'Comores', 'COMORES', 'comores', 'km'),
-(100, 'Rép. Dém. du Congo', 'RÉP. DÉM. DU CONGO', 'rep-dem-du-congo', 'cg'),
-(101, 'Cook (Îles)', 'COOK (ÎLES)', 'cook-iles', 'ck'),
-(102, 'Cuba', 'CUBA', 'cuba', 'cu'),
-(103, 'Chypre', 'CHYPRE', 'chypre', 'cy'),
-(104, 'Djibouti', 'DJIBOUTI', 'djibouti', 'dj'),
-(105, 'Dominique', 'DOMINIQUE', 'dominique', 'dm'),
-(106, 'République Dominicaine', 'RÉPUBLIQUE DOMINICAINE', 'republique-dominicaine', 'do'),
-(107, 'Timor', 'TIMOR', 'timor', 'tp'),
-(108, 'Guinée Equatoriale', 'GUINÉE EQUATORIALE', 'guinee-equatoriale', 'gq'),
-(109, 'Érythrée', 'ÉRYTHRÉE', 'erythree', 'er'),
-(110, 'Estonie', 'ESTONIE', 'estonie', 'ee'),
-(111, 'Ethiopie', 'ETHIOPIE', 'ethiopie', 'et'),
-(112, 'Falkland (Île)', 'FALKLAND (ÎLE)', 'falkland-ile', 'fk'),
-(113, 'Féroé (Îles)', 'FÉROÉ (ÎLES)', 'feroe-iles', 'fo'),
-(114, 'Fidji (République des)', 'FIDJI (RÉPUBLIQUE DES)', 'fidji-republique-des', 'fj'),
-(115, 'Guyane française', 'GUYANE FRANÇAISE', 'guyane-francaise', 'gf'),
-(116, 'Polynésie française', 'POLYNÉSIE FRANÇAISE', 'polynesie-francaise', 'pf'),
-(117, 'Territoires français du sud', 'TERRITOIRES FRANÇAIS DU SUD', 'territoires-francais-du-sud', 'tf'),
-(118, 'Gabon', 'GABON', 'gabon', 'ga'),
-(119, 'Gambie', 'GAMBIE', 'gambie', 'gm'),
-(120, 'Géorgie', 'GÉORGIE', 'georgie', 'ge'),
-(121, 'Ghana', 'GHANA', 'ghana', 'gh'),
-(122, 'Gibraltar', 'GIBRALTAR', 'gibraltar', 'gi'),
-(123, 'Groenland', 'GROENLAND', 'groenland', 'gl'),
-(124, 'Grenade', 'GRENADE', 'grenade', 'gd'),
-(125, 'Guadeloupe', 'GUADELOUPE', 'guadeloupe', 'gp'),
-(126, 'Guam', 'GUAM', 'guam', 'gu'),
-(127, 'Guatemala', 'GUATEMALA', 'guatemala', 'gt'),
-(128, 'Guinée', 'GUINÉE', 'guinee', 'gn'),
-(129, 'Guinée-Bissau', 'GUINÉE-BISSAU', 'guinee-bissau', 'gw'),
-(130, 'Guyane', 'GUYANE', 'guyane', 'gy'),
-(131, 'Haïti', 'HAÏTI', 'haiti', 'ht'),
-(132, 'Heard et McDonald (Îles)', 'HEARD ET MCDONALD (ÎLES)', 'heard-et-mcdonald-iles', 'hm'),
-(133, 'Honduras', 'HONDURAS', 'honduras', 'hn'),
-(134, 'Islande', 'ISLANDE', 'islande', 'is'),
-(135, 'Iran', 'IRAN', 'iran', 'ir'),
-(136, 'Irak', 'IRAK', 'irak', 'iq'),
-(137, 'Côte d''Ivoire', 'CÔTE D''IVOIRE', 'cote-divoire', 'ci'),
-(138, 'Jamaïque', 'JAMAÏQUE', 'jamaique', 'jm'),
-(139, 'Kazakhstan', 'KAZAKHSTAN', 'kazakhstan', 'kz'),
-(140, 'Kenya', 'KENYA', 'kenya', 'ke'),
-(141, 'Kiribati', 'KIRIBATI', 'kiribati', 'ki'),
-(142, 'Corée du Nord', 'CORÉE DU NORD', 'coree-du-nord', 'kp'),
-(143, 'Koweit', 'KOWEIT', 'koweit', 'kw'),
-(144, 'Kirghizistan', 'KIRGHIZISTAN', 'kirghizistan', 'kg'),
-(145, 'Laos', 'LAOS', 'laos', 'la'),
-(146, 'Lettonie', 'LETTONIE', 'lettonie', 'lv'),
-(147, 'Lesotho', 'LESOTHO', 'lesotho', 'ls'),
-(148, 'Libéria', 'LIBÉRIA', 'liberia', 'lr'),
-(149, 'Libye', 'LIBYE', 'libye', 'ly'),
-(150, 'Liechtenstein', 'LIECHTENSTEIN', 'liechtenstein', 'li'),
-(151, 'Lithuanie', 'LITHUANIE', 'lithuanie', 'lt'),
-(152, 'Luxembourg', 'LUXEMBOURG', 'luxembourg', 'lu'),
-(153, 'Macau', 'MACAU', 'macau', 'mo'),
-(154, 'Macédoine', 'MACÉDOINE', 'macedoine', 'mk'),
-(155, 'Madagascar', 'MADAGASCAR', 'madagascar', 'mg'),
-(156, 'Malawi', 'MALAWI', 'malawi', 'mw'),
-(157, 'Maldives (Îles)', 'MALDIVES (ÎLES)', 'maldives-iles', 'mv'),
-(158, 'Mali', 'MALI', 'mali', 'ml'),
-(159, 'Malte', 'MALTE', 'malte', 'mt'),
-(160, 'Marshall (Îles)', 'MARSHALL (ÎLES)', 'marshall-iles', 'mh'),
-(161, 'Martinique', 'MARTINIQUE', 'martinique', 'mq'),
-(162, 'Mauritanie', 'MAURITANIE', 'mauritanie', 'mr'),
-(163, 'Maurice', 'MAURICE', 'maurice', 'mu'),
-(164, 'Mayotte', 'MAYOTTE', 'mayotte', 'yt'),
-(165, 'Micronésie (États fédérés de)', 'MICRONÉSIE (ÉTATS FÉDÉRÉS DE)', 'micronesie-etats-federes-de', 'fm'),
-(166, 'Moldavie', 'MOLDAVIE', 'moldavie', 'md'),
-(167, 'Monaco', 'MONACO', 'monaco', 'mc'),
-(168, 'Mongolie', 'MONGOLIE', 'mongolie', 'mn'),
-(169, 'Montserrat', 'MONTSERRAT', 'montserrat', 'ms'),
-(170, 'Mozambique', 'MOZAMBIQUE', 'mozambique', 'mz'),
-(171, 'Myanmar', 'MYANMAR', 'myanmar', 'mm'),
-(172, 'Namibie', 'NAMIBIE', 'namibie', 'na'),
-(173, 'Nauru', 'NAURU', 'nauru', 'nr'),
-(174, 'Nepal', 'NEPAL', 'nepal', 'np'),
-(175, 'Antilles néerlandaises', 'ANTILLES NÉERLANDAISES', 'antilles-neerlandaises', 'an'),
-(176, 'Nouvelle Calédonie', 'NOUVELLE CALÉDONIE', 'nouvelle-caledonie', 'nc'),
-(177, 'Nicaragua', 'NICARAGUA', 'nicaragua', 'ni'),
-(178, 'Niger', 'NIGER', 'niger', 'ne'),
-(179, 'Nigeria', 'NIGERIA', 'nigeria', 'ng'),
-(180, 'Niue', 'NIUE', 'niue', 'nu'),
-(181, 'Norfolk (Îles)', 'NORFOLK (ÎLES)', 'norfolk-iles', 'nf'),
-(182, 'Mariannes du Nord (Îles)', 'MARIANNES DU NORD (ÎLES)', 'mariannes-du-nord-iles', 'mp'),
-(183, 'Oman', 'OMAN', 'oman', 'om'),
-(184, 'Palau', 'PALAU', 'palau', 'pw'),
-(185, 'Panama', 'PANAMA', 'panama', 'pa'),
-(186, 'Papouasie-Nouvelle-Guinée', 'PAPOUASIE-NOUVELLE-GUINÉE', 'papouasie-nouvelle-guinee', 'pg'),
-(187, 'Paraguay', 'PARAGUAY', 'paraguay', 'py'),
-(188, 'Pitcairn (Îles)', 'PITCAIRN (ÎLES)', 'pitcairn-iles', 'pn'),
-(189, 'Qatar', 'QATAR', 'qatar', 'qa'),
-(190, 'Réunion (La)', 'RÉUNION (LA)', 'reunion-la', 're'),
-(191, 'Rwanda', 'RWANDA', 'rwanda', 'rw'),
-(192, 'Géorgie du Sud et Sandwich du Sud (Îles)', 'GÉORGIE DU SUD ET SANDWICH DU SUD (ÎLES)', 'georgie-du-sud-et-sandwich-du-sud-iles', 'gs'),
-(193, 'Saint-Kitts et Nevis', 'SAINT-KITTS ET NEVIS', 'saint-kitts-et-nevis', 'kn'),
-(194, 'Sainte Lucie', 'SAINTE LUCIE', 'sainte-lucie', 'lc'),
-(195, 'Saint Vincent et les Grenadines', 'SAINT VINCENT ET LES GRENADINES', 'saint-vincent-et-les-grenadines', 'vc'),
-(196, 'Samoa', 'SAMOA', 'samoa', 'ws'),
-(197, 'Saint-Marin (Rép. de)', 'SAINT-MARIN (RÉP. DE)', 'saint-marin-rep-de', 'sm'),
-(198, 'São Tomé et Príncipe (Rép.)', 'SÃO TOMÉ ET PRÍNCIPE (RÉP.)', 'sao-tome-et-principe-rep', 'st'),
-(199, 'Sénégal', 'SÉNÉGAL', 'senegal', 'sn'),
-(200, 'Seychelles', 'SEYCHELLES', 'seychelles', 'sc'),
-(201, 'Sierra Leone', 'SIERRA LEONE', 'sierra-leone', 'sl'),
-(202, 'Slovaquie', 'SLOVAQUIE', 'slovaquie', 'sk'),
-(203, 'Slovénie', 'SLOVÉNIE', 'slovenie', 'si'),
-(204, 'Somalie', 'SOMALIE', 'somalie', 'so'),
-(205, 'Sri Lanka', 'SRI LANKA', 'sri-lanka', 'lk'),
-(206, 'Sainte Hélène', 'SAINTE HÉLÈNE', 'sainte-helene', 'sh'),
-(207, 'Saint Pierre et Miquelon', 'SAINT PIERRE ET MIQUELON', 'saint-pierre-et-miquelon', 'pm'),
-(208, 'Soudan', 'SOUDAN', 'soudan', 'sd'),
-(209, 'Suriname', 'SURINAME', 'suriname', 'sr'),
-(210, 'Svalbard et Jan Mayen (Îles)', 'SVALBARD ET JAN MAYEN (ÎLES)', 'svalbard-et-jan-mayen-iles', 'sj'),
-(211, 'Swaziland', 'SWAZILAND', 'swaziland', 'sz'),
-(212, 'Syrie', 'SYRIE', 'syrie', 'sy'),
-(213, 'Tadjikistan', 'TADJIKISTAN', 'tadjikistan', 'tj'),
-(214, 'Tanzanie', 'TANZANIE', 'tanzanie', 'tz'),
-(215, 'Togo', 'TOGO', 'togo', 'tg'),
-(216, 'Tokelau', 'TOKELAU', 'tokelau', 'tk'),
-(217, 'Tonga', 'TONGA', 'tonga', 'to'),
-(218, 'Trinité et Tobago', 'TRINITÉ ET TOBAGO', 'trinite-et-tobago', 'tt'),
-(219, 'Tunisie', 'TUNISIE', 'tunisie', 'tn'),
-(220, 'Turkménistan', 'TURKMÉNISTAN', 'turkmenistan', 'tm'),
-(221, 'Turks et Caïques (Îles)', 'TURKS ET CAÏQUES (ÎLES)', 'turks-et-caiques-iles', 'tc'),
-(222, 'Tuvalu', 'TUVALU', 'tuvalu', 'tv'),
-(223, 'Îles Mineures Éloignées des États-Unis', 'ÎLES MINEURES ÉLOIGNÉES DES ÉTATS-UNIS', 'iles-mineures-eloignees-des-etats-unis', 'um'),
-(224, 'Ouganda', 'OUGANDA', 'ouganda', 'ug'),
-(225, 'Uruguay', 'URUGUAY', 'uruguay', 'uy'),
-(226, 'Ouzbékistan', 'OUZBÉKISTAN', 'ouzbekistan', 'uz'),
-(227, 'Vanuatu', 'VANUATU', 'vanuatu', 'vu'),
-(228, 'Vatican (Etat du)', 'VATICAN (ETAT DU)', 'vatican-etat-du', 'va'),
-(229, 'Vietnam', 'VIETNAM', 'vietnam', 'vn'),
-(230, 'Vierges (Îles)', 'VIERGES (ÎLES)', 'vierges-iles', 'vi'),
-(231, 'Wallis et Futuna (Îles)', 'WALLIS ET FUTUNA (ÎLES)', 'wallis-et-futuna-iles', 'wf'),
-(232, 'Sahara Occidental', 'SAHARA OCCIDENTAL', 'sahara-occidental', 'eh'),
-(233, 'Yemen', 'YEMEN', 'yemen', 'ye'),
-(234, 'Zaïre', 'ZAÏRE', 'zaire', 'zr'),
-(235, 'Zambie', 'ZAMBIE', 'zambie', 'zm'),
-(236, 'Zimbabwe', 'ZIMBABWE', 'zimbabwe', 'zw'),
-(237, 'La Barbad', 'LA BARBAD', 'la-barbad', 'bb');
+CREATE TABLE country (id_country, country_name, country_name_uppercase, country_slug, code);
+INSERT INTO country VALUES(1,'France','FRANCE','france','fr');
+INSERT INTO country VALUES(2,'Afghanistan','AFGHANISTAN','afghanistan','af');
+INSERT INTO country VALUES(3,'Afrique du sud','AFRIQUE DU SUD','afrique-du-sud','za');
+INSERT INTO country VALUES(4,'Albanie','ALBANIE','albanie','al');
+INSERT INTO country VALUES(5,'Algérie','ALGÉRIE','algerie','dz');
+INSERT INTO country VALUES(6,'Allemagne','ALLEMAGNE','allemagne','de');
+INSERT INTO country VALUES(7,'Arabie saoudite','ARABIE SAOUDITE','arabie-saoudite','sa');
+INSERT INTO country VALUES(8,'Argentine','ARGENTINE','argentine','ar');
+INSERT INTO country VALUES(9,'Australie','AUSTRALIE','australie','au');
+INSERT INTO country VALUES(10,'Autriche','AUTRICHE','autriche','at');
+INSERT INTO country VALUES(11,'Belgique','BELGIQUE','belgique','be');
+INSERT INTO country VALUES(12,'Brésil','BRÉSIL','bresil','br');
+INSERT INTO country VALUES(13,'Bulgarie','BULGARIE','bulgarie','bg');
+INSERT INTO country VALUES(14,'Canada','CANADA','canada','ca');
+INSERT INTO country VALUES(15,'Chili','CHILI','chili','cl');
+INSERT INTO country VALUES(16,'Chine (Rép. pop.)','CHINE (RÉP. POP.)','chine-rep-pop','cn');
+INSERT INTO country VALUES(17,'Colombie','COLOMBIE','colombie','co');
+INSERT INTO country VALUES(18,'Corée, Sud','CORÉE, SUD','coree-sud','kr');
+INSERT INTO country VALUES(19,'Costa Rica','COSTA RICA','costa-rica','cr');
+INSERT INTO country VALUES(20,'Croatie','CROATIE','croatie','hr');
+INSERT INTO country VALUES(21,'Danemark','DANEMARK','danemark','dk');
+INSERT INTO country VALUES(22,'Égypte','ÉGYPTE','egypte','eg');
+INSERT INTO country VALUES(23,'Émirats arabes unis','ÉMIRATS ARABES UNIS','emirats-arabes-unis','ae');
+INSERT INTO country VALUES(24,'Équateur','ÉQUATEUR','equateur','ec');
+INSERT INTO country VALUES(25,'États-Unis','ÉTATS-UNIS','etats-unis','us');
+INSERT INTO country VALUES(26,'El Salvador','EL SALVADOR','el-salvador','sv');
+INSERT INTO country VALUES(27,'Espagne','ESPAGNE','espagne','es');
+INSERT INTO country VALUES(28,'Finlande','FINLANDE','finlande','fi');
+INSERT INTO country VALUES(29,'Grèce','GRÈCE','grece','gr');
+INSERT INTO country VALUES(30,'Hong Kong','HONG KONG','hong-kong','hk');
+INSERT INTO country VALUES(31,'Hongrie','HONGRIE','hongrie','hu');
+INSERT INTO country VALUES(32,'Inde','INDE','inde','in');
+INSERT INTO country VALUES(33,'Indonésie','INDONÉSIE','indonesie','id');
+INSERT INTO country VALUES(34,'Irlande','IRLANDE','irlande','ie');
+INSERT INTO country VALUES(35,'Israël','ISRAËL','israel','il');
+INSERT INTO country VALUES(36,'Italie','ITALIE','italie','it');
+INSERT INTO country VALUES(37,'Japon','JAPON','japon','jp');
+INSERT INTO country VALUES(38,'Jordanie','JORDANIE','jordanie','jo');
+INSERT INTO country VALUES(39,'Liban','LIBAN','liban','lb');
+INSERT INTO country VALUES(40,'Malaisie','MALAISIE','malaisie','my');
+INSERT INTO country VALUES(41,'Maroc','MAROC','maroc','ma');
+INSERT INTO country VALUES(42,'Mexique','MEXIQUE','mexique','mx');
+INSERT INTO country VALUES(43,'Norvège','NORVÈGE','norvege','no');
+INSERT INTO country VALUES(44,'Nouvelle-Zélande','NOUVELLE-ZÉLANDE','nouvelle-zelande','nz');
+INSERT INTO country VALUES(45,'Pérou','PÉROU','perou','pe');
+INSERT INTO country VALUES(46,'Pakistan','PAKISTAN','pakistan','pk');
+INSERT INTO country VALUES(47,'Pays-Bas','PAYS-BAS','pays-bas','nl');
+INSERT INTO country VALUES(48,'Philippines','PHILIPPINES','philippines','ph');
+INSERT INTO country VALUES(49,'Pologne','POLOGNE','pologne','pl');
+INSERT INTO country VALUES(50,'Porto Rico','PORTO RICO','porto-rico','pr');
+INSERT INTO country VALUES(51,'Portugal','PORTUGAL','portugal','pt');
+INSERT INTO country VALUES(52,'République tchèque','RÉPUBLIQUE TCHÈQUE','republique-tcheque','cz');
+INSERT INTO country VALUES(53,'Roumanie','ROUMANIE','roumanie','ro');
+INSERT INTO country VALUES(54,'Royaume-Uni','ROYAUME-UNI','royaume-uni','uk');
+INSERT INTO country VALUES(55,'Russie','RUSSIE','russie','ru');
+INSERT INTO country VALUES(56,'Singapour','SINGAPOUR','singapour','sg');
+INSERT INTO country VALUES(57,'Suède','SUÈDE','suede','se');
+INSERT INTO country VALUES(58,'Suisse','SUISSE','suisse','ch');
+INSERT INTO country VALUES(59,'Taiwan','TAIWAN','taiwan','tw');
+INSERT INTO country VALUES(60,'Thailande','THAILANDE','thailande','th');
+INSERT INTO country VALUES(61,'Turquie','TURQUIE','turquie','tr');
+INSERT INTO country VALUES(62,'Ukraine','UKRAINE','ukraine','ua');
+INSERT INTO country VALUES(63,'Venezuela','VENEZUELA','venezuela','ve');
+INSERT INTO country VALUES(64,'Yougoslavie','YOUGOSLAVIE','yougoslavie','yu');
+INSERT INTO country VALUES(65,'Samoa','SAMOA','samoa','as');
+INSERT INTO country VALUES(66,'Andorre','ANDORRE','andorre','ad');
+INSERT INTO country VALUES(67,'Angola','ANGOLA','angola','ao');
+INSERT INTO country VALUES(68,'Anguilla','ANGUILLA','anguilla','ai');
+INSERT INTO country VALUES(69,'Antarctique','ANTARCTIQUE','antarctique','aq');
+INSERT INTO country VALUES(70,'Antigua et Barbuda','ANTIGUA ET BARBUDA','antigua-et-barbuda','ag');
+INSERT INTO country VALUES(71,'Arménie','ARMÉNIE','armenie','am');
+INSERT INTO country VALUES(72,'Aruba','ARUBA','aruba','aw');
+INSERT INTO country VALUES(73,'Azerbaïdjan','AZERBAÏDJAN','azerbaidjan','az');
+INSERT INTO country VALUES(74,'Bahamas','BAHAMAS','bahamas','bs');
+INSERT INTO country VALUES(75,'Bahrain','BAHRAIN','bahrain','bh');
+INSERT INTO country VALUES(76,'Bangladesh','BANGLADESH','bangladesh','bd');
+INSERT INTO country VALUES(77,'Biélorussie','BIÉLORUSSIE','bielorussie','by');
+INSERT INTO country VALUES(78,'Belize','BELIZE','belize','bz');
+INSERT INTO country VALUES(79,'Benin','BENIN','benin','bj');
+INSERT INTO country VALUES(80,'Bermudes (Les)','BERMUDES (LES)','bermudes-les','bm');
+INSERT INTO country VALUES(81,'Bhoutan','BHOUTAN','bhoutan','bt');
+INSERT INTO country VALUES(82,'Bolivie','BOLIVIE','bolivie','bo');
+INSERT INTO country VALUES(83,'Bosnie-Herzégovine','BOSNIE-HERZÉGOVINE','bosnie-herzegovine','ba');
+INSERT INTO country VALUES(84,'Botswana','BOTSWANA','botswana','bw');
+INSERT INTO country VALUES(85,'Bouvet (Îles)','BOUVET (ÎLES)','bouvet-iles','bv');
+INSERT INTO country VALUES(86,'Territoire britannique de l''océan Indien','TERRITOIRE BRITANNIQUE DE L''OCÉAN INDIEN','territoire-britannique-de-locean-indien','io');
+INSERT INTO country VALUES(87,'Vierges britanniques (Îles)','VIERGES BRITANNIQUES (ÎLES)','vierges-britanniques-iles','vg');
+INSERT INTO country VALUES(88,'Brunei','BRUNEI','brunei','bn');
+INSERT INTO country VALUES(89,'Burkina Faso','BURKINA FASO','burkina-faso','bf');
+INSERT INTO country VALUES(90,'Burundi','BURUNDI','burundi','bi');
+INSERT INTO country VALUES(91,'Cambodge','CAMBODGE','cambodge','kh');
+INSERT INTO country VALUES(92,'Cameroun','CAMEROUN','cameroun','cm');
+INSERT INTO country VALUES(93,'Cap Vert','CAP VERT','cap-vert','cv');
+INSERT INTO country VALUES(94,'Cayman (Îles)','CAYMAN (ÎLES)','cayman-iles','ky');
+INSERT INTO country VALUES(95,'République centrafricaine','RÉPUBLIQUE CENTRAFRICAINE','republique-centrafricaine','cf');
+INSERT INTO country VALUES(96,'Tchad','TCHAD','tchad','td');
+INSERT INTO country VALUES(97,'Christmas (Île)','CHRISTMAS (ÎLE)','christmas-ile','cx');
+INSERT INTO country VALUES(98,'Cocos (Îles)','COCOS (ÎLES)','cocos-iles','cc');
+INSERT INTO country VALUES(99,'Comores','COMORES','comores','km');
+INSERT INTO country VALUES(100,'Rép. Dém. du Congo','RÉP. DÉM. DU CONGO','rep-dem-du-congo','cg');
+INSERT INTO country VALUES(101,'Cook (Îles)','COOK (ÎLES)','cook-iles','ck');
+INSERT INTO country VALUES(102,'Cuba','CUBA','cuba','cu');
+INSERT INTO country VALUES(103,'Chypre','CHYPRE','chypre','cy');
+INSERT INTO country VALUES(104,'Djibouti','DJIBOUTI','djibouti','dj');
+INSERT INTO country VALUES(105,'Dominique','DOMINIQUE','dominique','dm');
+INSERT INTO country VALUES(106,'République Dominicaine','RÉPUBLIQUE DOMINICAINE','republique-dominicaine','do');
+INSERT INTO country VALUES(107,'Timor','TIMOR','timor','tp');
+INSERT INTO country VALUES(108,'Guinée Equatoriale','GUINÉE EQUATORIALE','guinee-equatoriale','gq');
+INSERT INTO country VALUES(109,'Érythrée','ÉRYTHRÉE','erythree','er');
+INSERT INTO country VALUES(110,'Estonie','ESTONIE','estonie','ee');
+INSERT INTO country VALUES(111,'Ethiopie','ETHIOPIE','ethiopie','et');
+INSERT INTO country VALUES(112,'Falkland (Île)','FALKLAND (ÎLE)','falkland-ile','fk');
+INSERT INTO country VALUES(113,'Féroé (Îles)','FÉROÉ (ÎLES)','feroe-iles','fo');
+INSERT INTO country VALUES(114,'Fidji (République des)','FIDJI (RÉPUBLIQUE DES)','fidji-republique-des','fj');
+INSERT INTO country VALUES(115,'Guyane française','GUYANE FRANÇAISE','guyane-francaise','gf');
+INSERT INTO country VALUES(116,'Polynésie française','POLYNÉSIE FRANÇAISE','polynesie-francaise','pf');
+INSERT INTO country VALUES(117,'Territoires français du sud','TERRITOIRES FRANÇAIS DU SUD','territoires-francais-du-sud','tf');
+INSERT INTO country VALUES(118,'Gabon','GABON','gabon','ga');
+INSERT INTO country VALUES(119,'Gambie','GAMBIE','gambie','gm');
+INSERT INTO country VALUES(120,'Géorgie','GÉORGIE','georgie','ge');
+INSERT INTO country VALUES(121,'Ghana','GHANA','ghana','gh');
+INSERT INTO country VALUES(122,'Gibraltar','GIBRALTAR','gibraltar','gi');
+INSERT INTO country VALUES(123,'Groenland','GROENLAND','groenland','gl');
+INSERT INTO country VALUES(124,'Grenade','GRENADE','grenade','gd');
+INSERT INTO country VALUES(125,'Guadeloupe','GUADELOUPE','guadeloupe','gp');
+INSERT INTO country VALUES(126,'Guam','GUAM','guam','gu');
+INSERT INTO country VALUES(127,'Guatemala','GUATEMALA','guatemala','gt');
+INSERT INTO country VALUES(128,'Guinée','GUINÉE','guinee','gn');
+INSERT INTO country VALUES(129,'Guinée-Bissau','GUINÉE-BISSAU','guinee-bissau','gw');
+INSERT INTO country VALUES(130,'Guyane','GUYANE','guyane','gy');
+INSERT INTO country VALUES(131,'Haïti','HAÏTI','haiti','ht');
+INSERT INTO country VALUES(132,'Heard et McDonald (Îles)','HEARD ET MCDONALD (ÎLES)','heard-et-mcdonald-iles','hm');
+INSERT INTO country VALUES(133,'Honduras','HONDURAS','honduras','hn');
+INSERT INTO country VALUES(134,'Islande','ISLANDE','islande','is');
+INSERT INTO country VALUES(135,'Iran','IRAN','iran','ir');
+INSERT INTO country VALUES(136,'Irak','IRAK','irak','iq');
+INSERT INTO country VALUES(137,'Côte d''Ivoire','CÔTE D''IVOIRE','cote-divoire','ci');
+INSERT INTO country VALUES(138,'Jamaïque','JAMAÏQUE','jamaique','jm');
+INSERT INTO country VALUES(139,'Kazakhstan','KAZAKHSTAN','kazakhstan','kz');
+INSERT INTO country VALUES(140,'Kenya','KENYA','kenya','ke');
+INSERT INTO country VALUES(141,'Kiribati','KIRIBATI','kiribati','ki');
+INSERT INTO country VALUES(142,'Corée du Nord','CORÉE DU NORD','coree-du-nord','kp');
+INSERT INTO country VALUES(143,'Koweit','KOWEIT','koweit','kw');
+INSERT INTO country VALUES(144,'Kirghizistan','KIRGHIZISTAN','kirghizistan','kg');
+INSERT INTO country VALUES(145,'Laos','LAOS','laos','la');
+INSERT INTO country VALUES(146,'Lettonie','LETTONIE','lettonie','lv');
+INSERT INTO country VALUES(147,'Lesotho','LESOTHO','lesotho','ls');
+INSERT INTO country VALUES(148,'Libéria','LIBÉRIA','liberia','lr');
+INSERT INTO country VALUES(149,'Libye','LIBYE','libye','ly');
+INSERT INTO country VALUES(150,'Liechtenstein','LIECHTENSTEIN','liechtenstein','li');
+INSERT INTO country VALUES(151,'Lithuanie','LITHUANIE','lithuanie','lt');
+INSERT INTO country VALUES(152,'Luxembourg','LUXEMBOURG','luxembourg','lu');
+INSERT INTO country VALUES(153,'Macau','MACAU','macau','mo');
+INSERT INTO country VALUES(154,'Macédoine','MACÉDOINE','macedoine','mk');
+INSERT INTO country VALUES(155,'Madagascar','MADAGASCAR','madagascar','mg');
+INSERT INTO country VALUES(156,'Malawi','MALAWI','malawi','mw');
+INSERT INTO country VALUES(157,'Maldives (Îles)','MALDIVES (ÎLES)','maldives-iles','mv');
+INSERT INTO country VALUES(158,'Mali','MALI','mali','ml');
+INSERT INTO country VALUES(159,'Malte','MALTE','malte','mt');
+INSERT INTO country VALUES(160,'Marshall (Îles)','MARSHALL (ÎLES)','marshall-iles','mh');
+INSERT INTO country VALUES(161,'Martinique','MARTINIQUE','martinique','mq');
+INSERT INTO country VALUES(162,'Mauritanie','MAURITANIE','mauritanie','mr');
+INSERT INTO country VALUES(163,'Maurice','MAURICE','maurice','mu');
+INSERT INTO country VALUES(164,'Mayotte','MAYOTTE','mayotte','yt');
+INSERT INTO country VALUES(165,'Micronésie (États fédérés de)','MICRONÉSIE (ÉTATS FÉDÉRÉS DE)','micronesie-etats-federes-de','fm');
+INSERT INTO country VALUES(166,'Moldavie','MOLDAVIE','moldavie','md');
+INSERT INTO country VALUES(167,'Monaco','MONACO','monaco','mc');
+INSERT INTO country VALUES(168,'Mongolie','MONGOLIE','mongolie','mn');
+INSERT INTO country VALUES(169,'Montserrat','MONTSERRAT','montserrat','ms');
+INSERT INTO country VALUES(170,'Mozambique','MOZAMBIQUE','mozambique','mz');
+INSERT INTO country VALUES(171,'Myanmar','MYANMAR','myanmar','mm');
+INSERT INTO country VALUES(172,'Namibie','NAMIBIE','namibie','na');
+INSERT INTO country VALUES(173,'Nauru','NAURU','nauru','nr');
+INSERT INTO country VALUES(174,'Nepal','NEPAL','nepal','np');
+INSERT INTO country VALUES(175,'Antilles néerlandaises','ANTILLES NÉERLANDAISES','antilles-neerlandaises','an');
+INSERT INTO country VALUES(176,'Nouvelle Calédonie','NOUVELLE CALÉDONIE','nouvelle-caledonie','nc');
+INSERT INTO country VALUES(177,'Nicaragua','NICARAGUA','nicaragua','ni');
+INSERT INTO country VALUES(178,'Niger','NIGER','niger','ne');
+INSERT INTO country VALUES(179,'Nigeria','NIGERIA','nigeria','ng');
+INSERT INTO country VALUES(180,'Niue','NIUE','niue','nu');
+INSERT INTO country VALUES(181,'Norfolk (Îles)','NORFOLK (ÎLES)','norfolk-iles','nf');
+INSERT INTO country VALUES(182,'Mariannes du Nord (Îles)','MARIANNES DU NORD (ÎLES)','mariannes-du-nord-iles','mp');
+INSERT INTO country VALUES(183,'Oman','OMAN','oman','om');
+INSERT INTO country VALUES(184,'Palau','PALAU','palau','pw');
+INSERT INTO country VALUES(185,'Panama','PANAMA','panama','pa');
+INSERT INTO country VALUES(186,'Papouasie-Nouvelle-Guinée','PAPOUASIE-NOUVELLE-GUINÉE','papouasie-nouvelle-guinee','pg');
+INSERT INTO country VALUES(187,'Paraguay','PARAGUAY','paraguay','py');
+INSERT INTO country VALUES(188,'Pitcairn (Îles)','PITCAIRN (ÎLES)','pitcairn-iles','pn');
+INSERT INTO country VALUES(189,'Qatar','QATAR','qatar','qa');
+INSERT INTO country VALUES(190,'Réunion (La)','RÉUNION (LA)','reunion-la','re');
+INSERT INTO country VALUES(191,'Rwanda','RWANDA','rwanda','rw');
+INSERT INTO country VALUES(192,'Géorgie du Sud et Sandwich du Sud (Îles)','GÉORGIE DU SUD ET SANDWICH DU SUD (ÎLES)','georgie-du-sud-et-sandwich-du-sud-iles','gs');
+INSERT INTO country VALUES(193,'Saint-Kitts et Nevis','SAINT-KITTS ET NEVIS','saint-kitts-et-nevis','kn');
+INSERT INTO country VALUES(194,'Sainte Lucie','SAINTE LUCIE','sainte-lucie','lc');
+INSERT INTO country VALUES(195,'Saint Vincent et les Grenadines','SAINT VINCENT ET LES GRENADINES','saint-vincent-et-les-grenadines','vc');
+INSERT INTO country VALUES(196,'Samoa','SAMOA','samoa','ws');
+INSERT INTO country VALUES(197,'Saint-Marin (Rép. de)','SAINT-MARIN (RÉP. DE)','saint-marin-rep-de','sm');
+INSERT INTO country VALUES(198,'São Tomé et Príncipe (Rép.)','SÃO TOMÉ ET PRÍNCIPE (RÉP.)','sao-tome-et-principe-rep','st');
+INSERT INTO country VALUES(199,'Sénégal','SÉNÉGAL','senegal','sn');
+INSERT INTO country VALUES(200,'Seychelles','SEYCHELLES','seychelles','sc');
+INSERT INTO country VALUES(201,'Sierra Leone','SIERRA LEONE','sierra-leone','sl');
+INSERT INTO country VALUES(202,'Slovaquie','SLOVAQUIE','slovaquie','sk');
+INSERT INTO country VALUES(203,'Slovénie','SLOVÉNIE','slovenie','si');
+INSERT INTO country VALUES(204,'Somalie','SOMALIE','somalie','so');
+INSERT INTO country VALUES(205,'Sri Lanka','SRI LANKA','sri-lanka','lk');
+INSERT INTO country VALUES(206,'Sainte Hélène','SAINTE HÉLÈNE','sainte-helene','sh');
+INSERT INTO country VALUES(207,'Saint Pierre et Miquelon','SAINT PIERRE ET MIQUELON','saint-pierre-et-miquelon','pm');
+INSERT INTO country VALUES(208,'Soudan','SOUDAN','soudan','sd');
+INSERT INTO country VALUES(209,'Suriname','SURINAME','suriname','sr');
+INSERT INTO country VALUES(210,'Svalbard et Jan Mayen (Îles)','SVALBARD ET JAN MAYEN (ÎLES)','svalbard-et-jan-mayen-iles','sj');
+INSERT INTO country VALUES(211,'Swaziland','SWAZILAND','swaziland','sz');
+INSERT INTO country VALUES(212,'Syrie','SYRIE','syrie','sy');
+INSERT INTO country VALUES(213,'Tadjikistan','TADJIKISTAN','tadjikistan','tj');
+INSERT INTO country VALUES(214,'Tanzanie','TANZANIE','tanzanie','tz');
+INSERT INTO country VALUES(215,'Togo','TOGO','togo','tg');
+INSERT INTO country VALUES(216,'Tokelau','TOKELAU','tokelau','tk');
+INSERT INTO country VALUES(217,'Tonga','TONGA','tonga','to');
+INSERT INTO country VALUES(218,'Trinité et Tobago','TRINITÉ ET TOBAGO','trinite-et-tobago','tt');
+INSERT INTO country VALUES(219,'Tunisie','TUNISIE','tunisie','tn');
+INSERT INTO country VALUES(220,'Turkménistan','TURKMÉNISTAN','turkmenistan','tm');
+INSERT INTO country VALUES(221,'Turks et Caïques (Îles)','TURKS ET CAÏQUES (ÎLES)','turks-et-caiques-iles','tc');
+INSERT INTO country VALUES(222,'Tuvalu','TUVALU','tuvalu','tv');
+INSERT INTO country VALUES(223,'Îles Mineures Éloignées des États-Unis','ÎLES MINEURES ÉLOIGNÉES DES ÉTATS-UNIS','iles-mineures-eloignees-des-etats-unis','um');
+INSERT INTO country VALUES(224,'Ouganda','OUGANDA','ouganda','ug');
+INSERT INTO country VALUES(225,'Uruguay','URUGUAY','uruguay','uy');
+INSERT INTO country VALUES(226,'Ouzbékistan','OUZBÉKISTAN','ouzbekistan','uz');
+INSERT INTO country VALUES(227,'Vanuatu','VANUATU','vanuatu','vu');
+INSERT INTO country VALUES(228,'Vatican (Etat du)','VATICAN (ETAT DU)','vatican-etat-du','va');
+INSERT INTO country VALUES(229,'Vietnam','VIETNAM','vietnam','vn');
+INSERT INTO country VALUES(230,'Vierges (Îles)','VIERGES (ÎLES)','vierges-iles','vi');
+INSERT INTO country VALUES(231,'Wallis et Futuna (Îles)','WALLIS ET FUTUNA (ÎLES)','wallis-et-futuna-iles','wf');
+INSERT INTO country VALUES(232,'Sahara Occidental','SAHARA OCCIDENTAL','sahara-occidental','eh');
+INSERT INTO country VALUES(233,'Yemen','YEMEN','yemen','ye');
+INSERT INTO country VALUES(234,'Zaïre','ZAÏRE','zaire','zr');
+INSERT INTO country VALUES(235,'Zambie','ZAMBIE','zambie','zm');
+INSERT INTO country VALUES(236,'Zimbabwe','ZIMBABWE','zimbabwe','zw');
+INSERT INTO country VALUES(237,'La Barbad','LA BARBAD','la-barbad','bb');
