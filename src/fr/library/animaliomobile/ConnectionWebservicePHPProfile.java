@@ -66,7 +66,7 @@ public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, JSO
 	public int resultErrorReturn;
 	public int nbMsgMin;
 	public ArrayList<Object> webserviceReturn = new ArrayList<Object>();
-
+	public static Boolean isFinish = false;
 	/**
 	 * Constuctor of Animalio Webservice
 	 * 
@@ -130,6 +130,8 @@ public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, JSO
 	protected void onPostExecute(JSONArray result) {
 		// On enleve le loader de chargement
 		pd.dismiss();
+		
+		isFinish = true;
 	}
 
 	@Override
@@ -138,12 +140,19 @@ public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, JSO
 		String connection = this.connectionType;
 		resultErrorReturn = 1;
 
+		try {
+	        Thread.sleep(3000);         
+	    } catch (InterruptedException e) {
+	       e.printStackTrace();
+	    }
+		
 		// Si le webservice concerne le profil
 		if (connection.equals("listObject")){
 			String url = this.domainUrl + "/list-object.php";
 			// On récupére les info du serveur
-
 			arrayInfoWebservice = getServerData(this.data, url);
+			
+			Log.i("log_tagRecupéreProfile", "Data : " + arrayInfoWebservice);
 		}
 		
 		return arrayInfoWebservice;

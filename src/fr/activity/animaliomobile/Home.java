@@ -1,6 +1,7 @@
 package fr.activity.animaliomobile;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -25,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import fr.animaliomobile.R;
 import fr.library.animaliomobile.ConnectionWebservicePHP;
+import fr.library.animaliomobile.ConnectionWebservicePHPProfile;
 import fr.library.animaliomobile.TypefaceSpan;
 
 public class Home extends Activity {
@@ -130,9 +132,9 @@ public class Home extends Activity {
 			if(v==btnHomeProfil){
 				//Display the Member Fragment Activity
 				// On créé l'Intent qui va nous permettre d'afficher l'activity Mermber
-				Intent intent = new Intent(getApplicationContext(), Profiles.class);
-				intent.putExtra("typeProfil", 0);
-				startActivity(intent);
+					Intent intent = new Intent(v.getContext(), Profiles.class);
+					intent.putExtra("typeProfil", 0);
+					startActivity(intent);
 			}
 			if(v==btnHomeEvent){
 				//Display the Member Fragment Activity
