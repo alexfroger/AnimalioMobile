@@ -534,8 +534,9 @@ public class Profiles extends Activity {
 			String dateFormatBirthdayFormmated = new SimpleDateFormat("dd-MM-yyyy").format(dateFormatBirthday);
 			String dateFormatDeathFormmated = new SimpleDateFormat("dd-MM-yyyy").format(dateFormatDeath);
 			
-			//On ajoute les types et race au spinner type et race
+			//Spinner : On ajoute les types et race au spinner type et race
 			addItemsTypeOnSpinner(infoAnimal.id);
+			addItemsRaceOnSpinner();
 			
 			edt_upd_an_birthday.setHint(dateFormatBirthdayFormmated);
 			edt_upd_an_death.setHint(dateFormatDeathFormmated);
@@ -1707,6 +1708,20 @@ public class Profiles extends Activity {
 				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner2.setAdapter(dataAdapter);
 		spinner2.setSelection(idType, true);
+	}
+	
+	/**
+	 *  Add items into spinner Type
+	 */
+	public void addItemsRaceOnSpinner() {
+		Spinner spinner2 = (Spinner) findViewById(R.id.update_spinner_race_id);
+		List<String> list = new ArrayList<String>();
+		list.add("Test");
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, list);
+		dataAdapter
+		.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		spinner2.setAdapter(dataAdapter);
 	}
 	  
 	  

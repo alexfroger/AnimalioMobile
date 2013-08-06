@@ -83,6 +83,21 @@
 		        android:layout_height="wrap_content" />
             
             <TextView
+                android:id="@+id/update_race_id"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="8dp"
+	            android:layout_marginBottom="6dp"
+	            android:text="Race* :"
+	            android:textColor="#808080"
+	            android:textSize="18sp" />
+            
+            <Spinner
+		        android:id="@+id/update_spinner_race_id"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content" />
+            
+            <TextView
                 android:id="@+id/update_txtView_an_birthday"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"

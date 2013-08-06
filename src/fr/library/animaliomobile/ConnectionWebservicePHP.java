@@ -424,6 +424,7 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 					editor.putString("createdAt", infoWebserviveReturn.getString("created_at"));
 					editor.putString("updatedAt", infoWebserviveReturn.getString("updated_at"));
 					editor.commit();
+					
 				} else {
 					res = false;
 				}
