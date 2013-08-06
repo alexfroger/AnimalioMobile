@@ -44,7 +44,6 @@ public class InstallSQLiteBase extends SQLiteOpenHelper {
 				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
 			Log.e("log_CreateSqliteBase", "Error creating database " + ex.toString());
 		}
 	}
