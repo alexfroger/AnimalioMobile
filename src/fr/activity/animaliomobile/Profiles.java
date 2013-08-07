@@ -23,6 +23,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -48,6 +49,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -73,7 +75,7 @@ import fr.library.animaliomobile.Notification;
 import fr.library.animaliomobile.RoundedImageView;
 import fr.library.animaliomobile.TypefaceSpan;
 
-public class Profiles extends Activity {
+public class Profiles extends Activity{
 	//Button de l'activité courante
 	private Button btn_animals_list;
 	private Button btn_friends_list;
@@ -125,8 +127,9 @@ public class Profiles extends Activity {
 	private static String user_createdAt;
 	private static String user_updatedAt;
 	
+	private static int userProvinceId;
+	
 	private static int pAnimalId;
-	private JSONArray arrayInfoWebservice;
 	private Animal infoAnimal;
 	// 0-Messagerie 1-ListeAnimaux 2-ListeAmis 3-ListeNotification
 	// 4-FriendRequest
@@ -155,7 +158,17 @@ public class Profiles extends Activity {
     private TextView txt_an_description;
     private TextView txt_an_birthday;
     private TextView txt_an_death;
-	
+    private TextView updLastname;
+    private TextView updFirstname;
+    private TextView updEmail;
+    private TextView updNickname;
+    private TextView updPays;
+    private TextView updDep;
+    private TextView updVille;
+    private TextView updBirthday;
+    private TextView updPhone;
+    private TextView updPhoneMobile;
+
     private Spinner upd_pays;
 	private Spinner upd_dep;
 	private Spinner upd_ville;
@@ -166,43 +179,19 @@ public class Profiles extends Activity {
 	private Thread splashTread;
 	
 	//Arrays retour webservice
+	private ArrayList<JSONArray> arrayListReturn;
 	private JSONArray arrayListMsg;
 	private JSONArray arrayListAnimals;
 	private JSONArray arrayListFriend;
+	private JSONArray arrayListProfilAnimal;
+	private JSONArray arrayListProfilFriend; 
+	private JSONArray arrayListProfilAnimalUpdate; 
+	private JSONArray arrayListProfilUpdate; 
+	private JSONArray arrayListProvince; 
 	
 	private ConnectionWebservicePHPProfile calcul;
-	@Override
-	protected void onStart() {
-		super.onStart();
-		
-		//On recupere les informations
-		calcul = new ConnectionWebservicePHPProfile(
-				1, "listObject", this, data);
-		calcul.execute();	
-		
-		final Handler handler = new Handler(Looper.getMainLooper());
-		
-		Thread thread = new Thread() {
-
-			@Override
-			public void run() {
-				if (calcul.isFinish == true) {
-					vf_profil = (ViewFlipper) findViewById(R.id.vf_profil);
-					ListView.LayoutParams param_lsv = new ListView.LayoutParams(
-							LayoutParams.MATCH_PARENT,
-							LayoutParams.MATCH_PARENT);
-
-					vf_profil.addView(createLayout("Envoyer un message"),
-							param_lsv);
-					positionChild[0] = 0;
-				}else{
-					handler.postDelayed(this, 100);
-				}
-			}
-		};
-
-		thread.start();
-	}
+	private Thread thread;
+	private Handler handler;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -333,94 +322,6 @@ public class Profiles extends Activity {
 ////				vf_profil.addView(createListNotifications(), param_lsv);
 ////				positionChild[3]=3;
 //	
-//				vf_profil.addView(createModification(), param_lsv);
-//				positionChild[7] = 4;
-				
-				//Style de la vue modification
-				// Bouton modifier profil
-//				btn_profil_update = (Button) findViewById(R.id.btn_registration);
-//				btn_profil_update.setOnClickListener(eventClick);
-//				
-//				//Textview
-//			    TextView updLastname = (TextView)findViewById(R.id.update_txtView_lastname);
-//			    TextView updFirstname = (TextView)findViewById(R.id.update_txtView_firstname);
-//			    TextView updEmail = (TextView)findViewById(R.id.update_txtView_email);
-//			    TextView updNickname = (TextView)findViewById(R.id.update_txtView_nickname);
-//			    TextView updPays = (TextView)findViewById(R.id.update_p_pays_id);
-//	//		    TextView updDep = (TextView)findViewById(R.id.update_p_dep_id);
-//	//		    TextView updVille = (TextView)findViewById(R.id.update_p_ville_id);
-//			    TextView updBirthday = (TextView)findViewById(R.id.update_txtView_birthday);
-//			    TextView updPhone = (TextView)findViewById(R.id.update_txtView_phone);
-//			    TextView updPhoneMobile = (TextView)findViewById(R.id.update_txtView_mobile);
-//			    
-//			    //EditText
-//			    upd_lastname = (EditText) findViewById(R.id.update_lastname);
-//			    upd_firstname = (EditText) findViewById(R.id.update_firstname);
-//			    upd_email = (EditText) findViewById(R.id.update_email);
-//			    upd_nickname = (EditText) findViewById(R.id.update_nickname);
-//				upd_birthday = (EditText) findViewById(R.id.update_birthday);
-//				upd_phone = (EditText) findViewById(R.id.update_phone);
-//				upd_phone_mobile = (EditText) findViewById(R.id.update_phone_mobile);
-//				
-//				//Spinner
-//			    upd_pays = (Spinner) findViewById(R.id.update_spinner_p_pays_id);
-//	//		    upd_dep = (Spinner) findViewById(R.id.update_spinner_p_dep_id);
-//	//		    upd_ville = (Spinner) findViewById(R.id.update_p_ville_id);
-//			    
-//				//Formattage de la date de naissance
-//				Date dateFormat = null;
-//				try {
-//					dateFormat = new SimpleDateFormat("yyyy-MM-dd").parse(user_birthday);
-//				} catch (ParseException e1) {
-//					Log.e("log_profilModif",
-//							"Date Formatted : " + user_birthday);
-//					e1.printStackTrace();
-//				}
-//				String birthdayFormmated = new SimpleDateFormat("dd-MM-yyyy").format(dateFormat);
-//			
-//				
-//	//			String user_cityID = preferences.getString("cityID", "");
-//	//			String user_countryID = preferences.getString("countryID", "");
-//				
-//				upd_lastname.setText(user_lastname);
-//				upd_firstname.setText(user_firstname);
-//				upd_email.setHint(user_email);
-//			    upd_nickname.setText(user_nickname);	    
-//				upd_birthday.setText(birthdayFormmated);
-//			    upd_phone.setText(user_phone);
-//			    upd_phone_mobile.setText(user_phoneMobile);
-//			    
-//				//On met la police au textview
-//			    updLastname.setTypeface(Lobster);
-//			    updFirstname.setTypeface(Lobster);
-//				updEmail.setTypeface(Lobster);
-//				updNickname.setTypeface(Lobster);
-//				updPays.setTypeface(Lobster);
-//	//			updDep.setTypeface(Lobster);
-//	//			updVille.setTypeface(Lobster);
-//				updBirthday.setTypeface(Lobster);
-//				updPhone.setTypeface(Lobster);
-//				updPhoneMobile.setTypeface(Lobster);
-//				
-//				//On ajoute les informations des spinners
-//				addItemsCountryOnSpinner(Integer.parseInt(user_countryID));
-//				
-//				upd_birthday.setOnTouchListener(new OnTouchListener() {
-//	
-//					@Override
-//					public boolean onTouch(View v, MotionEvent event) {
-//						if (event.getAction() == KeyEvent.ACTION_UP){
-//							new DatePickerDialog(v.getContext(), date, myCalendar
-//									.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-//									myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-//						}
-//						return false;
-//					}
-//	
-//				});
-				//End vue modification
-				
-				
 				break;
 	
 			case 1: // Profil membre
@@ -450,14 +351,14 @@ public class Profiles extends Activity {
 				 * Création des éléments du ViewFlipper
 				 */
 	
-				vf_profil.addView(createListAnimals(), param_lsv);
-				positionChild[1] = 0;
-	
-				vf_profil.addView(createListFriends(), param_lsv);
-				positionChild[2] = 1;
-	
-				vf_profil.addView(createModification(), param_lsv);
-				positionChild[4] = 2; 
+//				vf_profil.addView(createListAnimals(), param_lsv);
+//				positionChild[1] = 0;
+//	
+//				vf_profil.addView(createListFriends(), param_lsv);
+//				positionChild[2] = 1;
+//	
+//				vf_profil.addView(createModification(), param_lsv);
+//				positionChild[4] = 2; 
 	
 				break;
 			case 2: // Profil ami
@@ -498,19 +399,19 @@ public class Profiles extends Activity {
 				vf_profil.addView(createLayout("Envoyer un message"), param_lsv);
 				positionChild[5] = 0;
 	
-				vf_profil.addView(createListAnimals(), param_lsv);
-				positionChild[1]=1;
-	
-				vf_profil.addView(createListFriends(), param_lsv);
-				positionChild[2]= 2;
-	
-				vf_profil.addView(createListNotifications(), param_lsv);
-				positionChild[3]=3;
-	
-				vf_profil.addView(createModification(), param_lsv);
-				positionChild[6] = 4;			
+//				vf_profil.addView(createListAnimals(), param_lsv);
+//				positionChild[1]=1;
+//	
+//				vf_profil.addView(createListFriends(), param_lsv);
+//				positionChild[2]= 2;
+//	
+//				vf_profil.addView(createListNotifications(), param_lsv);
+//				positionChild[3]=3;
+//	
+//				vf_profil.addView(createModification(), param_lsv);
+//				positionChild[6] = 4;			
 				break;
-			case 3: //Profil animal		
+			case 3: //Profil Static animal		
 				/*
 				 * Création des boutons
 				 */
@@ -583,74 +484,6 @@ public class Profiles extends Activity {
 					}
 	
 				});
-				
-				// On vide la liste de données à envoyé si existe déjà
-				data.clear();
-	
-				// On ajoute les valeurs
-				data.add(new BasicNameValuePair("id_user", idUser));
-				data.add(new BasicNameValuePair("id_animal", String.valueOf(pAnimalId)));
-				data.add(new BasicNameValuePair("list_name", "AnimalInfo"));
-	
-				// Instancie la connection au webservice en thread
-				if (ConnectionWebservicePHPProfile.haveNetworkConnection(this)) {
-					ConnectionWebservicePHPProfile calcul1 = new ConnectionWebservicePHPProfile(
-							1, "listObject", this, data);
-					calcul1.execute();
-					
-					try {
-						//On recupere le tableau JSONArray d'animals et on cree l'animal
-						arrayInfoWebservice = calcul1.get();
-						try {
-							JSONObject infoWebserviveReturn = this.arrayInfoWebservice
-									.getJSONObject(0);
-							
-							infoAnimal = new Animal(infoWebserviveReturn.getInt("id_animal"), infoWebserviveReturn.getString("animal_name"));
-							infoAnimal.setUserId(infoWebserviveReturn.getInt("user_id"));
-							infoAnimal.setRaceId(infoWebserviveReturn.getInt("animal_race_id"));
-							infoAnimal.setDescription(infoWebserviveReturn.getString("animal_description"));
-							infoAnimal.setBirthday(infoWebserviveReturn.getString("animal_birthday"));
-							infoAnimal.setDeath(infoWebserviveReturn.getString("animal_death"));
-							infoAnimal.setCreatedAt(infoWebserviveReturn.getString("created_at"));
-							infoAnimal.setUpdatedAt(infoWebserviveReturn.getString("updated_at"));
-							
-						} catch (JSONException e) {
-							Log.e("log_listObjectMessage",
-									"Erreur 3 infoWebserviveReturn : " + e.toString());
-						}
-					
-					} catch (InterruptedException e) {
-						Log.e("log_listObjectMessage",
-								"Erreur 1 Interrupted :" + e.toString());
-					} catch (ExecutionException e) {
-						Log.e("log_listObjectMessage",
-								"Erreur 2 Execution :" + e.toString());
-					}
-				} else { // Sinon toast de problème
-					ConnectionWebservicePHPProfile.haveNetworkConnectionError(this);
-				}
-				
-				//Formattage de la date de naissance et de décès
-				Date dateFormatBirthday = null;
-				Date dateFormatDeath = null;
-				try {
-					dateFormatBirthday = new SimpleDateFormat("yyyy-MM-dd").parse(infoAnimal.birthday);
-					dateFormatDeath = new SimpleDateFormat("yyyy-MM-dd").parse(infoAnimal.death);
-				} catch (ParseException e1) {
-					Log.e("log_profilModif",
-							"Date Formatted : " + e1.toString());
-				}
-				String dateFormatBirthdayFormmated = new SimpleDateFormat("dd-MM-yyyy").format(dateFormatBirthday);
-				String dateFormatDeathFormmated = new SimpleDateFormat("dd-MM-yyyy").format(dateFormatDeath);
-				
-				//Spinner : On ajoute les types et race au spinner type et race
-				addItemsTypeOnSpinner(infoAnimal.id);
-				addItemsRaceOnSpinner();
-				
-				edt_upd_an_birthday.setHint(dateFormatBirthdayFormmated);
-				edt_upd_an_death.setHint(dateFormatDeathFormmated);
-				edt_upd_an_lastname.setHint(infoAnimal.name);
-				edt_upd_an_description.setHint(infoAnimal.description);
 				break;
 			}
 		}else{ // Sinon toast de problème
@@ -677,7 +510,275 @@ public class Profiles extends Activity {
 		getWindow().setSoftInputMode(
 		         WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		
+		switch (typeProfil) {
+			case 0: // Profil utilisateur
+				//On recupere les informations
+				calcul = new ConnectionWebservicePHPProfile(
+						1, "listObject", this);
+				calcul.execute();	
+				
+				handler = new Handler(Looper.getMainLooper());
+				
+				thread = new Thread() {
+					@Override
+					public void run() {
+						if (calcul.isFinish == true) {
+							
+							try {
+								//Récupere les information du profil
+								//0 => "listMsg", 1 =>listAnimals, 2 =>AnimalInfo, 
+								//3 =>listFriend, 4 =>updateProfil
+								arrayListReturn = calcul.get();
+								
+								arrayListMsg = arrayListReturn.get(0);
+								arrayListAnimals = arrayListReturn.get(1);
+								arrayListFriend = arrayListReturn.get(2);
+								
+								arrayListProvince = arrayListReturn.get(3);
+								JSONObject infoWebserviveReturn = arrayListProvince
+										.getJSONObject(0);
+								userProvinceId = infoWebserviveReturn.getInt("province_id");
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							} catch (ExecutionException e) {
+								e.printStackTrace();
+							} catch (JSONException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							
+							//On récupére les infos array retourner et on ajoute les elements à la vue
+							vf_profil = (ViewFlipper) findViewById(R.id.vf_profil);
+							ListView.LayoutParams param_lsv = new ListView.LayoutParams(
+									LayoutParams.MATCH_PARENT,
+									LayoutParams.MATCH_PARENT);
 
+							vf_profil.addView(createListMsg(arrayListMsg),
+									param_lsv);
+							positionChild[0] = 0;
+							
+							Log.i("log_arrayListAnimals", "arrayListAnimals : " + arrayListAnimals);
+							vf_profil.addView(createListAnimals(arrayListAnimals), param_lsv);
+							positionChild[1]=1;
+				
+							vf_profil.addView(createListFriends(arrayListFriend), param_lsv);
+							positionChild[2]= 2;
+				
+							vf_profil.addView(createListNotifications(), param_lsv);
+							positionChild[3]=3;
+							
+							vf_profil.addView(createModification(), param_lsv);
+							positionChild[7] = 4;
+							
+							//Style de la vue modification
+							// Bouton modifier profil
+							btn_profil_update = (Button) findViewById(R.id.btn_registration);
+							btn_profil_update.setOnClickListener(eventClick);
+							
+							//Textview
+						    updLastname = (TextView)findViewById(R.id.update_txtView_lastname);
+						    updFirstname = (TextView)findViewById(R.id.update_txtView_firstname);
+						    updEmail = (TextView)findViewById(R.id.update_txtView_email);
+						    updNickname = (TextView)findViewById(R.id.update_txtView_nickname);
+						    updPays = (TextView)findViewById(R.id.update_p_pays_id);
+						    updDep = (TextView)findViewById(R.id.update_p_dep_id);
+				//		    updVille = (TextView)findViewById(R.id.update_p_ville_id);
+						    updBirthday = (TextView)findViewById(R.id.update_txtView_birthday);
+						    updPhone = (TextView)findViewById(R.id.update_txtView_phone);
+						    updPhoneMobile = (TextView)findViewById(R.id.update_txtView_mobile);
+						    
+						    //EditText
+						    upd_lastname = (EditText) findViewById(R.id.update_lastname);
+						    upd_firstname = (EditText) findViewById(R.id.update_firstname);
+						    upd_email = (EditText) findViewById(R.id.update_email);
+						    upd_nickname = (EditText) findViewById(R.id.update_nickname);
+							upd_birthday = (EditText) findViewById(R.id.update_birthday);
+							upd_phone = (EditText) findViewById(R.id.update_phone);
+							upd_phone_mobile = (EditText) findViewById(R.id.update_phone_mobile);
+							
+							//Spinner
+						    upd_pays = (Spinner) findViewById(R.id.update_spinner_p_pays_id);
+						    upd_dep = (Spinner) findViewById(R.id.update_spinner_p_dep_id);
+						    
+						    upd_pays.setOnItemSelectedListener(selectClick);
+						    upd_ville = (Spinner) findViewById(R.id.update_p_ville_id);
+						    
+							//Formattage de la date de naissance
+							Date dateFormat = null;
+							try {
+								dateFormat = new SimpleDateFormat("yyyy-MM-dd").parse(user_birthday);
+							} catch (ParseException e1) {
+								Log.e("log_profilModif",
+										"Date Formatted : " + user_birthday);
+								e1.printStackTrace();
+							}
+							String birthdayFormmated = new SimpleDateFormat("dd-MM-yyyy").format(dateFormat);
+							
+							upd_lastname.setText(user_lastname);
+							upd_firstname.setText(user_firstname);
+							upd_email.setHint(user_email);
+						    upd_nickname.setText(user_nickname);	    
+							upd_birthday.setText(birthdayFormmated);
+						    upd_phone.setText(user_phone);
+						    upd_phone_mobile.setText(user_phoneMobile);
+						    
+							//On met la police au textview
+						    updLastname.setTypeface(Lobster);
+						    updFirstname.setTypeface(Lobster);
+							updEmail.setTypeface(Lobster);
+							updNickname.setTypeface(Lobster);
+							updPays.setTypeface(Lobster);
+							updDep.setTypeface(Lobster);
+							updVille.setTypeface(Lobster);
+							updBirthday.setTypeface(Lobster);
+							updPhone.setTypeface(Lobster);
+							updPhoneMobile.setTypeface(Lobster);
+							
+							//On ajoute les informations des spinners
+							addItemsCountryOnSpinner(Integer.parseInt(user_countryID));
+							
+							upd_birthday.setOnTouchListener(new OnTouchListener() {
+				
+								@Override
+								public boolean onTouch(View v, MotionEvent event) {
+									if (event.getAction() == KeyEvent.ACTION_UP){
+										new DatePickerDialog(v.getContext(), date, myCalendar
+												.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+												myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+									}
+									return false;
+								}
+				
+							});			
+							//End vue modification
+						}else{
+							handler.postDelayed(this, 100);
+						}
+					}
+				};
+				thread.start();
+			break;
+			case 1 : //Profil membre
+				break;
+			case 2 : // Profil ami
+				break;
+			case 3 : // Profil animal
+				// On vide la liste de données à envoyé si existe déjà
+				data.clear();
+	
+				// On ajoute les valeurs
+				data.add(new BasicNameValuePair("id_user", idUser));
+				data.add(new BasicNameValuePair("id_animal", String.valueOf(pAnimalId)));
+				data.add(new BasicNameValuePair("list_name", "AnimalInfo"));
+				
+				//On recupere les informations
+				calcul = new ConnectionWebservicePHPProfile(
+						1, "listObjectOther", this, data);
+				calcul.execute();	
+				
+				handler = new Handler(Looper.getMainLooper());
+				
+				thread = new Thread() {
+					@Override
+					public void run() {
+						if (calcul.isFinish == true) {
+							
+							try {
+								//Récupere les information du profil
+								//0 => "listMsg", 1 =>listAnimals, 2 =>AnimalInfo, 
+								//3 =>listFriend, 4 =>updateProfil
+								arrayListReturn = calcul.get();
+								
+								arrayListProfilAnimal = arrayListReturn.get(0);
+								
+								try {
+									JSONObject infoWebserviveReturn = arrayListProfilAnimal
+											.getJSONObject(0);
+									
+									infoAnimal = new Animal(infoWebserviveReturn.getInt("id_animal"), infoWebserviveReturn.getString("animal_name"));
+									infoAnimal.setUserId(infoWebserviveReturn.getInt("user_id"));
+									infoAnimal.setRaceId(infoWebserviveReturn.getInt("animal_race_id"));
+									infoAnimal.setDescription(infoWebserviveReturn.getString("animal_description"));
+									infoAnimal.setBirthday(infoWebserviveReturn.getString("animal_birthday"));
+									infoAnimal.setDeath(infoWebserviveReturn.getString("animal_death"));
+									infoAnimal.setCreatedAt(infoWebserviveReturn.getString("created_at"));
+									infoAnimal.setUpdatedAt(infoWebserviveReturn.getString("updated_at"));
+									
+								} catch (JSONException e) {
+									Log.e("log_listObjectMessage",
+											"Erreur 3 infoWebserviveReturn : " + e.toString());
+								}
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							} catch (ExecutionException e) {
+
+								e.printStackTrace();
+							}
+							
+							//On récupére les infos array retourner et on ajoute les elements à la vue
+							//Formattage de la date de naissance et de décès
+							Date dateFormatBirthday = null;
+							Date dateFormatDeath = null;
+							try {
+								dateFormatBirthday = new SimpleDateFormat("yyyy-MM-dd").parse(infoAnimal.birthday);
+								dateFormatDeath = new SimpleDateFormat("yyyy-MM-dd").parse(infoAnimal.death);
+							} catch (ParseException e1) {
+								Log.e("log_profilModif",
+										"Date Formatted : " + e1.toString());
+							}
+							String dateFormatBirthdayFormmated = new SimpleDateFormat("dd-MM-yyyy").format(dateFormatBirthday);
+							String dateFormatDeathFormmated = new SimpleDateFormat("dd-MM-yyyy").format(dateFormatDeath);
+							
+							//Spinner : On ajoute les types et race au spinner type et race
+							addItemsTypeOnSpinner(infoAnimal.id);
+							addItemsRaceOnSpinner();
+							
+							edt_upd_an_birthday.setHint(dateFormatBirthdayFormmated);
+							edt_upd_an_death.setHint(dateFormatDeathFormmated);
+							edt_upd_an_lastname.setHint(infoAnimal.name);
+							edt_upd_an_description.setHint(infoAnimal.description);
+						}else{
+							handler.postDelayed(this, 100);
+						}
+					}
+				};
+				thread.start();
+				break;
+		
+		}
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+	    super.onConfigurationChanged(newConfig);
+	}
+	
+	OnItemSelectedListener selectClick = new OnItemSelectedListener(){
+		
+		@Override
+		public void onItemSelected(AdapterView<?> parent, View v, int position,
+				long id) {
+			
+			if(parent == upd_pays){
+				addItemsProvinceOnSpinner(Integer.parseInt(user_cityID), position+1);
+			}
+			if(parent == upd_ville){
+				addItemsCityOnSpinner(Integer.parseInt(user_cityID), position+1);
+			}
+		}
+	
+		@Override
+		public void onNothingSelected(AdapterView<?> arg0) {
+			// TODO Auto-generated method stub
+			
+		}	
+	};
+	
 	OnClickListener eventClick = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -731,14 +832,15 @@ public class Profiles extends Activity {
 					// Instancie la connection au webservice en thread
 					if (ConnectionWebservicePHPProfile.haveNetworkConnection(v.getContext())) { 
 						ConnectionWebservicePHPProfile calcul = new ConnectionWebservicePHPProfile(
-								1, "listObject", v.getContext(), data);
+								1, "listObjectOther", v.getContext(), data);
 						calcul.execute();
 						try {
-							arrayInfoWebservice = calcul.get();
+							arrayListReturn = calcul.get();
+							arrayListProfilAnimalUpdate = arrayListReturn.get(0);
 							
 							JSONObject infoWebserviveReturn;
 							try {
-								infoWebserviveReturn = arrayInfoWebservice
+								infoWebserviveReturn = arrayListProfilAnimalUpdate
 										.getJSONObject(0);
 								
 								if (infoWebserviveReturn.getInt("isOk") == 0) {
@@ -814,11 +916,13 @@ public class Profiles extends Activity {
 								1, "listObject", v.getContext(), data);
 						calcul.execute();
 						try {
-							arrayInfoWebservice = calcul.get();
+							arrayListReturn = calcul.get();
+							
+							arrayListProfilUpdate = arrayListReturn.get(0);
 							
 							JSONObject infoWebserviveReturn;
 							try {
-								infoWebserviveReturn = arrayInfoWebservice
+								infoWebserviveReturn = arrayListProfilUpdate
 										.getJSONObject(0);
 								
 								if (infoWebserviveReturn.getInt("isOk") == 0) {
@@ -936,14 +1040,14 @@ public class Profiles extends Activity {
 		return displayView;
 	}
 	
-	public ListView createListMsg(JSONArray arrayListAnimals) {
+	public ListView createListMsg(JSONArray arrayListMsg1) {
 		final ListView lsv_msg = new ListView(this);
 		ArrayList<Message> messages = new ArrayList<Message>();
 		
 		try {
 			// On ajoute les message que l'on à reçu
 			for (int i = 0; i < arrayListAnimals.length(); i++) {
-				JSONObject infoWebserviveReturn = arrayListAnimals
+				JSONObject infoWebserviveReturn = arrayListMsg1
 						.getJSONObject(i);
 
 				if (!infoWebserviveReturn.isNull("user_id_to")) {
@@ -982,45 +1086,18 @@ public class Profiles extends Activity {
 		return lsv_msg;
 	}
 
-	ListView createListAnimals() {
+	ListView createListAnimals(JSONArray arrayListAnimal1) {
 		final ListView lsv_animals_list = new ListView(this);
 		ArrayList<Animal> animals = new ArrayList<Animal>();
-
-		// On vide la liste de données à envoyé si existe déjà
-		data.clear();
-
-		// On ajoute les valeurs
-		data.add(new BasicNameValuePair("id_user", idUser));
-		data.add(new BasicNameValuePair("list_name", "listAnimals"));
-		data.add(new BasicNameValuePair("nb_msg_min", "0"));
-		data.add(new BasicNameValuePair("nb_msg_max", "20"));
-		// Instancie la connection au webservice en thread
-		if (ConnectionWebservicePHPProfile.haveNetworkConnection(this)) {
-			ConnectionWebservicePHPProfile calcul = new ConnectionWebservicePHPProfile(
-					1, "listObject", this, data);
-			calcul.execute();
-			try {
-				// On recupere le tableau JSONArray d'animals
-				arrayInfoWebservice = calcul.get();
-			} catch (InterruptedException e) {
-				Log.e("log_listObjectMessage",
-						"Erreur 1 Interrupted :" + e.toString());
-			} catch (ExecutionException e) {
-				Log.e("log_listObjectMessage",
-						"Erreur 2 Execution :" + e.toString());
-			}
-		} else { // Sinon toast de problème
-			ConnectionWebservicePHPProfile.haveNetworkConnectionError(this);
-		}
-
+		
 		try {
 			// Création d'une ligne ou on peut ajouter un animal
 			Animal animal0 = new Animal(0, "Ajouter un animal");
 			animals.add(animal0);
 
 			// On ajoute les animaux que l'on à déjà créer
-			for (int i = 0; i < this.arrayInfoWebservice.length(); i++) {
-				JSONObject infoWebserviveReturn = this.arrayInfoWebservice
+			for (int i = 0; i < arrayListAnimal1.length(); i++) {
+				JSONObject infoWebserviveReturn = arrayListAnimal1
 						.getJSONObject(i);
 
 				if (!infoWebserviveReturn.isNull("id_animal")) {
@@ -1086,41 +1163,14 @@ public class Profiles extends Activity {
 		return lsv_animals_list;
 	}
 
-	ListView createListFriends() {
+	ListView createListFriends(JSONArray arrayListFriend1) {
 		final ListView lsv_friends_list = new ListView(this);
 		ArrayList<Friend> friends = new ArrayList<Friend>();
 
-		// On vide la liste de données à envoyé si existe déjà
-		data.clear();
-
-		// On ajoute les valeurs
-		data.add(new BasicNameValuePair("id_user", idUser));
-		data.add(new BasicNameValuePair("list_name", "listFriend"));
-		data.add(new BasicNameValuePair("nb_msg_min", "0"));
-		data.add(new BasicNameValuePair("nb_msg_max", "100"));
-		// Instancie la connection au webservice en thread
-		if (ConnectionWebservicePHPProfile.haveNetworkConnection(this)) {
-			ConnectionWebservicePHPProfile calcul = new ConnectionWebservicePHPProfile(
-					1, "listObject", this, data);
-			calcul.execute();
-			try {
-				// On recupere le tableau JSONArray d'animals
-				arrayInfoWebservice = calcul.get();
-			} catch (InterruptedException e) {
-				Log.e("log_listObjectMessage",
-						"Erreur 1 Interrupted :" + e.toString());
-			} catch (ExecutionException e) {
-				Log.e("log_listObjectMessage",
-						"Erreur 2 Execution :" + e.toString());
-			}
-		} else { // Sinon toast de problème
-			ConnectionWebservicePHPProfile.haveNetworkConnectionError(this);
-		}
-
 		try {
 			// On ajoute les animaux que l'on à déjà créer
-			for (int i = 0; i < this.arrayInfoWebservice.length(); i++) {
-				JSONObject infoWebserviveReturn = this.arrayInfoWebservice
+			for (int i = 0; i < arrayListFriend1.length(); i++) {
+				JSONObject infoWebserviveReturn = arrayListFriend1
 						.getJSONObject(i);
 
 				if (!infoWebserviveReturn.isNull("friend_id")) {
@@ -1815,7 +1865,7 @@ public class Profiles extends Activity {
 	}
 	  
 	/**
-	 *  Add items into spinner Type
+	 *  Add items into spinner Country
 	 */
 	public void addItemsCountryOnSpinner(int idCountry) {
 		Spinner spinner2 = (Spinner) findViewById(R.id.update_spinner_p_pays_id);
@@ -1841,6 +1891,72 @@ public class Profiles extends Activity {
 		spinner2.setSelection(idCountry, true);
 	}
 	
+	/**
+	 *  Add items into spinner Province
+	 */
+	public void addItemsProvinceOnSpinner(int idCity, int idCountry) {
+		List<String> list = new ArrayList<String>();
+		
+		if(idCountry == 1){
+		//Connexion a la bdd interne
+		//on affiche le spinner dep
+		InstallSQLiteBase firstInstallBdd = new InstallSQLiteBase(getApplicationContext());
+		SQLiteDatabase formationDB = firstInstallBdd.getReadableDatabase(); 
+		Cursor curseur = formationDB.rawQuery("SELECT province_name FROM provinces", null);
+		
+		while(curseur.moveToNext()) {
+			list.add(curseur.getString(0));
+		}
+		
+		firstInstallBdd.close();
+		}else{
+			list.add("");
+		}
+		
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, list);
+		dataAdapter
+				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		upd_dep.setAdapter(dataAdapter);
+		
+		if(idCountry == 1){
+			upd_dep.setSelection(userProvinceId, true);
+		}
+	}
+	
+	/**
+	 *  Add items into spinner Cities
+	 */
+	public void addItemsCityOnSpinner(int idCity, int idCountry) {
+		List<String> list = new ArrayList<String>();
+		
+		if(idCountry == 1){
+			//Connexion a la bdd interne
+			//on affiche le spinner dep
+			InstallSQLiteBase firstInstallBdd = new InstallSQLiteBase(getApplicationContext());
+			SQLiteDatabase formationDB = firstInstallBdd.getReadableDatabase(); 
+			Cursor curseur = formationDB.rawQuery("SELECT province_name FROM provinces", null);
+			
+			while(curseur.moveToNext()) {
+				list.add(curseur.getString(0));
+			}
+			
+			firstInstallBdd.close();
+		}else{
+			list.add("");
+		}
+		
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, list);
+		dataAdapter
+		.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		upd_ville.setAdapter(dataAdapter);
+		
+		if(idCountry == 1){
+			upd_ville.setSelection(idCity, true);
+		}
+	}
+	
 	private class ViewHolder {
 		ImageView imageWho;
 		ImageView imageWhom;
@@ -1851,5 +1967,5 @@ public class Profiles extends Activity {
 		TextView date;
 		TextView nbComm;
 		TextView nbLike;
-	}	
+	}
 }

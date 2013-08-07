@@ -45,7 +45,8 @@
         </activity>
         <activity
             android:name="fr.activity.animaliomobile.Profiles"
-            android:label="@string/title_activity_profil" >
+            android:label="@string/title_activity_profil"
+            android:configChanges="keyboardHidden|orientation|screenSize" >
         </activity>
         <activity
             android:name="fr.activity.animaliomobile.Details"

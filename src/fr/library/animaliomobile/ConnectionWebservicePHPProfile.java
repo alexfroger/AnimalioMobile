@@ -18,6 +18,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
 import org.json.JSONArray;
@@ -49,7 +50,7 @@ import fr.activity.animaliomobile.Home;
 import fr.activity.animaliomobile.MessagingService;
 import fr.animaliomobile.R;
 
-public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, JSONArray> {
+public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, ArrayList<JSONArray>> {
 
 	private int loaderType; // affiche le layout de la premiere page de
 							// chargement de l'application
@@ -59,7 +60,7 @@ public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, JSO
 	public RelativeLayout layMessage;
 	public ScrollView layScrollview;
 	private ProgressDialog pd;
-	private JSONArray arrayInfoWebservice;
+	private ArrayList<JSONArray> arrayInfoWebservice = new ArrayList<JSONArray>();
 	public String domainUrl = "http://m.animalio.fr/";
 	HttpRequestRetryHandler myRetryHandler; // Récupérateur de réponse HTTP
 	public ArrayList<NameValuePair> data = new ArrayList<NameValuePair>();
@@ -67,6 +68,16 @@ public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, JSO
 	public int nbMsgMin;
 	public ArrayList<Object> webserviceReturn = new ArrayList<Object>();
 	public static Boolean isFinish = false;
+	public String[] listObject = {
+		"listMsg",
+		"listAnimals",
+		"listFriend",
+		"getUserProvinceId"
+	};
+	
+	private static String idUser;
+	private static String user_cityID;
+
 	/**
 	 * Constuctor of Animalio Webservice
 	 * 
@@ -127,7 +138,7 @@ public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, JSO
 	}
 
 	@Override
-	protected void onPostExecute(JSONArray result) {
+	protected void onPostExecute(ArrayList<JSONArray> result) {
 		// On enleve le loader de chargement
 		pd.dismiss();
 		
@@ -135,24 +146,83 @@ public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, JSO
 	}
 
 	@Override
-	protected JSONArray doInBackground(Void... arg0) { // Actions à exécuter en
+	protected ArrayList<JSONArray> doInBackground(Void... arg0) { // Actions à exécuter en
 														// tache de fond
+		//On Récupére les préférences utilisateur si elle existe
+		SharedPreferences preferences = PreferenceManager
+					.getDefaultSharedPreferences(this.context);
+		
+		idUser = preferences.getString("idUser", "");
+		user_cityID = preferences.getString("cityID", "");
+		
 		String connection = this.connectionType;
 		resultErrorReturn = 1;
-
-		try {
-	        Thread.sleep(3000);         
-	    } catch (InterruptedException e) {
-	       e.printStackTrace();
-	    }
 		
 		// Si le webservice concerne le profil
 		if (connection.equals("listObject")){
 			String url = this.domainUrl + "/list-object.php";
-			// On récupére les info du serveur
-			arrayInfoWebservice = getServerData(this.data, url);
 			
-			Log.i("log_tagRecupéreProfile", "Data : " + arrayInfoWebservice);
+			Log.i("log_tagRecupéreProfile", "listObject : " + listObject);
+			
+			for (int i = 0; i < listObject.length; i++) {
+				Log.i("log_tagRecupéreProfile", "listObjectI : " + listObject[i]);
+				// On récupére les info du serveur
+				if(listObject[i].equals("listMsg")){
+					// On vide la liste de données à envoyé si existe déjà
+					data.clear();
+
+					// On ajoute les valeurs
+					data.add(new BasicNameValuePair("id_user", idUser));
+					data.add(new BasicNameValuePair("list_name", "listMsg"));
+					data.add(new BasicNameValuePair("nb_msg_min", "0"));
+					data.add(new BasicNameValuePair("nb_msg_max", "20"));
+					
+					arrayInfoWebservice.add(getServerData(data, url));
+				}
+				if(listObject[i].equals("listAnimals")){
+					// On vide la liste de données à envoyé si existe déjà
+					data.clear();
+
+					// On ajoute les valeurs
+					data.add(new BasicNameValuePair("id_user", idUser));
+					data.add(new BasicNameValuePair("list_name", "listAnimals"));
+					data.add(new BasicNameValuePair("nb_msg_min", "0"));
+					data.add(new BasicNameValuePair("nb_msg_max", "20"));
+					
+					arrayInfoWebservice.add(getServerData(data, url));
+				}
+				if(listObject[i].equals("listFriend")){
+					// On vide la liste de données à envoyé si existe déjà
+					data.clear();
+
+					// On ajoute les valeurs
+					data.add(new BasicNameValuePair("id_user", idUser));
+					data.add(new BasicNameValuePair("list_name", "listFriend"));
+					data.add(new BasicNameValuePair("nb_msg_min", "0"));
+					data.add(new BasicNameValuePair("nb_msg_max", "20"));
+					
+					arrayInfoWebservice.add(getServerData(data, url));
+				}
+				if(listObject[i].equals("getUserProvinceId")){
+					// On vide la liste de données à envoyé si existe déjà
+					data.clear();
+
+					// On ajoute les valeurs
+					data.add(new BasicNameValuePair("id_user", idUser));
+					data.add(new BasicNameValuePair("list_name", "getUserProvinceId"));
+					data.add(new BasicNameValuePair("city_id", user_cityID));
+					
+					arrayInfoWebservice.add(getServerData(data, url));
+				}
+			}
+			
+			Log.i("log_tagRecupéreProfile", "listObject : " + arrayInfoWebservice);
+		}else if (connection.equals("listObjectOther")){
+			String url = this.domainUrl + "/list-object.php";
+			
+			arrayInfoWebservice.add(getServerData(data, url));
+			
+			Log.i("log_tagRecupéreProfile", "listObjectOther : " + arrayInfoWebservice);
 		}
 		
 		return arrayInfoWebservice;
