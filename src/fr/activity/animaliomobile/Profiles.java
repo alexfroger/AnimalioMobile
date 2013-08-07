@@ -188,10 +188,14 @@ public class Profiles extends Activity{
 	private JSONArray arrayListProfilAnimalUpdate; 
 	private JSONArray arrayListProfilUpdate; 
 	private JSONArray arrayListProvince; 
+	private JSONArray userCityDefaut; 
+	private JSONArray arrayListUserCity; 
 	
 	private ConnectionWebservicePHPProfile calcul;
 	private Thread thread;
 	private Handler handler;
+	
+	private Boolean isFirstUseSelected = true;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -543,13 +547,13 @@ public class Profiles extends Activity{
 								JSONObject infoWebserviveReturn = arrayListProvince
 										.getJSONObject(0);
 								userProvinceId = infoWebserviveReturn.getInt("province_id");
+								userCityDefaut = arrayListReturn.get(4);
 							} catch (InterruptedException e) {
-								e.printStackTrace();
+								Log.i("log_ArrayReturn", "InterruptedException : " + e.toString());
 							} catch (ExecutionException e) {
-								e.printStackTrace();
+								Log.i("log_ArrayReturn", "ExecutionException : " + e.toString());
 							} catch (JSONException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								Log.i("log_ArrayReturn", "ExecutionException : " + e.toString());
 							}
 							
 							//On récupére les infos array retourner et on ajoute les elements à la vue
@@ -587,7 +591,7 @@ public class Profiles extends Activity{
 						    updNickname = (TextView)findViewById(R.id.update_txtView_nickname);
 						    updPays = (TextView)findViewById(R.id.update_p_pays_id);
 						    updDep = (TextView)findViewById(R.id.update_p_dep_id);
-				//		    updVille = (TextView)findViewById(R.id.update_p_ville_id);
+						    updVille = (TextView)findViewById(R.id.update_p_ville_id);
 						    updBirthday = (TextView)findViewById(R.id.update_txtView_birthday);
 						    updPhone = (TextView)findViewById(R.id.update_txtView_phone);
 						    updPhoneMobile = (TextView)findViewById(R.id.update_txtView_mobile);
@@ -604,9 +608,9 @@ public class Profiles extends Activity{
 							//Spinner
 						    upd_pays = (Spinner) findViewById(R.id.update_spinner_p_pays_id);
 						    upd_dep = (Spinner) findViewById(R.id.update_spinner_p_dep_id);
-						    
+						    upd_ville = (Spinner) findViewById(R.id.update_spinner_p_ville_id);
 						    upd_pays.setOnItemSelectedListener(selectClick);
-						    upd_ville = (Spinner) findViewById(R.id.update_p_ville_id);
+						    upd_dep.setOnItemSelectedListener(selectClick);
 						    
 							//Formattage de la date de naissance
 							Date dateFormat = null;
@@ -765,10 +769,12 @@ public class Profiles extends Activity{
 				long id) {
 			
 			if(parent == upd_pays){
-				addItemsProvinceOnSpinner(Integer.parseInt(user_cityID), position+1);
+				addItemsProvinceOnSpinner(position+1, isFirstUseSelected);
+				isFirstUseSelected = false;
 			}
-			if(parent == upd_ville){
-				addItemsCityOnSpinner(Integer.parseInt(user_cityID), position+1);
+			if(parent == upd_dep){
+				Log.i("Log_upd_dep", "provinceS : " + (position+1) + "- province : " + userProvinceId + "- city : " + user_cityID);
+				addItemsCityOnSpinner(position+1, userProvinceId, false);
 			}
 		}
 	
@@ -906,6 +912,8 @@ public class Profiles extends Activity{
 					data.add(new BasicNameValuePair("upd_lastname", upd_lastname.getText().toString()));
 					data.add(new BasicNameValuePair("upd_firstname", upd_firstname.getText().toString()));
 					data.add(new BasicNameValuePair("upd_nickname", upd_nickname.getText().toString()));
+					data.add(new BasicNameValuePair("upd_country", upd_pays.getSelectedItem().toString()));
+					data.add(new BasicNameValuePair("upd_city", upd_ville.getSelectedItem().toString()));
 					data.add(new BasicNameValuePair("upd_birthday", upd_birthday.getText().toString()));
 					data.add(new BasicNameValuePair("upd_phone", upd_phone.getText().toString()));
 					data.add(new BasicNameValuePair("upd_phone_mobile", upd_phone_mobile.getText().toString()));
@@ -913,7 +921,7 @@ public class Profiles extends Activity{
 					// Instancie la connection au webservice en thread
 					if (ConnectionWebservicePHPProfile.haveNetworkConnection(v.getContext())) { 
 						ConnectionWebservicePHPProfile calcul = new ConnectionWebservicePHPProfile(
-								1, "listObject", v.getContext(), data);
+								1, "listObjectOther", v.getContext(), data);
 						calcul.execute();
 						try {
 							arrayListReturn = calcul.get();
@@ -1888,16 +1896,20 @@ public class Profiles extends Activity{
 		dataAdapter
 				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner2.setAdapter(dataAdapter);
-		spinner2.setSelection(idCountry, true);
+		
+		spinner2.setSelection(idCountry-1, true);
 	}
 	
 	/**
-	 *  Add items into spinner Province
+	 * Add items into spinner Province
+	 *  @param int idCountrySelected
+	 *  @param boolean isFirstUse in case is the fisrt use we use the select action
+	 *  @return void
 	 */
-	public void addItemsProvinceOnSpinner(int idCity, int idCountry) {
+	public void addItemsProvinceOnSpinner(int idCountrySelected, boolean isFirstUse) {
 		List<String> list = new ArrayList<String>();
 		
-		if(idCountry == 1){
+		if(idCountrySelected == 1){
 		//Connexion a la bdd interne
 		//on affiche le spinner dep
 		InstallSQLiteBase firstInstallBdd = new InstallSQLiteBase(getApplicationContext());
@@ -1919,42 +1931,86 @@ public class Profiles extends Activity{
 				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		upd_dep.setAdapter(dataAdapter);
 		
-		if(idCountry == 1){
-			upd_dep.setSelection(userProvinceId, true);
+		if(isFirstUse){
+			if(idCountrySelected == 1){
+				upd_dep.setSelection(userProvinceId-1, true);
+				addItemsCityOnSpinner(userProvinceId, userProvinceId, true);
+			}
 		}
 	}
 	
 	/**
 	 *  Add items into spinner Cities
+	 *  @param int idProvinceSelected
+	 *  @param int idProvince
+	 *  @param int idCity
+	 *  @return void
 	 */
-	public void addItemsCityOnSpinner(int idCity, int idCountry) {
+	public void addItemsCityOnSpinner(int idProvinceSelected, int idProvince, boolean isFirstUse) {
 		List<String> list = new ArrayList<String>();
 		
-		if(idCountry == 1){
-			//Connexion a la bdd interne
-			//on affiche le spinner dep
-			InstallSQLiteBase firstInstallBdd = new InstallSQLiteBase(getApplicationContext());
-			SQLiteDatabase formationDB = firstInstallBdd.getReadableDatabase(); 
-			Cursor curseur = formationDB.rawQuery("SELECT province_name FROM provinces", null);
-			
-			while(curseur.moveToNext()) {
-				list.add(curseur.getString(0));
-			}
-			
-			firstInstallBdd.close();
-		}else{
+		Log.i("log_addItemsCityOnSpinner", "idProvinceSelected : " + idProvinceSelected);
+		
+		String provinceCourante;
+		try {
+			provinceCourante = upd_dep.getItemAtPosition(idProvinceSelected).toString();
+		}catch (Exception e) {
+			provinceCourante = "";
+		}
+		
+		if(provinceCourante.equals("")){
 			list.add("");
+		}else if(idProvince == userProvinceId && isFirstUse){
+			//On affiche la ville séléctionné
+				JSONObject infoWebserviveReturn;
+				try {
+					infoWebserviveReturn = userCityDefaut
+							.getJSONObject(0);
+					list.add(infoWebserviveReturn.getString("city_name"));
+				} catch (JSONException e) {
+					Log.i("log_userCityDefaut", "JSONException : " + e.toString());
+				}
+		}else{
+			//On charge les nouvelles données
+			// On vide la liste de données à envoyé si existe déjà
+			data.clear();
+
+			// On ajoute les valeurs
+			data.add(new BasicNameValuePair("id_user", idUser));
+			data.add(new BasicNameValuePair("list_name", "userCity"));
+			data.add(new BasicNameValuePair("province_id", String.valueOf(idProvinceSelected)));
+			
+			if (ConnectionWebservicePHPProfile.haveNetworkConnection(this)) { 
+				ConnectionWebservicePHPProfile calcul = new ConnectionWebservicePHPProfile(
+						1, "listObjectOther", this, data);
+				calcul.execute();
+				try {
+					arrayListReturn = calcul.get();
+					arrayListUserCity = arrayListReturn.get(0);
+					
+					JSONObject infoWebserviveReturn;
+					//On affiche les villes de la personnes par defaut
+					for (int i = 0; i < arrayListUserCity.length(); i++) {
+						try {
+							infoWebserviveReturn = arrayListUserCity
+									.getJSONObject(i);
+							list.add(infoWebserviveReturn.getString("city_name"));
+						} catch (JSONException e) {
+							Log.e("log_userCity", "JSONException : " + e.toString());
+						}
+					}
+				}catch (Exception e) {
+					Log.e("log_arrayListReturn1", "Exception : " + e.toString());
+				}
+			} else { // Sinon toast de problème
+				ConnectionWebservicePHPProfile.haveNetworkConnectionError(this);
+			}
 		}
 		
 		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_spinner_item, list);
-		dataAdapter
-		.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		upd_ville.setAdapter(dataAdapter);
-		
-		if(idCountry == 1){
-			upd_ville.setSelection(idCity, true);
-		}
 	}
 	
 	private class ViewHolder {

@@ -72,11 +72,13 @@ public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, Arr
 		"listMsg",
 		"listAnimals",
 		"listFriend",
-		"getUserProvinceId"
+		"getUserProvinceId",
+		"userCityDefaut"
 	};
 	
 	private static String idUser;
 	private static String user_cityID;
+
 
 	/**
 	 * Constuctor of Animalio Webservice
@@ -165,7 +167,7 @@ public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, Arr
 			Log.i("log_tagRecupéreProfile", "listObject : " + listObject);
 			
 			for (int i = 0; i < listObject.length; i++) {
-				Log.i("log_tagRecupéreProfile", "listObjectI : " + listObject[i]);
+				Log.i("log_tagRecupéreProfile", "listObject : " + listObject[i]);
 				// On récupére les info du serveur
 				if(listObject[i].equals("listMsg")){
 					// On vide la liste de données à envoyé si existe déjà
@@ -214,9 +216,18 @@ public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, Arr
 					
 					arrayInfoWebservice.add(getServerData(data, url));
 				}
+				if(listObject[i].equals("userCityDefaut")){
+					// On vide la liste de données à envoyé si existe déjà
+					data.clear();
+					
+					// On ajoute les valeurs
+					data.add(new BasicNameValuePair("id_user", idUser));
+					data.add(new BasicNameValuePair("list_name", "userCityDefaut"));
+					data.add(new BasicNameValuePair("city_id", user_cityID));
+					
+					arrayInfoWebservice.add(getServerData(data, url));
+				}
 			}
-			
-			Log.i("log_tagRecupéreProfile", "listObject : " + arrayInfoWebservice);
 		}else if (connection.equals("listObjectOther")){
 			String url = this.domainUrl + "/list-object.php";
 			
