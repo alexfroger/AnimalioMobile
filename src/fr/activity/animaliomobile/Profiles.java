@@ -75,8 +75,8 @@ import fr.library.animaliomobile.Notification;
 import fr.library.animaliomobile.RoundedImageView;
 import fr.library.animaliomobile.TypefaceSpan;
 
-public class Profiles extends Activity{
-	//Button de l'activité courante
+public class Profiles extends Activity {
+	// Button de l'activité courante
 	private Button btn_animals_list;
 	private Button btn_friends_list;
 	private Button btn_notifications_list;
@@ -90,22 +90,22 @@ public class Profiles extends Activity{
 	private Button btn_galerie;
 	private Button btn_profil_update;
 	private Button btn_upd_animal;
-	
-	//Button bar de bas
+
+	// Button bar de bas
 	private Button btn_members;
 	private Button btn_gallery;
 	private Button btn_profil;
 	private Button btn_events;
 	private Button btn_live;
 	private Button btn_photo;
-	
+
 	private ViewFlipper vf_profil;
 	private static int typeProfil;
 	private static ListView.LayoutParams param_lsv;
 	private int[] positionChild = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	private static ArrayList<NameValuePair> data = new ArrayList<NameValuePair>();
-	
-	//Preference
+
+	// Preference
 	private static String idUser;
 	private static String user_humorID;
 	private static String user_cityID;
@@ -126,22 +126,25 @@ public class Profiles extends Activity{
 	private static String user_isBlacklist;
 	private static String user_createdAt;
 	private static String user_updatedAt;
-	
+
 	private static int userProvinceId;
-	
+
 	private static int pAnimalId;
+	private static String pAnimalName;
+	private static int pAnimalPosition;
+
 	private Animal infoAnimal;
 	// 0-Messagerie 1-ListeAnimaux 2-ListeAmis 3-ListeNotification
 	// 4-FriendRequest
 	// 5-EnvoyerMessage 6-DeleteFriend 7-UserModification 8-AnimalModification
 	// 9-DeleteAnimal
-	
+
 	private RoundedImageView imv_profil;
 	private ImageView imv_cover;
-	
+
 	private Typeface Arimo;
 	private Typeface Lobster;
-	
+
 	private EditText upd_lastname;
 	private EditText upd_firstname;
 	private EditText upd_email;
@@ -153,60 +156,63 @@ public class Profiles extends Activity{
 	private EditText edt_upd_an_death;
 	private EditText edt_upd_an_lastname;
 	private EditText edt_upd_an_description;
-	
-    private TextView txt_an_lastname;
-    private TextView txt_an_description;
-    private TextView txt_an_birthday;
-    private TextView txt_an_death;
-    private TextView updLastname;
-    private TextView updFirstname;
-    private TextView updEmail;
-    private TextView updNickname;
-    private TextView updPays;
-    private TextView updDep;
-    private TextView updVille;
-    private TextView updBirthday;
-    private TextView updPhone;
-    private TextView updPhoneMobile;
 
-    private Spinner upd_pays;
+	private TextView txt_an_lastname;
+	private TextView txt_an_description;
+	private TextView txt_an_birthday;
+	private TextView txt_an_death;
+	private TextView updLastname;
+	private TextView updFirstname;
+	private TextView updEmail;
+	private TextView updNickname;
+	private TextView updPays;
+	private TextView updDep;
+	private TextView updVille;
+	private TextView updBirthday;
+	private TextView updPhone;
+	private TextView updPhoneMobile;
+
+	private Spinner upd_pays;
 	private Spinner upd_dep;
 	private Spinner upd_ville;
-	
+
 	private Calendar myCalendar;
 	private DatePickerDialog.OnDateSetListener date;
-	
+
 	private Thread splashTread;
-	
-	//Arrays retour webservice
+
+	// Arrays retour webservice
 	private ArrayList<JSONArray> arrayListReturn;
 	private JSONArray arrayListMsg;
 	private JSONArray arrayListAnimals;
 	private JSONArray arrayListFriend;
 	private JSONArray arrayListProfilAnimal;
-	private JSONArray arrayListProfilFriend; 
-	private JSONArray arrayListProfilAnimalUpdate; 
-	private JSONArray arrayListProfilUpdate; 
-	private JSONArray arrayListProvince; 
-	private JSONArray userCityDefaut; 
-	private JSONArray arrayListUserCity; 
-	
+	private JSONArray arrayListProfilFriend;
+	private JSONArray arrayListProfilAnimalUpdate;
+	private JSONArray arrayListProfilUpdate;
+	private JSONArray arrayListProvince;
+	private JSONArray userCityDefaut;
+	private JSONArray arrayListUserCity;
+	private JSONArray arrayAnimalInfo;
+
 	private ConnectionWebservicePHPProfile calcul;
 	private Thread thread;
 	private Handler handler;
-	
+
 	private Boolean isFirstUseSelected = true;
-	
+	private static Context context;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.member_profiles);
-		
-		//On Récupére les préférences utilisateur si elle existe
+
+		context = getApplicationContext();
+		// On Récupére les préférences utilisateur si elle existe
 		SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(getApplicationContext());
 
-		//On Récupére les préférences utilisateur si elle existe
+		// On Récupére les préférences utilisateur si elle existe
 		user_humorID = preferences.getString("humorID", "");
 		user_cityID = preferences.getString("cityID", "");
 		user_countryID = preferences.getString("countryID", "");
@@ -227,54 +233,57 @@ public class Profiles extends Activity{
 		user_createdAt = preferences.getString("createdAt", "");
 		user_updatedAt = preferences.getString("updatedAt", "");
 		idUser = preferences.getString("idUser", "");
-				
-		//On récupère les variables passer par une autre vue 
+
+		// On récupère les variables passer par une autre vue
 		Bundle extra = getIntent().getExtras();
 		typeProfil = extra.getInt("typeProfil");
 		pAnimalId = extra.getInt("animalId");
-		
-//		imv_profil = (RoundedImageView)findViewById(R.id.imv_profil);
-//		imv_profil.setImageDrawable(getResources().getDrawable(R.drawable.ic_profil_undefined));
+		pAnimalName = extra.getString("animalName");
+		pAnimalPosition = extra.getInt("animalPositionList");
 
-		imv_cover = (ImageView)findViewById(R.id.imv_cover);
-		imv_cover.setImageDrawable(getResources().getDrawable(R.drawable.profil_test));
+		// imv_profil = (RoundedImageView)findViewById(R.id.imv_profil);
+		// imv_profil.setImageDrawable(getResources().getDrawable(R.drawable.ic_profil_undefined));
+
+		imv_cover = (ImageView) findViewById(R.id.imv_cover);
+		imv_cover.setImageDrawable(getResources().getDrawable(
+				R.drawable.profil_test));
 		imv_cover.setScaleType(ScaleType.FIT_XY);
 
-		Arimo = Typeface.createFromAsset(
-				getApplicationContext().getAssets(), "Arimo-Regular.ttf");
-		Lobster = Typeface.createFromAsset(
-				getApplicationContext().getAssets(), "Lobster.otf");
-		
+		Arimo = Typeface.createFromAsset(getApplicationContext().getAssets(),
+				"Arimo-Regular.ttf");
+		Lobster = Typeface.createFromAsset(getApplicationContext().getAssets(),
+				"Lobster.otf");
+
 		myCalendar = Calendar.getInstance();
 
 		date = new DatePickerDialog.OnDateSetListener() {
-		    @Override
-		    public void onDateSet(DatePicker view, int year, int monthOfYear,
-		            int dayOfMonth) {
-		        myCalendar.set(Calendar.YEAR, year);
-		        myCalendar.set(Calendar.MONTH, monthOfYear);
-		       
-		        myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+			@Override
+			public void onDateSet(DatePicker view, int year, int monthOfYear,
+					int dayOfMonth) {
+				myCalendar.set(Calendar.YEAR, year);
+				myCalendar.set(Calendar.MONTH, monthOfYear);
 
-		        String myFormat = "dd-MM-yyyy"; //In which you need put here
-			    SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-	
-			    upd_birthday.setText(sdf.format(myCalendar.getTime()));
-		    }
+				myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+				String myFormat = "dd-MM-yyyy"; // In which you need put here
+				SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+				upd_birthday.setText(sdf.format(myCalendar.getTime()));
+			}
 		};
-		
+
 		// Si connexion existe on charge le contenu
-		if (ConnectionWebservicePHP.haveNetworkConnection(this)) {	
+		if (ConnectionWebservicePHP.haveNetworkConnection(this)) {
 			switch (typeProfil) {
-			case 0: // Profil utilisateur		
-				
+			case 0: // Profil utilisateur
+
 				/*
 				 * Instanciation des éléments du ViewFlipper
 				 */
-//				View layoutListMsg = createLayout("Envoyer un message");
-//				vf_profil.addView(layoutListMsg, param_lsv);
-//				positionChild[0]=0;
-				
+				// View layoutListMsg = createLayout("Envoyer un message");
+				// vf_profil.addView(layoutListMsg, param_lsv);
+				// positionChild[0]=0;
+
 				// On vide la liste de données à envoyé si existe déjà
 				data.clear();
 
@@ -283,13 +292,13 @@ public class Profiles extends Activity{
 				data.add(new BasicNameValuePair("list_name", "listMsg"));
 				data.add(new BasicNameValuePair("nb_msg_min", "0"));
 				data.add(new BasicNameValuePair("nb_msg_max", "20"));
-				
+
 				/*
 				 * Création des boutons
 				 */
-	
+
 				// Bouton Galerie
-				btn_galerie = (Button)findViewById(R.id.btn_galerie);
+				btn_galerie = (Button) findViewById(R.id.btn_galerie);
 				btn_galerie.setVisibility(View.VISIBLE);
 				btn_galerie.setOnClickListener(eventClick);
 				// Bouton Messagerie
@@ -312,30 +321,207 @@ public class Profiles extends Activity{
 				btn_user_modification = (Button) findViewById(R.id.btn_user_modification);
 				btn_user_modification.setVisibility(View.VISIBLE);
 				btn_user_modification.setOnClickListener(eventClick);
-	
-				/*
-				 * Création des éléments du ViewFlipper
-				 */
-//		
-////				vf_profil.addView(createListAnimals(arrayListAnimals), param_lsv);
-////				positionChild[1]=1;
-////	
-////				vf_profil.addView(createListFriends(arrayListFriend), param_lsv);
-////				positionChild[2]= 2;
-////	
-////				vf_profil.addView(createListNotifications(), param_lsv);
-////				positionChild[3]=3;
-//	
+
+				// On recupere les informations
+				calcul = new ConnectionWebservicePHPProfile(1, "listObject",
+						this);
+				calcul.execute();
+
+				handler = new Handler();
+
+				thread = new Thread() {
+					@Override
+					public void run() {
+						if (calcul.isFinish == true) {
+
+							try {
+								// Récupere les information du profil
+								// 0 => "listMsg", 1 =>listAnimals, 2
+								// =>AnimalInfo,
+								// 3 =>listFriend, 4 =>updateProfil
+								arrayListReturn = calcul.get();
+
+								arrayListMsg = arrayListReturn.get(0);
+								arrayListAnimals = arrayListReturn.get(1);
+								arrayListFriend = arrayListReturn.get(2);
+
+								arrayListProvince = arrayListReturn.get(3);
+								JSONObject infoWebserviveReturn = arrayListProvince
+										.getJSONObject(0);
+								userProvinceId = infoWebserviveReturn
+										.getInt("province_id");
+								userCityDefaut = arrayListReturn.get(4);
+							} catch (InterruptedException e) {
+								Log.i("log_ArrayReturn",
+										"InterruptedException : "
+												+ e.toString());
+							} catch (ExecutionException e) {
+								Log.i("log_ArrayReturn",
+										"ExecutionException : " + e.toString());
+							} catch (JSONException e) {
+								Log.i("log_ArrayReturn",
+										"ExecutionException : " + e.toString());
+							}
+
+							runOnUiThread(new Runnable() {
+
+								@Override
+								public void run() {
+									// On récupére les infos array retourner et
+									// on ajoute les elements à la vue
+									vf_profil = (ViewFlipper) findViewById(R.id.vf_profil);
+									ListView.LayoutParams param_lsv = new ListView.LayoutParams(
+											LayoutParams.MATCH_PARENT,
+											LayoutParams.MATCH_PARENT);
+
+									vf_profil.addView(
+											createListMsg(arrayListMsg),
+											param_lsv);
+									positionChild[0] = 0;
+
+									Log.i("log_arrayListAnimals",
+											"arrayListAnimals : "
+													+ arrayListAnimals);
+									vf_profil
+											.addView(
+													createListAnimals(arrayListAnimals),
+													param_lsv);
+									positionChild[1] = 1;
+
+									vf_profil.addView(
+											createListFriends(arrayListFriend),
+											param_lsv);
+									positionChild[2] = 2;
+
+									vf_profil.addView(
+											createListNotifications(),
+											param_lsv);
+									positionChild[3] = 3;
+
+									vf_profil.addView(createModification(),
+											param_lsv);
+									positionChild[7] = 4;
+
+									// Style de la vue modification
+									// Bouton modifier profil
+									btn_profil_update = (Button) findViewById(R.id.btn_registration);
+									btn_profil_update
+											.setOnClickListener(eventClick);
+
+									// Textview
+									updLastname = (TextView) findViewById(R.id.update_txtView_lastname);
+									updFirstname = (TextView) findViewById(R.id.update_txtView_firstname);
+									updEmail = (TextView) findViewById(R.id.update_txtView_email);
+									updNickname = (TextView) findViewById(R.id.update_txtView_nickname);
+									// updPays =
+									// (TextView)findViewById(R.id.update_p_pays_id);
+									// updDep =
+									// (TextView)findViewById(R.id.update_p_dep_id);
+									// updVille =
+									// (TextView)findViewById(R.id.update_p_ville_id);
+									updBirthday = (TextView) findViewById(R.id.update_txtView_birthday);
+									updPhone = (TextView) findViewById(R.id.update_txtView_phone);
+									updPhoneMobile = (TextView) findViewById(R.id.update_txtView_mobile);
+
+									// EditText
+									upd_lastname = (EditText) findViewById(R.id.update_lastname);
+									upd_firstname = (EditText) findViewById(R.id.update_firstname);
+									upd_email = (EditText) findViewById(R.id.update_email);
+									upd_nickname = (EditText) findViewById(R.id.update_nickname);
+									upd_birthday = (EditText) findViewById(R.id.update_birthday);
+									upd_phone = (EditText) findViewById(R.id.update_phone);
+									upd_phone_mobile = (EditText) findViewById(R.id.update_phone_mobile);
+
+									// Spinner
+									// upd_pays = (Spinner)
+									// findViewById(R.id.update_spinner_p_pays_id);
+									// upd_dep = (Spinner)
+									// findViewById(R.id.update_spinner_p_dep_id);
+									// upd_ville = (Spinner)
+									// findViewById(R.id.update_spinner_p_ville_id);
+									// upd_pays.setOnItemSelectedListener(selectClick);
+									// upd_dep.setOnItemSelectedListener(selectClick);
+
+									// Formattage de la date de naissance
+									Date dateFormat = null;
+									try {
+										dateFormat = new SimpleDateFormat(
+												"yyyy-MM-dd")
+												.parse(user_birthday);
+									} catch (ParseException e1) {
+										Log.e("log_profilModif",
+												"Date Formatted : "
+														+ user_birthday);
+										e1.printStackTrace();
+									}
+									String birthdayFormmated = new SimpleDateFormat(
+											"dd-MM-yyyy").format(dateFormat);
+
+									upd_lastname.setText(user_lastname);
+									upd_firstname.setText(user_firstname);
+									upd_email.setHint(user_email);
+									upd_nickname.setText(user_nickname);
+									upd_birthday.setText(birthdayFormmated);
+									upd_phone.setText(user_phone);
+									upd_phone_mobile.setText(user_phoneMobile);
+
+									// On met la police au textview
+									updLastname.setTypeface(Lobster);
+									updFirstname.setTypeface(Lobster);
+									updEmail.setTypeface(Lobster);
+									updNickname.setTypeface(Lobster);
+									// updPays.setTypeface(Lobster);
+									// updDep.setTypeface(Lobster);
+									// updVille.setTypeface(Lobster);
+									updBirthday.setTypeface(Lobster);
+									updPhone.setTypeface(Lobster);
+									updPhoneMobile.setTypeface(Lobster);
+
+									// On ajoute les informations des spinners
+									// addItemsCountryOnSpinner(Integer.parseInt(user_countryID));
+
+									upd_birthday
+											.setOnTouchListener(new OnTouchListener() {
+
+												@Override
+												public boolean onTouch(View v,
+														MotionEvent event) {
+													if (event.getAction() == KeyEvent.ACTION_UP) {
+														new DatePickerDialog(
+																v.getContext(),
+																date,
+																myCalendar
+																		.get(Calendar.YEAR),
+																myCalendar
+																		.get(Calendar.MONTH),
+																myCalendar
+																		.get(Calendar.DAY_OF_MONTH))
+																.show();
+													}
+													return false;
+												}
+
+											});
+									// End vue modification
+								}
+							});
+
+						} else {
+							handler.postDelayed(this, 100);
+						}
+					}
+				};
+				thread.start();
 				break;
-	
+
 			case 1: // Profil membre
-	
+
 				/*
 				 * Création des boutons
 				 */
-	
+
 				// Bouton Galerie
-				btn_galerie = (Button)findViewById(R.id.btn_galerie);
+				btn_galerie = (Button) findViewById(R.id.btn_galerie);
 				btn_galerie.setVisibility(View.VISIBLE);
 				btn_galerie.setOnClickListener(eventClick);
 				// Bouton Liste animaux
@@ -350,29 +536,29 @@ public class Profiles extends Activity{
 				btn_friends_requests = (Button) findViewById(R.id.btn_friends_requests);
 				btn_friends_requests.setVisibility(View.VISIBLE);
 				btn_friends_requests.setOnClickListener(eventClick);
-	
+
 				/*
 				 * Création des éléments du ViewFlipper
 				 */
-	
-//				vf_profil.addView(createListAnimals(), param_lsv);
-//				positionChild[1] = 0;
-//	
-//				vf_profil.addView(createListFriends(), param_lsv);
-//				positionChild[2] = 1;
-//	
-//				vf_profil.addView(createModification(), param_lsv);
-//				positionChild[4] = 2; 
-	
+
+				// vf_profil.addView(createListAnimals(), param_lsv);
+				// positionChild[1] = 0;
+				//
+				// vf_profil.addView(createListFriends(), param_lsv);
+				// positionChild[2] = 1;
+				//
+				// vf_profil.addView(createModification(), param_lsv);
+				// positionChild[4] = 2;
+
 				break;
 			case 2: // Profil ami
-	
+
 				/*
 				 * Création des boutons
 				 */
-	
+
 				// Bouton Galerie
-				btn_galerie = (Button)findViewById(R.id.btn_galerie);
+				btn_galerie = (Button) findViewById(R.id.btn_galerie);
 				btn_galerie.setVisibility(View.VISIBLE);
 				btn_galerie.setOnClickListener(eventClick);
 				// Bouton Envoyer message
@@ -395,33 +581,34 @@ public class Profiles extends Activity{
 				btn_delete_friend = (Button) findViewById(R.id.btn_delete_friend);
 				btn_delete_friend.setVisibility(View.VISIBLE);
 				btn_delete_friend.setOnClickListener(eventClick);
-			
+
 				/*
 				 * Création des éléments du ViewFlipper
 				 */
-	
-				vf_profil.addView(createLayout("Envoyer un message"), param_lsv);
+
+				vf_profil
+						.addView(createLayout("Envoyer un message"), param_lsv);
 				positionChild[5] = 0;
-	
-//				vf_profil.addView(createListAnimals(), param_lsv);
-//				positionChild[1]=1;
-//	
-//				vf_profil.addView(createListFriends(), param_lsv);
-//				positionChild[2]= 2;
-//	
-//				vf_profil.addView(createListNotifications(), param_lsv);
-//				positionChild[3]=3;
-//	
-//				vf_profil.addView(createModification(), param_lsv);
-//				positionChild[6] = 4;			
+
+				// vf_profil.addView(createListAnimals(), param_lsv);
+				// positionChild[1]=1;
+				//
+				// vf_profil.addView(createListFriends(), param_lsv);
+				// positionChild[2]= 2;
+				//
+				// vf_profil.addView(createListNotifications(), param_lsv);
+				// positionChild[3]=3;
+				//
+				// vf_profil.addView(createModification(), param_lsv);
+				// positionChild[6] = 4;
 				break;
-			case 3: //Profil Static animal		
+			case 3: // Profil animal
 				/*
 				 * Création des boutons
 				 */
-	
+
 				// Bouton Galerie
-				btn_galerie = (Button)findViewById(R.id.btn_galerie);
+				btn_galerie = (Button) findViewById(R.id.btn_galerie);
 				btn_galerie.setVisibility(View.VISIBLE);
 				btn_galerie.setOnClickListener(eventClick);
 				// Bouton modifier animal
@@ -432,359 +619,215 @@ public class Profiles extends Activity{
 				btn_delete_animal = (Button) findViewById(R.id.btn_delete_animal);
 				btn_delete_animal.setVisibility(View.VISIBLE);
 				btn_delete_animal.setOnClickListener(eventClick);
-				
-				/*
-				 * Création des éléments du ViewFlipper
-				 */
-				vf_profil.addView(createModificationAnimal(), param_lsv);
-				positionChild[8] = 0;
-				
-				//TextView
-				txt_an_lastname = (TextView) findViewById(R.id.update_txtView_an_lastname);
-				txt_an_description = (TextView) findViewById(R.id.update_txtView_an_description);
-				txt_an_birthday = (TextView) findViewById(R.id.update_txtView_an_birthday);
-				txt_an_death = (TextView) findViewById(R.id.update_txtView_an_death);
-				
-				//EditText
-				edt_upd_an_birthday = (EditText) findViewById(R.id.update_an_birthday);
-				edt_upd_an_death = (EditText) findViewById(R.id.update_an_death);
-				edt_upd_an_lastname = (EditText) findViewById(R.id.update_an_lastname);
-				edt_upd_an_description = (EditText) findViewById(R.id.update_an_description);
-				
-				//Button
-				btn_upd_animal = (Button) findViewById(R.id.btn_update_animal);
-			    
-				//On met la police au textview
-				txt_an_lastname.setTypeface(Lobster);
-			    txt_an_description.setTypeface(Lobster);
-			    txt_an_birthday.setTypeface(Lobster);
-			    txt_an_death.setTypeface(Lobster);
-				
-				//Event à la touche ou au click propre a cette vue
-				btn_upd_animal.setOnClickListener(eventClick);
-	
-				edt_upd_an_birthday.setOnTouchListener(new OnTouchListener() {
+
+				// On vide la liste de données à envoyé si existe déjà
+				data.clear();
+
+				// On ajoute les valeurs
+				data.add(new BasicNameValuePair("id_user", idUser));
+				data.add(new BasicNameValuePair("id_animal", String
+						.valueOf(pAnimalId)));
+				data.add(new BasicNameValuePair("list_name", "AnimalInfo"));
+
+				// On recupere les informations
+				calcul = new ConnectionWebservicePHPProfile(1,
+						"listObjectOther", this, data);
+				calcul.execute();
+
+				handler = new Handler();
+
+				thread = new Thread() {
 					@Override
-					public boolean onTouch(View v, MotionEvent event) {
-						if (event.getAction() == KeyEvent.ACTION_UP){
-							new DatePickerDialog(v.getContext(), date, myCalendar
-									.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-									myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+					public void run() {
+						if (calcul.isFinish == true) {
+							try {
+								arrayListReturn = calcul.get();
+
+								arrayAnimalInfo = arrayListReturn.get(0);
+								JSONObject animalInfo = arrayAnimalInfo
+										.getJSONObject(0);
+								// On instancie l'objet animal
+								infoAnimal = new Animal(
+										pAnimalId,
+										animalInfo.getInt("user_id"),
+										animalInfo.getInt("animal_race_id"),
+										animalInfo.getString("animal_name"),
+										animalInfo
+												.getString("animal_description"),
+										animalInfo.getString("animal_birthday"),
+										animalInfo.getString("animal_death"),
+										animalInfo.getString("created_at"),
+										animalInfo.getString("updated_at"));
+								
+								Log.i("log_Animal",
+										"Animal : "
+												+ animalInfo.getString("animal_name"));
+							} catch (InterruptedException e) {
+								Log.e("log_ArrayReturn3",
+										"InterruptedExceptio3n : "
+												+ e.toString());
+							} catch (ExecutionException e) {
+								Log.e("log_ArrayReturn3",
+										"ExecutionException3 : " + e.toString());
+							} catch (JSONException e) {
+								Log.e("log_ArrayReturn3",
+										"ExecutionException3 : " + e.toString());
+							}
+
+							runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									/*
+									 * Création des éléments du ViewFlipper
+									 */
+									vf_profil = (ViewFlipper) findViewById(R.id.vf_profil);
+									ListView.LayoutParams param_lsv = new ListView.LayoutParams(
+											LayoutParams.MATCH_PARENT,
+											LayoutParams.MATCH_PARENT);
+									
+									vf_profil.addView(
+											createModificationAnimal(),
+											param_lsv);
+									positionChild[8] = 0;
+
+									// TextView
+									txt_an_lastname = (TextView) findViewById(R.id.update_txtView_an_lastname);
+									txt_an_description = (TextView) findViewById(R.id.update_txtView_an_description);
+									txt_an_birthday = (TextView) findViewById(R.id.update_txtView_an_birthday);
+									txt_an_death = (TextView) findViewById(R.id.update_txtView_an_death);
+
+									// EditText
+									edt_upd_an_birthday = (EditText) findViewById(R.id.update_an_birthday);
+									edt_upd_an_death = (EditText) findViewById(R.id.update_an_death);
+									edt_upd_an_lastname = (EditText) findViewById(R.id.update_an_lastname);
+									edt_upd_an_description = (EditText) findViewById(R.id.update_an_description);
+
+									// Button
+									btn_upd_animal = (Button) findViewById(R.id.btn_update_animal);
+
+									// On met la police au textview
+									txt_an_lastname.setTypeface(Lobster);
+									txt_an_description.setTypeface(Lobster);
+									txt_an_birthday.setTypeface(Lobster);
+									txt_an_death.setTypeface(Lobster);
+
+									// Event à la touche ou au click propre a
+									// cette vue
+									btn_upd_animal.setOnClickListener(eventClick);
+									
+									edt_upd_an_birthday.setText(infoAnimal.birthday);
+									edt_upd_an_death.setText(infoAnimal.death);
+									edt_upd_an_lastname.setText(infoAnimal.name);
+									edt_upd_an_description.setText(infoAnimal.description);
+									
+									edt_upd_an_birthday
+											.setOnTouchListener(new OnTouchListener() {
+												@Override
+												public boolean onTouch(View v,
+														MotionEvent event) {
+													if (event.getAction() == KeyEvent.ACTION_UP) {
+														new DatePickerDialog(
+																v.getContext(),
+																date,
+																myCalendar
+																		.get(Calendar.YEAR),
+																myCalendar
+																		.get(Calendar.MONTH),
+																myCalendar
+																		.get(Calendar.DAY_OF_MONTH))
+																.show();
+													}
+													return false;
+												}
+
+											});
+
+									edt_upd_an_death
+											.setOnTouchListener(new OnTouchListener() {
+												@Override
+												public boolean onTouch(View v,
+														MotionEvent event) {
+													if (event.getAction() == KeyEvent.ACTION_UP) {
+														new DatePickerDialog(
+																v.getContext(),
+																date,
+																myCalendar
+																		.get(Calendar.YEAR),
+																myCalendar
+																		.get(Calendar.MONTH),
+																myCalendar
+																		.get(Calendar.DAY_OF_MONTH))
+																.show();
+													}
+													return false;
+												}
+
+											});
+								}
+							});
+
+						} else {
+							handler.postDelayed(this, 100);
 						}
-						return false;
 					}
-	
-				});
-				
-				edt_upd_an_death.setOnTouchListener(new OnTouchListener() {
-					@Override
-					public boolean onTouch(View v, MotionEvent event) {
-						if (event.getAction() == KeyEvent.ACTION_UP){
-							new DatePickerDialog(v.getContext(), date, myCalendar
-									.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-									myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-						}
-						return false;
-					}
-	
-				});
+				};
+				thread.start();
 				break;
 			}
-		}else{ // Sinon toast de problème
+		} else { // Sinon toast de problème
 			ConnectionWebservicePHP.haveNetworkConnectionError(this);
 		}
-		
-		btn_members = (Button)findViewById(R.id.btn_members);
-		btn_gallery = (Button)findViewById(R.id.btn_gallery);
-		btn_profil = (Button)findViewById(R.id.btn_profil);
-		btn_events = (Button)findViewById(R.id.btn_events);
-		btn_live = (Button)findViewById(R.id.btn_live);
-		btn_photo = (Button)findViewById(R.id.btn_photo);
-					
+
+		btn_members = (Button) findViewById(R.id.btn_members);
+		btn_gallery = (Button) findViewById(R.id.btn_gallery);
+		btn_profil = (Button) findViewById(R.id.btn_profil);
+		btn_events = (Button) findViewById(R.id.btn_events);
+		btn_live = (Button) findViewById(R.id.btn_live);
+		btn_photo = (Button) findViewById(R.id.btn_photo);
+
 		btn_profil.setBackgroundResource(R.drawable.ic_profil_pressed);
-		
-		//Evt click
+
+		// Evt click
 		btn_members.setOnClickListener(eventClick);
 		btn_gallery.setOnClickListener(eventClick);
 		btn_events.setOnClickListener(eventClick);
 		btn_live.setOnClickListener(eventClick);
 		btn_photo.setOnClickListener(eventClick);
-		
-		//On empeche le clavier de s'afficher
+
+		// On empeche le clavier de s'afficher
 		getWindow().setSoftInputMode(
-		         WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-	}
-	
-	@Override
-	protected void onStart() {
-		super.onStart();
-		
-		switch (typeProfil) {
-			case 0: // Profil utilisateur
-				//On recupere les informations
-				calcul = new ConnectionWebservicePHPProfile(
-						1, "listObject", this);
-				calcul.execute();	
-				
-				handler = new Handler(Looper.getMainLooper());
-				
-				thread = new Thread() {
-					@Override
-					public void run() {
-						if (calcul.isFinish == true) {
-							
-							try {
-								//Récupere les information du profil
-								//0 => "listMsg", 1 =>listAnimals, 2 =>AnimalInfo, 
-								//3 =>listFriend, 4 =>updateProfil
-								arrayListReturn = calcul.get();
-								
-								arrayListMsg = arrayListReturn.get(0);
-								arrayListAnimals = arrayListReturn.get(1);
-								arrayListFriend = arrayListReturn.get(2);
-								
-								arrayListProvince = arrayListReturn.get(3);
-								JSONObject infoWebserviveReturn = arrayListProvince
-										.getJSONObject(0);
-								userProvinceId = infoWebserviveReturn.getInt("province_id");
-								userCityDefaut = arrayListReturn.get(4);
-							} catch (InterruptedException e) {
-								Log.i("log_ArrayReturn", "InterruptedException : " + e.toString());
-							} catch (ExecutionException e) {
-								Log.i("log_ArrayReturn", "ExecutionException : " + e.toString());
-							} catch (JSONException e) {
-								Log.i("log_ArrayReturn", "ExecutionException : " + e.toString());
-							}
-							
-							//On récupére les infos array retourner et on ajoute les elements à la vue
-							vf_profil = (ViewFlipper) findViewById(R.id.vf_profil);
-							ListView.LayoutParams param_lsv = new ListView.LayoutParams(
-									LayoutParams.MATCH_PARENT,
-									LayoutParams.MATCH_PARENT);
-
-							vf_profil.addView(createListMsg(arrayListMsg),
-									param_lsv);
-							positionChild[0] = 0;
-							
-							Log.i("log_arrayListAnimals", "arrayListAnimals : " + arrayListAnimals);
-							vf_profil.addView(createListAnimals(arrayListAnimals), param_lsv);
-							positionChild[1]=1;
-				
-							vf_profil.addView(createListFriends(arrayListFriend), param_lsv);
-							positionChild[2]= 2;
-				
-							vf_profil.addView(createListNotifications(), param_lsv);
-							positionChild[3]=3;
-							
-							vf_profil.addView(createModification(), param_lsv);
-							positionChild[7] = 4;
-							
-							//Style de la vue modification
-							// Bouton modifier profil
-							btn_profil_update = (Button) findViewById(R.id.btn_registration);
-							btn_profil_update.setOnClickListener(eventClick);
-							
-							//Textview
-						    updLastname = (TextView)findViewById(R.id.update_txtView_lastname);
-						    updFirstname = (TextView)findViewById(R.id.update_txtView_firstname);
-						    updEmail = (TextView)findViewById(R.id.update_txtView_email);
-						    updNickname = (TextView)findViewById(R.id.update_txtView_nickname);
-						    updPays = (TextView)findViewById(R.id.update_p_pays_id);
-						    updDep = (TextView)findViewById(R.id.update_p_dep_id);
-						    updVille = (TextView)findViewById(R.id.update_p_ville_id);
-						    updBirthday = (TextView)findViewById(R.id.update_txtView_birthday);
-						    updPhone = (TextView)findViewById(R.id.update_txtView_phone);
-						    updPhoneMobile = (TextView)findViewById(R.id.update_txtView_mobile);
-						    
-						    //EditText
-						    upd_lastname = (EditText) findViewById(R.id.update_lastname);
-						    upd_firstname = (EditText) findViewById(R.id.update_firstname);
-						    upd_email = (EditText) findViewById(R.id.update_email);
-						    upd_nickname = (EditText) findViewById(R.id.update_nickname);
-							upd_birthday = (EditText) findViewById(R.id.update_birthday);
-							upd_phone = (EditText) findViewById(R.id.update_phone);
-							upd_phone_mobile = (EditText) findViewById(R.id.update_phone_mobile);
-							
-							//Spinner
-						    upd_pays = (Spinner) findViewById(R.id.update_spinner_p_pays_id);
-						    upd_dep = (Spinner) findViewById(R.id.update_spinner_p_dep_id);
-						    upd_ville = (Spinner) findViewById(R.id.update_spinner_p_ville_id);
-						    upd_pays.setOnItemSelectedListener(selectClick);
-						    upd_dep.setOnItemSelectedListener(selectClick);
-						    
-							//Formattage de la date de naissance
-							Date dateFormat = null;
-							try {
-								dateFormat = new SimpleDateFormat("yyyy-MM-dd").parse(user_birthday);
-							} catch (ParseException e1) {
-								Log.e("log_profilModif",
-										"Date Formatted : " + user_birthday);
-								e1.printStackTrace();
-							}
-							String birthdayFormmated = new SimpleDateFormat("dd-MM-yyyy").format(dateFormat);
-							
-							upd_lastname.setText(user_lastname);
-							upd_firstname.setText(user_firstname);
-							upd_email.setHint(user_email);
-						    upd_nickname.setText(user_nickname);	    
-							upd_birthday.setText(birthdayFormmated);
-						    upd_phone.setText(user_phone);
-						    upd_phone_mobile.setText(user_phoneMobile);
-						    
-							//On met la police au textview
-						    updLastname.setTypeface(Lobster);
-						    updFirstname.setTypeface(Lobster);
-							updEmail.setTypeface(Lobster);
-							updNickname.setTypeface(Lobster);
-							updPays.setTypeface(Lobster);
-							updDep.setTypeface(Lobster);
-							updVille.setTypeface(Lobster);
-							updBirthday.setTypeface(Lobster);
-							updPhone.setTypeface(Lobster);
-							updPhoneMobile.setTypeface(Lobster);
-							
-							//On ajoute les informations des spinners
-							addItemsCountryOnSpinner(Integer.parseInt(user_countryID));
-							
-							upd_birthday.setOnTouchListener(new OnTouchListener() {
-				
-								@Override
-								public boolean onTouch(View v, MotionEvent event) {
-									if (event.getAction() == KeyEvent.ACTION_UP){
-										new DatePickerDialog(v.getContext(), date, myCalendar
-												.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-												myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-									}
-									return false;
-								}
-				
-							});			
-							//End vue modification
-						}else{
-							handler.postDelayed(this, 100);
-						}
-					}
-				};
-				thread.start();
-			break;
-			case 1 : //Profil membre
-				break;
-			case 2 : // Profil ami
-				break;
-			case 3 : // Profil animal
-				// On vide la liste de données à envoyé si existe déjà
-				data.clear();
-	
-				// On ajoute les valeurs
-				data.add(new BasicNameValuePair("id_user", idUser));
-				data.add(new BasicNameValuePair("id_animal", String.valueOf(pAnimalId)));
-				data.add(new BasicNameValuePair("list_name", "AnimalInfo"));
-				
-				//On recupere les informations
-				calcul = new ConnectionWebservicePHPProfile(
-						1, "listObjectOther", this, data);
-				calcul.execute();	
-				
-				handler = new Handler(Looper.getMainLooper());
-				
-				thread = new Thread() {
-					@Override
-					public void run() {
-						if (calcul.isFinish == true) {
-							
-							try {
-								//Récupere les information du profil
-								//0 => "listMsg", 1 =>listAnimals, 2 =>AnimalInfo, 
-								//3 =>listFriend, 4 =>updateProfil
-								arrayListReturn = calcul.get();
-								
-								arrayListProfilAnimal = arrayListReturn.get(0);
-								
-								try {
-									JSONObject infoWebserviveReturn = arrayListProfilAnimal
-											.getJSONObject(0);
-									
-									infoAnimal = new Animal(infoWebserviveReturn.getInt("id_animal"), infoWebserviveReturn.getString("animal_name"));
-									infoAnimal.setUserId(infoWebserviveReturn.getInt("user_id"));
-									infoAnimal.setRaceId(infoWebserviveReturn.getInt("animal_race_id"));
-									infoAnimal.setDescription(infoWebserviveReturn.getString("animal_description"));
-									infoAnimal.setBirthday(infoWebserviveReturn.getString("animal_birthday"));
-									infoAnimal.setDeath(infoWebserviveReturn.getString("animal_death"));
-									infoAnimal.setCreatedAt(infoWebserviveReturn.getString("created_at"));
-									infoAnimal.setUpdatedAt(infoWebserviveReturn.getString("updated_at"));
-									
-								} catch (JSONException e) {
-									Log.e("log_listObjectMessage",
-											"Erreur 3 infoWebserviveReturn : " + e.toString());
-								}
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							} catch (ExecutionException e) {
-
-								e.printStackTrace();
-							}
-							
-							//On récupére les infos array retourner et on ajoute les elements à la vue
-							//Formattage de la date de naissance et de décès
-							Date dateFormatBirthday = null;
-							Date dateFormatDeath = null;
-							try {
-								dateFormatBirthday = new SimpleDateFormat("yyyy-MM-dd").parse(infoAnimal.birthday);
-								dateFormatDeath = new SimpleDateFormat("yyyy-MM-dd").parse(infoAnimal.death);
-							} catch (ParseException e1) {
-								Log.e("log_profilModif",
-										"Date Formatted : " + e1.toString());
-							}
-							String dateFormatBirthdayFormmated = new SimpleDateFormat("dd-MM-yyyy").format(dateFormatBirthday);
-							String dateFormatDeathFormmated = new SimpleDateFormat("dd-MM-yyyy").format(dateFormatDeath);
-							
-							//Spinner : On ajoute les types et race au spinner type et race
-							addItemsTypeOnSpinner(infoAnimal.id);
-							addItemsRaceOnSpinner();
-							
-							edt_upd_an_birthday.setHint(dateFormatBirthdayFormmated);
-							edt_upd_an_death.setHint(dateFormatDeathFormmated);
-							edt_upd_an_lastname.setHint(infoAnimal.name);
-							edt_upd_an_description.setHint(infoAnimal.description);
-						}else{
-							handler.postDelayed(this, 100);
-						}
-					}
-				};
-				thread.start();
-				break;
-		
-		}
+				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 	}
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
-	    super.onConfigurationChanged(newConfig);
+		super.onConfigurationChanged(newConfig);
 	}
-	
-	OnItemSelectedListener selectClick = new OnItemSelectedListener(){
-		
+
+	OnItemSelectedListener selectClick = new OnItemSelectedListener() {
+
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View v, int position,
 				long id) {
-			
-			if(parent == upd_pays){
-				addItemsProvinceOnSpinner(position+1, isFirstUseSelected);
-				isFirstUseSelected = false;
-			}
-			if(parent == upd_dep){
-				Log.i("Log_upd_dep", "provinceS : " + (position+1) + "- province : " + userProvinceId + "- city : " + user_cityID);
-				addItemsCityOnSpinner(position+1, userProvinceId, false);
-			}
+
+			// if(parent == upd_pays){
+			// addItemsProvinceOnSpinner(position+1, isFirstUseSelected);
+			// isFirstUseSelected = false;
+			// }
+			// if(parent == upd_dep){
+			// Log.i("Log_upd_dep", "provinceS : " + (position+1) +
+			// "- province : " + userProvinceId + "- city : " + user_cityID);
+			// addItemsCityOnSpinner(position+1, userProvinceId, false);
+			// }
 		}
-	
+
 		@Override
 		public void onNothingSelected(AdapterView<?> arg0) {
 			// TODO Auto-generated method stub
-			
-		}	
+
+		}
 	};
-	
+
 	OnClickListener eventClick = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -809,179 +852,269 @@ public class Profiles extends Activity{
 				vf_profil.setDisplayedChild(positionChild[8]);
 			} else if (v == btn_delete_animal) {
 				Toast t = Toast.makeText(getApplicationContext(),
-						"Acitver la suppresion de l'animal",
-						Toast.LENGTH_LONG);
+						"Acitver la suppresion de l'animal", Toast.LENGTH_LONG);
 				t.setGravity(Gravity.BOTTOM, 0, 40);
 				t.show();
-			} else if (v == btn_upd_animal){
-				//Modification du profil
-				//si ou ou plusieurs champs sont vides
-				if(edt_upd_an_lastname.getText().toString().equals("") || edt_upd_an_birthday.getText().toString().equals("")){
+			} else if (v == btn_upd_animal) {
+				// Modification du profil
+				// si ou ou plusieurs champs sont vides
+				if (edt_upd_an_lastname.getText().toString().equals("")
+						|| edt_upd_an_birthday.getText().toString().equals("")) {
 					Toast t = Toast.makeText(getApplicationContext(),
 							"Veuillez remplir les champs obligatoires",
 							Toast.LENGTH_LONG);
 					t.setGravity(Gravity.BOTTOM, 0, 40);
 					t.show();
-				}else{
+				} else {
 					// On vide la liste de données à envoyé si existe déjà
 					data.clear();
-	
+
 					// On ajoute les valeurs
 					data.add(new BasicNameValuePair("id_user", idUser));
+					data.add(new BasicNameValuePair("upd_animalId", String
+							.valueOf(infoAnimal.id)));
 					data.add(new BasicNameValuePair("list_name", "updateProfilAnimal"));
-					data.add(new BasicNameValuePair("upd_an_birthday", edt_upd_an_birthday.getText().toString()));
-					data.add(new BasicNameValuePair("upd_an_death", edt_upd_an_death.getText().toString()));
-					data.add(new BasicNameValuePair("upd_an_description", edt_upd_an_description.getText().toString()));
-					data.add(new BasicNameValuePair("upd_an_lastname", edt_upd_an_lastname.getText().toString()));
-					data.add(new BasicNameValuePair("upd_animalId", String.valueOf(infoAnimal.id)));
+					data.add(new BasicNameValuePair("upd_an_lastname",
+							edt_upd_an_lastname.getText().toString()));
+					data.add(new BasicNameValuePair("upd_an_description",
+							edt_upd_an_description.getText().toString()));
+					data.add(new BasicNameValuePair("upd_an_birthday",
+							edt_upd_an_birthday.getText().toString()));
+					data.add(new BasicNameValuePair("upd_an_death",
+							edt_upd_an_death.getText().toString()));
 					
 					// Instancie la connection au webservice en thread
-					if (ConnectionWebservicePHPProfile.haveNetworkConnection(v.getContext())) { 
+					if (ConnectionWebservicePHPProfile
+							.haveNetworkConnection(v.getContext())) {
 						ConnectionWebservicePHPProfile calcul = new ConnectionWebservicePHPProfile(
 								1, "listObjectOther", v.getContext(), data);
 						calcul.execute();
 						try {
 							arrayListReturn = calcul.get();
-							arrayListProfilAnimalUpdate = arrayListReturn.get(0);
+							arrayListProfilAnimalUpdate = arrayListReturn
+									.get(0);
 							
 							JSONObject infoWebserviveReturn;
 							try {
 								infoWebserviveReturn = arrayListProfilAnimalUpdate
 										.getJSONObject(0);
-								
+
 								if (infoWebserviveReturn.getInt("isOk") == 0) {
-									//Erreur de modification du profil
+									// Erreur de modification du profil
 									Toast.makeText(v.getContext(),
 											"Erreur d'enregistrement",
 											Toast.LENGTH_LONG).show();
 								} else { // Profil modifié
-									// On stock les infos utilisateurs dans des preferences
+									//On update l'objet animal
+									infoAnimal.raceId = infoWebserviveReturn
+											.getInt("animal_race_id");
+									infoAnimal.name = infoWebserviveReturn
+											.getString("animal_name");
+									infoAnimal.description = infoWebserviveReturn
+											.getString("animal_description");
+									infoAnimal.birthday = infoWebserviveReturn
+											.getString("animal_birthday");
+									infoAnimal.death = infoWebserviveReturn
+											.getString("animal_death");
+									infoAnimal.createdAt = infoWebserviveReturn
+											.getString("created_at");
+									infoAnimal.updatedAt = infoWebserviveReturn
+											.getString("updated_at");
 									Toast.makeText(v.getContext(),
 											"Profil mis à jour avec succès",
 											Toast.LENGTH_LONG).show();
-									
-									//Formattage de la date de naissance et de décès
+
+									// Formattage de la date de naissance et décès
 									Date dateFormatBirthday = null;
 									Date dateFormatDeath = null;
 									try {
-										dateFormatBirthday = new SimpleDateFormat("yyyy-MM-dd").parse(infoWebserviveReturn.getString("an_birthday"));
-										dateFormatDeath = new SimpleDateFormat("yyyy-MM-dd").parse(infoWebserviveReturn.getString("an_death"));
+										dateFormatBirthday = new SimpleDateFormat(
+												"yyyy-MM-dd")
+												.parse(infoAnimal.birthday);
+										dateFormatDeath = new SimpleDateFormat(
+												"yyyy-MM-dd")
+												.parse(infoAnimal.death);
 									} catch (ParseException e1) {
-										Log.e("log_profilModif",
-												"Date Formatted : " + e1.toString());
+										Log.e("log_profilModif", "Date Formatted : "
+														+ e1.toString());
 									}
-									String dateFormatBirthdayFormmated = new SimpleDateFormat("dd-MM-yyyy").format(dateFormatBirthday);
-									String dateFormatDeathFormmated = new SimpleDateFormat("dd-MM-yyyy").format(dateFormatDeath);
-									
-									edt_upd_an_birthday.setHint(dateFormatBirthdayFormmated);
-									edt_upd_an_death.setHint(dateFormatDeathFormmated);
-									edt_upd_an_lastname.setHint(infoWebserviveReturn.getString("an_name"));
-									edt_upd_an_description.setHint(infoWebserviveReturn.getString("an_description"));
+									String dateFormatBirthdayFormmated = new SimpleDateFormat(
+											"dd-MM-yyyy")
+											.format(dateFormatBirthday);
+									String dateFormatDeathFormmated = new SimpleDateFormat(
+											"dd-MM-yyyy")
+											.format(dateFormatDeath);
+
+									edt_upd_an_birthday
+											.setHint(dateFormatBirthdayFormmated);
+									edt_upd_an_death
+											.setHint(dateFormatDeathFormmated);
+									edt_upd_an_lastname
+											.setHint(infoAnimal.name);
+									edt_upd_an_description
+											.setHint(infoAnimal.description);
 								}
 							} catch (JSONException e) {
-								e.printStackTrace();
+								Log.e("log_listObjectUpdProfilAnimal",
+										"JSONException :" + e.toString());
 							}
 						} catch (InterruptedException e) {
-							Log.e("log_listObjectMessage",
-									"Erreur 1 Interrupted :" + e.toString());
+							Log.e("log_listObjectUpdProfilAnimal",
+									"InterruptedException :" + e.toString());
 						} catch (ExecutionException e) {
-							Log.e("log_listObjectMessage",
-									"Erreur 2 Execution :" + e.toString());
+							Log.e("log_listObjectUpdProfilAnimal",
+									"ExecutionException :" + e.toString());
 						}
 					} else { // Sinon toast de problème
-						ConnectionWebservicePHPProfile.haveNetworkConnectionError(v.getContext());
+						ConnectionWebservicePHPProfile
+								.haveNetworkConnectionError(v.getContext());
 					}
 				}
-			}else if(v == btn_profil_update){
-				//Modification du profil
-				//si ou ou plusieurs champs sont vides
-				if(upd_lastname.getText().toString().equals("")||upd_firstname.getText().toString().equals("")
-						||upd_nickname.getText().toString().equals("")){
+			} else if (v == btn_profil_update) {
+				// Modification du profil
+				// si ou ou plusieurs champs sont vides
+				if (upd_lastname.getText().toString().equals("")
+						|| upd_firstname.getText().toString().equals("")
+						|| upd_nickname.getText().toString().equals("")) {
 					Toast t = Toast.makeText(getApplicationContext(),
 							"Veuillez remplir les champs obligatoires",
 							Toast.LENGTH_LONG);
 					t.setGravity(Gravity.BOTTOM, 0, 40);
 					t.show();
-				}else{
+				} else {
 					// On vide la liste de données à envoyé si existe déjà
 					data.clear();
-	
+
 					// On ajoute les valeurs
 					data.add(new BasicNameValuePair("id_user", idUser));
 					data.add(new BasicNameValuePair("list_name", "updateProfil"));
-					data.add(new BasicNameValuePair("upd_lastname", upd_lastname.getText().toString()));
-					data.add(new BasicNameValuePair("upd_firstname", upd_firstname.getText().toString()));
-					data.add(new BasicNameValuePair("upd_nickname", upd_nickname.getText().toString()));
-					data.add(new BasicNameValuePair("upd_country", upd_pays.getSelectedItem().toString()));
-					data.add(new BasicNameValuePair("upd_city", upd_ville.getSelectedItem().toString()));
-					data.add(new BasicNameValuePair("upd_birthday", upd_birthday.getText().toString()));
-					data.add(new BasicNameValuePair("upd_phone", upd_phone.getText().toString()));
-					data.add(new BasicNameValuePair("upd_phone_mobile", upd_phone_mobile.getText().toString()));
-					
+					data.add(new BasicNameValuePair("upd_lastname",
+							upd_lastname.getText().toString()));
+					data.add(new BasicNameValuePair("upd_firstname",
+							upd_firstname.getText().toString()));
+					data.add(new BasicNameValuePair("upd_nickname",
+							upd_nickname.getText().toString()));
+					// data.add(new BasicNameValuePair("upd_country",
+					// upd_pays.getSelectedItem().toString()));
+					// data.add(new BasicNameValuePair("upd_city",
+					// upd_ville.getSelectedItem().toString()));
+					data.add(new BasicNameValuePair("upd_birthday",
+							upd_birthday.getText().toString()));
+					data.add(new BasicNameValuePair("upd_phone", upd_phone
+							.getText().toString()));
+					data.add(new BasicNameValuePair("upd_phone_mobile",
+							upd_phone_mobile.getText().toString()));
+
 					// Instancie la connection au webservice en thread
-					if (ConnectionWebservicePHPProfile.haveNetworkConnection(v.getContext())) { 
+					if (ConnectionWebservicePHPProfile.haveNetworkConnection(v
+							.getContext())) {
 						ConnectionWebservicePHPProfile calcul = new ConnectionWebservicePHPProfile(
 								1, "listObjectOther", v.getContext(), data);
 						calcul.execute();
 						try {
 							arrayListReturn = calcul.get();
-							
+
 							arrayListProfilUpdate = arrayListReturn.get(0);
-							
+
 							JSONObject infoWebserviveReturn;
 							try {
 								infoWebserviveReturn = arrayListProfilUpdate
 										.getJSONObject(0);
-								
+
 								if (infoWebserviveReturn.getInt("isOk") == 0) {
-									//Erreur de modification du profil
+									// Erreur de modification du profil
 									Toast.makeText(v.getContext(),
 											"Erreur d'enregistrement",
 											Toast.LENGTH_LONG).show();
 								} else { // Profil modifié
-									// On stock les infos utilisateurs dans des preferences
+									// On stock les infos utilisateurs dans des
+									// preferences
 									SharedPreferences preferences = PreferenceManager
-											.getDefaultSharedPreferences(v.getContext());
-									SharedPreferences.Editor editor = preferences.edit();
-									editor.putString("idUser", infoWebserviveReturn.getString("id_user"));
-									editor.putString("humorID", infoWebserviveReturn.getString("humor_id"));
-									editor.putString("cityID", infoWebserviveReturn.getString("city_id"));
-									editor.putString("countryID", infoWebserviveReturn.getString("country_id"));
-									editor.putString("lastname", infoWebserviveReturn.getString("lastname"));
-									editor.putString("firstname", infoWebserviveReturn.getString("firstname"));
-									editor.putString("nickname", infoWebserviveReturn.getString("nickname"));
-									editor.putString("email", infoWebserviveReturn.getString("email"));
-									editor.putString("avatarName", infoWebserviveReturn.getString("avatar_name"));
-									editor.putString("password", infoWebserviveReturn.getString("password"));
-									editor.putString("civility", infoWebserviveReturn.getString("civility"));
-									editor.putString("birthday", infoWebserviveReturn.getString("birthday"));
-									editor.putString("phone", infoWebserviveReturn.getString("phone"));
-									editor.putString("phoneMobile", infoWebserviveReturn.getString("phone_mobile"));
-									editor.putString("onNewsletter", infoWebserviveReturn.getString("on_newsletter"));
-									editor.putString("onMobile", infoWebserviveReturn.getString("on_mobile"));
-									editor.putString("isLoggedFacebook", infoWebserviveReturn.getString("is_logged_facebook"));
-									editor.putString("isBlacklist", infoWebserviveReturn.getString("is_blacklist"));
-									editor.putString("createdAt", infoWebserviveReturn.getString("created_at"));
-									editor.putString("updatedAt", infoWebserviveReturn.getString("updated_at"));
+											.getDefaultSharedPreferences(v
+													.getContext());
+									SharedPreferences.Editor editor = preferences
+											.edit();
+									editor.putString("idUser",
+											infoWebserviveReturn
+													.getString("id_user"));
+									editor.putString("humorID",
+											infoWebserviveReturn
+													.getString("humor_id"));
+									editor.putString("cityID",
+											infoWebserviveReturn
+													.getString("city_id"));
+									editor.putString("countryID",
+											infoWebserviveReturn
+													.getString("country_id"));
+									editor.putString("lastname",
+											infoWebserviveReturn
+													.getString("lastname"));
+									editor.putString("firstname",
+											infoWebserviveReturn
+													.getString("firstname"));
+									editor.putString("nickname",
+											infoWebserviveReturn
+													.getString("nickname"));
+									editor.putString("email",
+											infoWebserviveReturn
+													.getString("email"));
+									editor.putString("avatarName",
+											infoWebserviveReturn
+													.getString("avatar_name"));
+									editor.putString("password",
+											infoWebserviveReturn
+													.getString("password"));
+									editor.putString("civility",
+											infoWebserviveReturn
+													.getString("civility"));
+									editor.putString("birthday",
+											infoWebserviveReturn
+													.getString("birthday"));
+									editor.putString("phone",
+											infoWebserviveReturn
+													.getString("phone"));
+									editor.putString("phoneMobile",
+											infoWebserviveReturn
+													.getString("phone_mobile"));
+									editor.putString("onNewsletter",
+											infoWebserviveReturn
+													.getString("on_newsletter"));
+									editor.putString("onMobile",
+											infoWebserviveReturn
+													.getString("on_mobile"));
+									editor.putString(
+											"isLoggedFacebook",
+											infoWebserviveReturn
+													.getString("is_logged_facebook"));
+									editor.putString("isBlacklist",
+											infoWebserviveReturn
+													.getString("is_blacklist"));
+									editor.putString("createdAt",
+											infoWebserviveReturn
+													.getString("created_at"));
+									editor.putString("updatedAt",
+											infoWebserviveReturn
+													.getString("updated_at"));
 									editor.commit();
-									
+
 									Toast.makeText(v.getContext(),
 											"Profil modifié mis à jour",
 											Toast.LENGTH_LONG).show();
 								}
 							} catch (JSONException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								Log.e("log_UpdateProfil",
+										"JSONException :" + e.toString());
 							}
 						} catch (InterruptedException e) {
-							Log.e("log_listObjectMessage",
-									"Erreur 1 Interrupted :" + e.toString());
+							Log.e("log_UpdateProfil", "InterruptedException :"
+									+ e.toString());
 						} catch (ExecutionException e) {
-							Log.e("log_listObjectMessage",
-									"Erreur 2 Execution :" + e.toString());
+							Log.e("log_UpdateProfil", "ExecutionException :"
+									+ e.toString());
 						}
 					} else { // Sinon toast de problème
-						ConnectionWebservicePHPProfile.haveNetworkConnectionError(v.getContext());
+						ConnectionWebservicePHPProfile
+								.haveNetworkConnectionError(v.getContext());
 					}
 				}
 			} else if (v == btn_members) {
@@ -1026,7 +1159,7 @@ public class Profiles extends Activity{
 			}
 		}
 	};
-	
+
 	/*
 	 * Fonction de création des vues
 	 */
@@ -1043,15 +1176,16 @@ public class Profiles extends Activity{
 		LayoutInflater inflater = (LayoutInflater) this
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-		View displayView = inflater.inflate(R.layout.profile_animal_update, null);
+		View displayView = inflater.inflate(R.layout.profile_animal_update,
+				null);
 
 		return displayView;
 	}
-	
+
 	public ListView createListMsg(JSONArray arrayListMsg1) {
 		final ListView lsv_msg = new ListView(this);
 		ArrayList<Message> messages = new ArrayList<Message>();
-		
+
 		try {
 			// On ajoute les message que l'on à reçu
 			for (int i = 0; i < arrayListAnimals.length(); i++) {
@@ -1097,7 +1231,7 @@ public class Profiles extends Activity{
 	ListView createListAnimals(JSONArray arrayListAnimal1) {
 		final ListView lsv_animals_list = new ListView(this);
 		ArrayList<Animal> animals = new ArrayList<Animal>();
-		
+
 		try {
 			// Création d'une ligne ou on peut ajouter un animal
 			Animal animal0 = new Animal(0, "Ajouter un animal");
@@ -1116,8 +1250,9 @@ public class Profiles extends Activity{
 				}
 			}
 		} catch (JSONException e) {
-			Log.e("log_ListObjectMessage", "Erreur récupération messages : "
-					+ e.toString());
+			Log.e("log_ListObjectAnimal",
+					"Erreur récupération de la liste d'animaux : "
+							+ e.toString());
 		}
 
 		CustomAdapterAnimals adapter_animals_list = new CustomAdapterAnimals(
@@ -1129,23 +1264,27 @@ public class Profiles extends Activity{
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// On recupere les infos de l'item
-				Animal res = (Animal) lsv_animals_list
-						.getItemAtPosition(position);
-				Intent intent = new Intent(getApplicationContext(),
-						Profiles.class);
-				if (typeProfil == 0) {
-					intent.putExtra("typeProfil", 3);
-				} else {
-					intent.putExtra("typeProfil", 3); // A CHANGER QUAND LE
-														// PROFIL ANIMAL AMI
-														// SERA CREE
-				}
-				// Si c'est un animal
-				if (res.getAnimalId() != 0) {
-					intent.putExtra("animalId", res.getAnimalId());
-					startActivity(intent);
-				} else {// Sinon on active l'ajout d'un animal
-						// TODO Ajouter l'ajout d'un animal
+				try {
+					Animal res = (Animal) lsv_animals_list
+							.getItemAtPosition(position);
+					Intent intent = new Intent(Profiles.context, Profiles.class);
+					if (typeProfil == 0) {
+						intent.putExtra("typeProfil", 3);
+					} else {
+						// A CHANGER QUAND LE PROFIL ANIMAL AMI SERA CREE
+						intent.putExtra("typeProfil", 3);
+					}
+					// Si c'est un animal
+					if (res.id != 0) {
+						intent.putExtra("animalId", res.id);
+						intent.putExtra("animalName", res.name);
+						intent.putExtra("animalPositionList", position);
+						startActivity(intent);
+					} else {// Sinon on active l'ajout d'un animal
+					}
+				} catch (Exception e) {
+					Log.e("log_ListObjectAnimal",
+							"Erreur récupération de l'animal : " + e.toString());
 				}
 			}
 		});
@@ -1300,7 +1439,7 @@ public class Profiles extends Activity{
 			case 2: // Profil ami
 				break;
 			case 3: // Profil animal
-				actionBarName = infoAnimal.getName();
+				actionBarName = pAnimalName;
 				break;
 			}
 			SpannableString s = new SpannableString(actionBarName);
@@ -1834,185 +1973,196 @@ public class Profiles extends Activity{
 	}
 
 	/**
-	 *  Add items into spinner Type
+	 * Add items into spinner Type
 	 */
-	public void addItemsTypeOnSpinner(int idType) {
-		//TODO Faire l'ajout des type dynamiquement par la suite.
-		Spinner spinner2 = (Spinner) findViewById(R.id.update_spinner_type_id);
-		List<String> list = new ArrayList<String>();
-		list.add("Chien");
-		list.add("Chat");
-		list.add("Furet");
-		list.add("Rongeur et lapin");
-		list.add("Oiseau");
-		list.add("Reptile");
-		list.add("Cheval");
-		list.add("Poisson");
-		list.add("Basse-cour");
-		list.add("Autres");
-		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_spinner_item, list);
-		dataAdapter
-				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		spinner2.setAdapter(dataAdapter);
-		spinner2.setSelection(idType, true);
-	}
-	
+//	public void addItemsTypeOnSpinner(int idType) {
+//		// TODO Faire l'ajout des type dynamiquement par la suite.
+//		Spinner spinner2 = (Spinner) findViewById(R.id.update_spinner_type_id);
+//		List<String> list = new ArrayList<String>();
+//		list.add("Chien");
+//		list.add("Chat");
+//		list.add("Furet");
+//		list.add("Rongeur et lapin");
+//		list.add("Oiseau");
+//		list.add("Reptile");
+//		list.add("Cheval");
+//		list.add("Poisson");
+//		list.add("Basse-cour");
+//		list.add("Autres");
+//		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+//				android.R.layout.simple_spinner_item, list);
+//		dataAdapter
+//				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//		spinner2.setAdapter(dataAdapter);
+//		spinner2.setSelection(idType, true);
+//	}
+
 	/**
-	 *  Add items into spinner Type
+	 * Add items into spinner Type
 	 */
-	public void addItemsRaceOnSpinner() {
-		Spinner spinner2 = (Spinner) findViewById(R.id.update_spinner_race_id);
-		List<String> list = new ArrayList<String>();
-		list.add("Test");
-		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_spinner_item, list);
-		dataAdapter
-		.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		spinner2.setAdapter(dataAdapter);
-	}
-	  
+//	public void addItemsRaceOnSpinner() {
+//		Spinner spinner2 = (Spinner) findViewById(R.id.update_spinner_race_id);
+//		List<String> list = new ArrayList<String>();
+//		list.add("Test");
+//		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+//				android.R.layout.simple_spinner_item, list);
+//		dataAdapter
+//				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//		spinner2.setAdapter(dataAdapter);
+//	}
+
 	/**
-	 *  Add items into spinner Country
+	 * Add items into spinner Country
 	 */
 	public void addItemsCountryOnSpinner(int idCountry) {
-		Spinner spinner2 = (Spinner) findViewById(R.id.update_spinner_p_pays_id);
-		
-		//Connexion a la bdd interne
-		InstallSQLiteBase firstInstallBdd = new InstallSQLiteBase(getApplicationContext());
-		SQLiteDatabase formationDB = firstInstallBdd.getReadableDatabase(); 
+		// Connexion a la bdd interne
+		InstallSQLiteBase firstInstallBdd = new InstallSQLiteBase(
+				getApplicationContext());
+		SQLiteDatabase formationDB = firstInstallBdd.getReadableDatabase();
 		Cursor curseur = formationDB.rawQuery("SELECT * FROM country", null);
-		
+
 		List<String> list = new ArrayList<String>();
-		
-		while(curseur.moveToNext()) {
+
+		while (curseur.moveToNext()) {
 			list.add(curseur.getString(1));
 		}
-		
+
 		firstInstallBdd.close();
-		
+
 		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_spinner_item, list);
 		dataAdapter
 				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		spinner2.setAdapter(dataAdapter);
-		
-		spinner2.setSelection(idCountry-1, true);
+		upd_pays.setAdapter(dataAdapter);
+
+		upd_pays.setSelection(idCountry - 1, true);
 	}
-	
+
 	/**
 	 * Add items into spinner Province
-	 *  @param int idCountrySelected
-	 *  @param boolean isFirstUse in case is the fisrt use we use the select action
-	 *  @return void
+	 * 
+	 * @param int idCountrySelected
+	 * @param boolean isFirstUse in case is the fisrt use we use the select
+	 *        action
+	 * @return void
 	 */
-	public void addItemsProvinceOnSpinner(int idCountrySelected, boolean isFirstUse) {
+	public void addItemsProvinceOnSpinner(int idCountrySelected,
+			boolean isFirstUse) {
 		List<String> list = new ArrayList<String>();
-		
-		if(idCountrySelected == 1){
-		//Connexion a la bdd interne
-		//on affiche le spinner dep
-		InstallSQLiteBase firstInstallBdd = new InstallSQLiteBase(getApplicationContext());
-		SQLiteDatabase formationDB = firstInstallBdd.getReadableDatabase(); 
-		Cursor curseur = formationDB.rawQuery("SELECT province_name FROM provinces", null);
-		
-		while(curseur.moveToNext()) {
-			list.add(curseur.getString(0));
-		}
-		
-		firstInstallBdd.close();
-		}else{
+
+		if (idCountrySelected == 1) {
+			// Connexion a la bdd interne
+			// on affiche le spinner dep
+			InstallSQLiteBase firstInstallBdd = new InstallSQLiteBase(
+					getApplicationContext());
+			SQLiteDatabase formationDB = firstInstallBdd.getReadableDatabase();
+			Cursor curseur = formationDB.rawQuery(
+					"SELECT province_name FROM provinces", null);
+
+			while (curseur.moveToNext()) {
+				list.add(curseur.getString(0));
+			}
+
+			firstInstallBdd.close();
+		} else {
 			list.add("");
 		}
-		
+
 		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_spinner_item, list);
 		dataAdapter
 				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		upd_dep.setAdapter(dataAdapter);
-		
-		if(isFirstUse){
-			if(idCountrySelected == 1){
-				upd_dep.setSelection(userProvinceId-1, true);
+
+		if (isFirstUse) {
+			if (idCountrySelected == 1) {
+				upd_dep.setSelection(userProvinceId - 1, true);
 				addItemsCityOnSpinner(userProvinceId, userProvinceId, true);
 			}
 		}
 	}
-	
+
 	/**
-	 *  Add items into spinner Cities
-	 *  @param int idProvinceSelected
-	 *  @param int idProvince
-	 *  @param int idCity
-	 *  @return void
+	 * Add items into spinner Cities
+	 * 
+	 * @param int idProvinceSelected
+	 * @param int idProvince
+	 * @param int idCity
+	 * @return void
 	 */
-	public void addItemsCityOnSpinner(int idProvinceSelected, int idProvince, boolean isFirstUse) {
+	public void addItemsCityOnSpinner(int idProvinceSelected, int idProvince,
+			boolean isFirstUse) {
 		List<String> list = new ArrayList<String>();
-		
-		Log.i("log_addItemsCityOnSpinner", "idProvinceSelected : " + idProvinceSelected);
-		
+
+		Log.i("log_addItemsCityOnSpinner", "idProvinceSelected : "
+				+ idProvinceSelected);
+
 		String provinceCourante;
 		try {
-			provinceCourante = upd_dep.getItemAtPosition(idProvinceSelected).toString();
-		}catch (Exception e) {
+			provinceCourante = upd_dep.getItemAtPosition(idProvinceSelected)
+					.toString();
+		} catch (Exception e) {
 			provinceCourante = "";
 		}
-		
-		if(provinceCourante.equals("")){
+
+		if (provinceCourante.equals("")) {
 			list.add("");
-		}else if(idProvince == userProvinceId && isFirstUse){
-			//On affiche la ville séléctionné
-				JSONObject infoWebserviveReturn;
-				try {
-					infoWebserviveReturn = userCityDefaut
-							.getJSONObject(0);
-					list.add(infoWebserviveReturn.getString("city_name"));
-				} catch (JSONException e) {
-					Log.i("log_userCityDefaut", "JSONException : " + e.toString());
-				}
-		}else{
-			//On charge les nouvelles données
+		} else if (idProvince == userProvinceId && isFirstUse) {
+			// On affiche la ville séléctionné
+			JSONObject infoWebserviveReturn;
+			try {
+				infoWebserviveReturn = userCityDefaut.getJSONObject(0);
+				list.add(infoWebserviveReturn.getString("city_name"));
+			} catch (JSONException e) {
+				Log.i("log_userCityDefaut", "JSONException : " + e.toString());
+			}
+		} else {
+			// On charge les nouvelles données
 			// On vide la liste de données à envoyé si existe déjà
 			data.clear();
 
 			// On ajoute les valeurs
 			data.add(new BasicNameValuePair("id_user", idUser));
 			data.add(new BasicNameValuePair("list_name", "userCity"));
-			data.add(new BasicNameValuePair("province_id", String.valueOf(idProvinceSelected)));
-			
-			if (ConnectionWebservicePHPProfile.haveNetworkConnection(this)) { 
+			data.add(new BasicNameValuePair("province_id", String
+					.valueOf(idProvinceSelected)));
+
+			if (ConnectionWebservicePHPProfile.haveNetworkConnection(this)) {
 				ConnectionWebservicePHPProfile calcul = new ConnectionWebservicePHPProfile(
 						1, "listObjectOther", this, data);
 				calcul.execute();
 				try {
 					arrayListReturn = calcul.get();
 					arrayListUserCity = arrayListReturn.get(0);
-					
+
 					JSONObject infoWebserviveReturn;
-					//On affiche les villes de la personnes par defaut
+					// On affiche les villes de la personnes par defaut
 					for (int i = 0; i < arrayListUserCity.length(); i++) {
 						try {
 							infoWebserviveReturn = arrayListUserCity
 									.getJSONObject(i);
-							list.add(infoWebserviveReturn.getString("city_name"));
+							list.add(infoWebserviveReturn
+									.getString("city_name"));
 						} catch (JSONException e) {
-							Log.e("log_userCity", "JSONException : " + e.toString());
+							Log.e("log_userCity",
+									"JSONException : " + e.toString());
 						}
 					}
-				}catch (Exception e) {
+				} catch (Exception e) {
 					Log.e("log_arrayListReturn1", "Exception : " + e.toString());
 				}
 			} else { // Sinon toast de problème
 				ConnectionWebservicePHPProfile.haveNetworkConnectionError(this);
 			}
 		}
-		
+
 		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_spinner_item, list);
-		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		dataAdapter
+				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		upd_ville.setAdapter(dataAdapter);
 	}
-	
+
 	private class ViewHolder {
 		ImageView imageWho;
 		ImageView imageWhom;

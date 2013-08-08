@@ -160,6 +160,7 @@ public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, Arr
 		String connection = this.connectionType;
 		resultErrorReturn = 1;
 		
+		Log.i("log_tagRecupéreProfileData", "Data : " + data);
 		// Si le webservice concerne le profil
 		if (connection.equals("listObject")){
 			String url = this.domainUrl + "/list-object.php";
@@ -269,7 +270,7 @@ public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, Arr
 			HttpEntity entity = response.getEntity();
 			is = entity.getContent();
 		} catch (Exception e) {
-			Log.e("log_tagEnvoieProfile", "Error in http connection " + e.toString());
+			Log.e("log_tagEnvoieProfileConnection", "Error in http connection " + e.toString());
 		}
 		// Convertion de la requête en string
 		try {
@@ -282,14 +283,15 @@ public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, Arr
 			}
 			is.close();
 			result = sb.toString();
+			Log.i("log_Result", "Result : " + result);
 		} catch (Exception e) {
-			Log.e("log_tagConvertProfile", "Error converting result " + e.toString());
+			Log.e("log_tagConvertProfileConverting", "Error converting result " + e.toString());
 		}
 		// Récupére un array de json
 		try {
 			resultat = new JSONArray(result);
 		} catch (JSONException e) {
-			Log.e("log_tagRecupéreProfile", "Error parsing data first " + e.toString());
+			Log.e("log_tagRecupéreProfileParsing", "Error parsing data first " + e.toString());
 		}
 
 		return resultat;
