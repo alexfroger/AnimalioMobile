@@ -18,9 +18,12 @@ import org.json.JSONObject;
 import android.app.ActionBar;
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -76,6 +79,8 @@ import fr.library.animaliomobile.RoundedImageView;
 import fr.library.animaliomobile.TypefaceSpan;
 
 public class Profiles extends Activity {
+	private int result_code;
+	
 	// Button de l'activité courante
 	private Button btn_animals_list;
 	private Button btn_friends_list;
@@ -129,9 +134,14 @@ public class Profiles extends Activity {
 
 	private static int userProvinceId;
 
+	//Bundle
 	private static int pAnimalId;
 	private static String pAnimalName;
 	private static int pAnimalPosition;
+	private static Boolean pAnimalUpdate;
+	private static String pAnimalUpdateName;
+	private static Boolean pAnimalDelete;
+	private static String pAnimalDeleteName;
 
 	private Animal infoAnimal;
 	// 0-Messagerie 1-ListeAnimaux 2-ListeAmis 3-ListeNotification
@@ -194,7 +204,19 @@ public class Profiles extends Activity {
 	private JSONArray userCityDefaut;
 	private JSONArray arrayListUserCity;
 	private JSONArray arrayAnimalInfo;
+	private JSONArray arrayListDeleteAnimal;
 
+	//ListView
+	private ListView lsv_animals_list;
+	
+	//Custom adapter
+	private CustomAdapterAnimals adapter_animals_list;
+	
+	//Animal
+	private Boolean isUpdateAnimalProfil = false;
+	private Boolean  isDeleteAnimalProfil = false;
+	private ArrayList<Animal> animals;
+	
 	private ConnectionWebservicePHPProfile calcul;
 	private Thread thread;
 	private Handler handler;
@@ -239,8 +261,7 @@ public class Profiles extends Activity {
 		typeProfil = extra.getInt("typeProfil");
 		pAnimalId = extra.getInt("animalId");
 		pAnimalName = extra.getString("animalName");
-		pAnimalPosition = extra.getInt("animalPositionList");
-
+		
 		// imv_profil = (RoundedImageView)findViewById(R.id.imv_profil);
 		// imv_profil.setImageDrawable(getResources().getDrawable(R.drawable.ic_profil_undefined));
 
@@ -276,7 +297,7 @@ public class Profiles extends Activity {
 		if (ConnectionWebservicePHP.haveNetworkConnection(this)) {
 			switch (typeProfil) {
 			case 0: // Profil utilisateur
-
+				result_code = 0;
 				/*
 				 * Instanciation des éléments du ViewFlipper
 				 */
@@ -367,142 +388,152 @@ public class Profiles extends Activity {
 
 								@Override
 								public void run() {
-									// On récupére les infos array retourner et
-									// on ajoute les elements à la vue
-									vf_profil = (ViewFlipper) findViewById(R.id.vf_profil);
-									ListView.LayoutParams param_lsv = new ListView.LayoutParams(
-											LayoutParams.MATCH_PARENT,
-											LayoutParams.MATCH_PARENT);
-
-									vf_profil.addView(
-											createListMsg(arrayListMsg),
-											param_lsv);
-									positionChild[0] = 0;
-
-									Log.i("log_arrayListAnimals",
-											"arrayListAnimals : "
-													+ arrayListAnimals);
-									vf_profil
-											.addView(
-													createListAnimals(arrayListAnimals),
-													param_lsv);
-									positionChild[1] = 1;
-
-									vf_profil.addView(
-											createListFriends(arrayListFriend),
-											param_lsv);
-									positionChild[2] = 2;
-
-									vf_profil.addView(
-											createListNotifications(),
-											param_lsv);
-									positionChild[3] = 3;
-
-									vf_profil.addView(createModification(),
-											param_lsv);
-									positionChild[7] = 4;
-
-									// Style de la vue modification
-									// Bouton modifier profil
-									btn_profil_update = (Button) findViewById(R.id.btn_registration);
-									btn_profil_update
-											.setOnClickListener(eventClick);
-
-									// Textview
-									updLastname = (TextView) findViewById(R.id.update_txtView_lastname);
-									updFirstname = (TextView) findViewById(R.id.update_txtView_firstname);
-									updEmail = (TextView) findViewById(R.id.update_txtView_email);
-									updNickname = (TextView) findViewById(R.id.update_txtView_nickname);
-									// updPays =
-									// (TextView)findViewById(R.id.update_p_pays_id);
-									// updDep =
-									// (TextView)findViewById(R.id.update_p_dep_id);
-									// updVille =
-									// (TextView)findViewById(R.id.update_p_ville_id);
-									updBirthday = (TextView) findViewById(R.id.update_txtView_birthday);
-									updPhone = (TextView) findViewById(R.id.update_txtView_phone);
-									updPhoneMobile = (TextView) findViewById(R.id.update_txtView_mobile);
-
-									// EditText
-									upd_lastname = (EditText) findViewById(R.id.update_lastname);
-									upd_firstname = (EditText) findViewById(R.id.update_firstname);
-									upd_email = (EditText) findViewById(R.id.update_email);
-									upd_nickname = (EditText) findViewById(R.id.update_nickname);
-									upd_birthday = (EditText) findViewById(R.id.update_birthday);
-									upd_phone = (EditText) findViewById(R.id.update_phone);
-									upd_phone_mobile = (EditText) findViewById(R.id.update_phone_mobile);
-
-									// Spinner
-									// upd_pays = (Spinner)
-									// findViewById(R.id.update_spinner_p_pays_id);
-									// upd_dep = (Spinner)
-									// findViewById(R.id.update_spinner_p_dep_id);
-									// upd_ville = (Spinner)
-									// findViewById(R.id.update_spinner_p_ville_id);
-									// upd_pays.setOnItemSelectedListener(selectClick);
-									// upd_dep.setOnItemSelectedListener(selectClick);
-
-									// Formattage de la date de naissance
-									Date dateFormat = null;
 									try {
-										dateFormat = new SimpleDateFormat(
-												"yyyy-MM-dd")
-												.parse(user_birthday);
-									} catch (ParseException e1) {
-										Log.e("log_profilModif",
-												"Date Formatted : "
-														+ user_birthday);
-										e1.printStackTrace();
-									}
-									String birthdayFormmated = new SimpleDateFormat(
-											"dd-MM-yyyy").format(dateFormat);
+										// On récupére les infos array retourner
+										// et
+										// on ajoute les elements à la vue
+										vf_profil = (ViewFlipper) findViewById(R.id.vf_profil);
+										ListView.LayoutParams param_lsv = new ListView.LayoutParams(
+												LayoutParams.MATCH_PARENT,
+												LayoutParams.MATCH_PARENT);
 
-									upd_lastname.setText(user_lastname);
-									upd_firstname.setText(user_firstname);
-									upd_email.setHint(user_email);
-									upd_nickname.setText(user_nickname);
-									upd_birthday.setText(birthdayFormmated);
-									upd_phone.setText(user_phone);
-									upd_phone_mobile.setText(user_phoneMobile);
+										vf_profil.addView(
+												createListMsg(arrayListMsg),
+												param_lsv);
+										positionChild[0] = 0;
 
-									// On met la police au textview
-									updLastname.setTypeface(Lobster);
-									updFirstname.setTypeface(Lobster);
-									updEmail.setTypeface(Lobster);
-									updNickname.setTypeface(Lobster);
-									// updPays.setTypeface(Lobster);
-									// updDep.setTypeface(Lobster);
-									// updVille.setTypeface(Lobster);
-									updBirthday.setTypeface(Lobster);
-									updPhone.setTypeface(Lobster);
-									updPhoneMobile.setTypeface(Lobster);
+										Log.i("log_arrayListAnimals",
+												"arrayListAnimals : "
+														+ arrayListAnimals);
+										vf_profil
+												.addView(
+														createListAnimals(arrayListAnimals),
+														param_lsv);
+										positionChild[1] = 1;
 
-									// On ajoute les informations des spinners
-									// addItemsCountryOnSpinner(Integer.parseInt(user_countryID));
+										vf_profil
+												.addView(
+														createListFriends(arrayListFriend),
+														param_lsv);
+										positionChild[2] = 2;
 
-									upd_birthday
-											.setOnTouchListener(new OnTouchListener() {
+										vf_profil.addView(
+												createListNotifications(),
+												param_lsv);
+										positionChild[3] = 3;
 
-												@Override
-												public boolean onTouch(View v,
-														MotionEvent event) {
-													if (event.getAction() == KeyEvent.ACTION_UP) {
-														new DatePickerDialog(
-																v.getContext(),
-																date,
-																myCalendar
-																		.get(Calendar.YEAR),
-																myCalendar
-																		.get(Calendar.MONTH),
-																myCalendar
-																		.get(Calendar.DAY_OF_MONTH))
-																.show();
+										vf_profil.addView(createModification(),
+												param_lsv);
+										positionChild[7] = 4;
+
+										// Style de la vue modification
+										// Bouton modifier profil
+										btn_profil_update = (Button) findViewById(R.id.btn_registration);
+										btn_profil_update
+												.setOnClickListener(eventClick);
+
+										// Textview
+										updLastname = (TextView) findViewById(R.id.update_txtView_lastname);
+										updFirstname = (TextView) findViewById(R.id.update_txtView_firstname);
+										updEmail = (TextView) findViewById(R.id.update_txtView_email);
+										updNickname = (TextView) findViewById(R.id.update_txtView_nickname);
+										// updPays =
+										// (TextView)findViewById(R.id.update_p_pays_id);
+										// updDep =
+										// (TextView)findViewById(R.id.update_p_dep_id);
+										// updVille =
+										// (TextView)findViewById(R.id.update_p_ville_id);
+										updBirthday = (TextView) findViewById(R.id.update_txtView_birthday);
+										updPhone = (TextView) findViewById(R.id.update_txtView_phone);
+										updPhoneMobile = (TextView) findViewById(R.id.update_txtView_mobile);
+
+										// EditText
+										upd_lastname = (EditText) findViewById(R.id.update_lastname);
+										upd_firstname = (EditText) findViewById(R.id.update_firstname);
+										upd_email = (EditText) findViewById(R.id.update_email);
+										upd_nickname = (EditText) findViewById(R.id.update_nickname);
+										upd_birthday = (EditText) findViewById(R.id.update_birthday);
+										upd_phone = (EditText) findViewById(R.id.update_phone);
+										upd_phone_mobile = (EditText) findViewById(R.id.update_phone_mobile);
+
+										// Spinner
+										// upd_pays = (Spinner)
+										// findViewById(R.id.update_spinner_p_pays_id);
+										// upd_dep = (Spinner)
+										// findViewById(R.id.update_spinner_p_dep_id);
+										// upd_ville = (Spinner)
+										// findViewById(R.id.update_spinner_p_ville_id);
+										// upd_pays.setOnItemSelectedListener(selectClick);
+										// upd_dep.setOnItemSelectedListener(selectClick);
+
+										// Formattage de la date de naissance
+										Date dateFormat = null;
+										try {
+											dateFormat = new SimpleDateFormat(
+													"yyyy-MM-dd")
+													.parse(user_birthday);
+										} catch (ParseException e1) {
+											Log.e("log_profilModif",
+													"Date Formatted : "
+															+ user_birthday);
+											e1.printStackTrace();
+										}
+										String birthdayFormmated = new SimpleDateFormat(
+												"dd-MM-yyyy")
+												.format(dateFormat);
+
+										upd_lastname.setText(user_lastname);
+										upd_firstname.setText(user_firstname);
+										upd_email.setHint(user_email);
+										upd_nickname.setText(user_nickname);
+										upd_birthday.setText(birthdayFormmated);
+										upd_phone.setText(user_phone);
+										upd_phone_mobile
+												.setText(user_phoneMobile);
+
+										// On met la police au textview
+										updLastname.setTypeface(Lobster);
+										updFirstname.setTypeface(Lobster);
+										updEmail.setTypeface(Lobster);
+										updNickname.setTypeface(Lobster);
+										// updPays.setTypeface(Lobster);
+										// updDep.setTypeface(Lobster);
+										// updVille.setTypeface(Lobster);
+										updBirthday.setTypeface(Lobster);
+										updPhone.setTypeface(Lobster);
+										updPhoneMobile.setTypeface(Lobster);
+
+										// On ajoute les informations des
+										// spinners
+										// addItemsCountryOnSpinner(Integer.parseInt(user_countryID));
+
+										upd_birthday
+												.setOnTouchListener(new OnTouchListener() {
+
+													@Override
+													public boolean onTouch(
+															View v,
+															MotionEvent event) {
+														if (event.getAction() == KeyEvent.ACTION_UP) {
+															new DatePickerDialog(
+																	v.getContext(),
+																	date,
+																	myCalendar
+																			.get(Calendar.YEAR),
+																	myCalendar
+																			.get(Calendar.MONTH),
+																	myCalendar
+																			.get(Calendar.DAY_OF_MONTH))
+																	.show();
+														}
+														return false;
 													}
-													return false;
-												}
 
-											});
-									// End vue modification
+												});
+										// End vue modification
+									} catch (Exception e) {
+										Log.i("log_Thread", "Thread : " + e.toString());
+									}
 								}
 							});
 
@@ -603,6 +634,10 @@ public class Profiles extends Activity {
 				// positionChild[6] = 4;
 				break;
 			case 3: // Profil animal
+				result_code = 3;
+				
+				//Get return bundle
+				pAnimalPosition = extra.getInt("animalPosition");
 				/*
 				 * Création des boutons
 				 */
@@ -658,10 +693,11 @@ public class Profiles extends Activity {
 										animalInfo.getString("animal_death"),
 										animalInfo.getString("created_at"),
 										animalInfo.getString("updated_at"));
-								
+
 								Log.i("log_Animal",
 										"Animal : "
-												+ animalInfo.getString("animal_name"));
+												+ animalInfo
+														.getString("animal_name"));
 							} catch (InterruptedException e) {
 								Log.e("log_ArrayReturn3",
 										"InterruptedExceptio3n : "
@@ -684,7 +720,7 @@ public class Profiles extends Activity {
 									ListView.LayoutParams param_lsv = new ListView.LayoutParams(
 											LayoutParams.MATCH_PARENT,
 											LayoutParams.MATCH_PARENT);
-									
+
 									vf_profil.addView(
 											createModificationAnimal(),
 											param_lsv);
@@ -713,13 +749,17 @@ public class Profiles extends Activity {
 
 									// Event à la touche ou au click propre a
 									// cette vue
-									btn_upd_animal.setOnClickListener(eventClick);
-									
-									edt_upd_an_birthday.setText(infoAnimal.birthday);
+									btn_upd_animal
+											.setOnClickListener(eventClick);
+
+									edt_upd_an_birthday
+											.setText(infoAnimal.birthday);
 									edt_upd_an_death.setText(infoAnimal.death);
-									edt_upd_an_lastname.setText(infoAnimal.name);
-									edt_upd_an_description.setText(infoAnimal.description);
-									
+									edt_upd_an_lastname
+											.setText(infoAnimal.name);
+									edt_upd_an_description
+											.setText(infoAnimal.description);
+
 									edt_upd_an_birthday
 											.setOnTouchListener(new OnTouchListener() {
 												@Override
@@ -798,7 +838,52 @@ public class Profiles extends Activity {
 		getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+		// Vérification du code de retour
+		if(requestCode == result_code) {
+			// Vérifie que le résultat est OK
+			if(resultCode == RESULT_OK) {
+				//Retour Vue profil Animal if update
+				pAnimalUpdate = data.getBooleanExtra("animalUpdate", false);
+				pAnimalUpdateName = data.getStringExtra("animalUpdateName");
+				
+				//Retour Vue profil Animal if delete
+				pAnimalDelete = data.getBooleanExtra("animalDelete", false);
+				pAnimalDeleteName = data.getStringExtra("animalDeleteName");
+
+				//Les 2 premiers cas
+				pAnimalPosition = data.getIntExtra("animalPosition", 0);
+				
+				//Changement d'information au retour d'activity si exist
+				if(pAnimalUpdate){
+					Animal animalChange = (Animal) lsv_animals_list.getItemAtPosition(pAnimalPosition);
+					animalChange.name = pAnimalUpdateName;
+					//On affecte le changement
+					adapter_animals_list.notifyDataSetChanged();
+					
+					// On affiche le résultat
+					Toast.makeText(getApplicationContext(), "Modification effectuée", Toast.LENGTH_SHORT).show();
+				}
+				
+				//Enleve l'animal au retour
+				if(pAnimalDelete){
+					//On supprimer l'élément du tableau
+					animals.remove(pAnimalPosition);
+					//On affecte le changement
+					adapter_animals_list.notifyDataSetChanged();
+					
+					Toast.makeText(getApplicationContext(),
+							"L'animal " + pAnimalDeleteName + " à été supprimé",
+							Toast.LENGTH_LONG).show();
+				}
+			}
+		}
+
+	}
+	
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
@@ -851,10 +936,83 @@ public class Profiles extends Activity {
 			} else if (v == btn_animal_modification) {
 				vf_profil.setDisplayedChild(positionChild[8]);
 			} else if (v == btn_delete_animal) {
-				Toast t = Toast.makeText(getApplicationContext(),
-						"Acitver la suppresion de l'animal", Toast.LENGTH_LONG);
-				t.setGravity(Gravity.BOTTOM, 0, 40);
-				t.show();
+				context = v.getContext();
+				DialogInterface.OnClickListener ecouteurDialog = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int codeBouton) {
+						if (codeBouton == Dialog.BUTTON_POSITIVE) {
+							//Suppression de l'animal
+							// On vide la liste de données à envoyé si existe déjà
+							data.clear();
+
+							// On ajoute les valeurs
+							data.add(new BasicNameValuePair("id_user", idUser));
+							data.add(new BasicNameValuePair("id_animal", String
+									.valueOf(infoAnimal.id)));
+							data.add(new BasicNameValuePair("list_name",
+									"deleteUserAnimal"));
+							
+							if (ConnectionWebservicePHPProfile.haveNetworkConnection(context)) {
+								ConnectionWebservicePHPProfile calcul = new ConnectionWebservicePHPProfile(
+										1, "listObjectOther", context, data);
+								calcul.execute();
+								try {
+									arrayListReturn = calcul.get();
+									arrayListDeleteAnimal = arrayListReturn.get(0);
+
+									JSONObject infoWebserviveReturn;
+									try {
+										infoWebserviveReturn = arrayListDeleteAnimal.getJSONObject(0);
+
+										if (infoWebserviveReturn.getInt("isOk") == 0) {
+											// Erreur de suppression de l'animal
+											Toast.makeText(context,
+													"L'animal n'as pas pu être supprimé",
+													Toast.LENGTH_LONG).show();
+										} else {
+											isDeleteAnimalProfil = true;
+											//Supprimé avec succès on redirige vers la vue précèdente
+											// Création de l'intent
+											Intent intent = new Intent();
+
+											// On rajoute le nom saisie dans l'intent
+											intent.putExtra("animalDelete", isDeleteAnimalProfil);
+											intent.putExtra("animalDeleteName", infoAnimal.name);
+											intent.putExtra("animalPosition", pAnimalPosition);
+											
+											// On retourne le résultat avec l'intent
+											setResult(RESULT_OK, intent);
+											// On termine cette activité
+											finish();
+										}
+									} catch (JSONException e) {
+										Log.e("log_deleteUserAnimal",
+												"JSONException :" + e.toString());
+									}
+								} catch (InterruptedException e) {
+									Log.e("log_deleteUserAnimal",
+											"InterruptedException :" + e.toString());
+								} catch (ExecutionException e) {
+									Log.e("log_deleteUserAnimal",
+											"ExecutionException :" + e.toString());
+								}
+							} else { // Sinon toast de problème
+								ConnectionWebservicePHPProfile
+										.haveNetworkConnectionError(context);
+							}
+						}
+						if (codeBouton == Dialog.BUTTON_NEGATIVE) {
+							//On ferme la fenêtre
+							dialog.cancel();
+						}
+					}
+				};
+
+				AlertDialog.Builder ad = new AlertDialog.Builder(v.getContext());
+				ad.setTitle("Suppression de " + infoAnimal.name);
+				ad.setPositiveButton("Comfirmer", ecouteurDialog);
+				ad.setNegativeButton("Annuler", ecouteurDialog);
+				ad.show();
 			} else if (v == btn_upd_animal) {
 				// Modification du profil
 				// si ou ou plusieurs champs sont vides
@@ -873,7 +1031,8 @@ public class Profiles extends Activity {
 					data.add(new BasicNameValuePair("id_user", idUser));
 					data.add(new BasicNameValuePair("upd_animalId", String
 							.valueOf(infoAnimal.id)));
-					data.add(new BasicNameValuePair("list_name", "updateProfilAnimal"));
+					data.add(new BasicNameValuePair("list_name",
+							"updateProfilAnimal"));
 					data.add(new BasicNameValuePair("upd_an_lastname",
 							edt_upd_an_lastname.getText().toString()));
 					data.add(new BasicNameValuePair("upd_an_description",
@@ -882,10 +1041,10 @@ public class Profiles extends Activity {
 							edt_upd_an_birthday.getText().toString()));
 					data.add(new BasicNameValuePair("upd_an_death",
 							edt_upd_an_death.getText().toString()));
-					
+
 					// Instancie la connection au webservice en thread
-					if (ConnectionWebservicePHPProfile
-							.haveNetworkConnection(v.getContext())) {
+					if (ConnectionWebservicePHPProfile.haveNetworkConnection(v
+							.getContext())) {
 						ConnectionWebservicePHPProfile calcul = new ConnectionWebservicePHPProfile(
 								1, "listObjectOther", v.getContext(), data);
 						calcul.execute();
@@ -893,7 +1052,7 @@ public class Profiles extends Activity {
 							arrayListReturn = calcul.get();
 							arrayListProfilAnimalUpdate = arrayListReturn
 									.get(0);
-							
+
 							JSONObject infoWebserviveReturn;
 							try {
 								infoWebserviveReturn = arrayListProfilAnimalUpdate
@@ -905,7 +1064,7 @@ public class Profiles extends Activity {
 											"Erreur d'enregistrement",
 											Toast.LENGTH_LONG).show();
 								} else { // Profil modifié
-									//On update l'objet animal
+									// On update l'objet animal
 									infoAnimal.raceId = infoWebserviveReturn
 											.getInt("animal_race_id");
 									infoAnimal.name = infoWebserviveReturn
@@ -920,11 +1079,15 @@ public class Profiles extends Activity {
 											.getString("created_at");
 									infoAnimal.updatedAt = infoWebserviveReturn
 											.getString("updated_at");
+									
 									Toast.makeText(v.getContext(),
 											"Profil mis à jour avec succès",
 											Toast.LENGTH_LONG).show();
-
-									// Formattage de la date de naissance et décès
+									
+									//On passe la variable d'update à true
+									isUpdateAnimalProfil = true;
+									// Formattage de la date de naissance et
+									// décès
 									Date dateFormatBirthday = null;
 									Date dateFormatDeath = null;
 									try {
@@ -935,7 +1098,8 @@ public class Profiles extends Activity {
 												"yyyy-MM-dd")
 												.parse(infoAnimal.death);
 									} catch (ParseException e1) {
-										Log.e("log_profilModif", "Date Formatted : "
+										Log.e("log_profilModif",
+												"Date Formatted : "
 														+ e1.toString());
 									}
 									String dateFormatBirthdayFormmated = new SimpleDateFormat(
@@ -1229,9 +1393,8 @@ public class Profiles extends Activity {
 	}
 
 	ListView createListAnimals(JSONArray arrayListAnimal1) {
-		final ListView lsv_animals_list = new ListView(this);
-		ArrayList<Animal> animals = new ArrayList<Animal>();
-
+		lsv_animals_list = new ListView(this);
+		animals = new ArrayList<Animal>();
 		try {
 			// Création d'une ligne ou on peut ajouter un animal
 			Animal animal0 = new Animal(0, "Ajouter un animal");
@@ -1255,18 +1418,16 @@ public class Profiles extends Activity {
 							+ e.toString());
 		}
 
-		CustomAdapterAnimals adapter_animals_list = new CustomAdapterAnimals(
+		adapter_animals_list = new CustomAdapterAnimals(
 				this, animals);
 		lsv_animals_list.setAdapter(adapter_animals_list);
-
 		// Ajout d'un onclick listener sur chaque element
 		lsv_animals_list.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// On recupere les infos de l'item
 				try {
-					Animal res = (Animal) lsv_animals_list
-							.getItemAtPosition(position);
+					Animal res = (Animal) lsv_animals_list.getItemAtPosition(position);
 					Intent intent = new Intent(Profiles.context, Profiles.class);
 					if (typeProfil == 0) {
 						intent.putExtra("typeProfil", 3);
@@ -1278,8 +1439,8 @@ public class Profiles extends Activity {
 					if (res.id != 0) {
 						intent.putExtra("animalId", res.id);
 						intent.putExtra("animalName", res.name);
-						intent.putExtra("animalPositionList", position);
-						startActivity(intent);
+						intent.putExtra("animalPosition", position);
+						startActivityForResult(intent, 0);
 					} else {// Sinon on active l'ajout d'un animal
 					}
 				} catch (Exception e) {
@@ -1457,7 +1618,22 @@ public class Profiles extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			onBackPressed();
+			switch (typeProfil) {
+				case 3:
+					// Création de l'intent
+					Intent intent = new Intent();
+
+					// On rajoute le nom saisie dans l'intent
+					intent.putExtra("animalUpdate", isUpdateAnimalProfil);
+					intent.putExtra("animalUpdateName", infoAnimal.name);
+					intent.putExtra("animalPosition", pAnimalPosition);
+
+					// On retourne le résultat avec l'intent
+					setResult(RESULT_OK, intent);
+					// On termine cette activité
+					finish();
+				break;
+			}
 			// Comportement du bouton "Logo"
 			return true;
 		case R.id.menu_refresh:
@@ -1624,30 +1800,54 @@ public class Profiles extends Activity {
 			super(context);
 			setId(animal.id);
 			setOrientation(LinearLayout.HORIZONTAL);
-
-			// Instanciation de l'image utilisateur
-			ImageView imv_user = new ImageView(context);
-			imv_user.setImageDrawable(getResources().getDrawable(
-					R.drawable.img_defaultanimal));
-
-			// Instanciation du nom de l'utilisateur
-			TextView txv_name = new TextView(context);
-			txv_name.setText(animal.name);
-			txv_name.setPadding(15, 0, 0, 0);
-			txv_name.setTextColor(getResources().getColor(R.color.grey_color));
-			txv_name.setTypeface(Arimo);
-			txv_name.setTextSize(20);
-			txv_name.setGravity(Gravity.CENTER_VERTICAL);
-
-			LinearLayout.LayoutParams paramTxv = new LinearLayout.LayoutParams(
-					LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-
-			LinearLayout.LayoutParams sizeImvUser = new LinearLayout.LayoutParams(
-					120, 120);
-
-			addView(imv_user, sizeImvUser);
-			addView(txv_name, paramTxv);
-
+			
+			ImageView imv_user;
+			TextView txv_name;
+			LinearLayout.LayoutParams paramTxv;
+			LinearLayout.LayoutParams sizeImvUser;
+			
+			if(animal.id == 0){
+				// Instanciation de l'image utilisateur
+				imv_user = new ImageView(context);
+				imv_user.setImageDrawable(getResources().getDrawable(
+						R.drawable.img_defaultanimal));
+	
+				// Instanciation du nom de l'utilisateur
+				txv_name = new TextView(context);
+				txv_name.setText(animal.name);
+				txv_name.setPadding(0, 0, 0, 15);
+				txv_name.setTextColor(getResources().getColor(R.color.grey_color));
+				txv_name.setTypeface(Lobster, Typeface.BOLD);
+				txv_name.setTextSize(20);
+				txv_name.setGravity(Gravity.CENTER_HORIZONTAL);
+				
+				paramTxv = new LinearLayout.LayoutParams(
+						LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+				addView(txv_name, paramTxv);
+			}else{
+				// Instanciation de l'image utilisateur
+				imv_user = new ImageView(context);
+				imv_user.setImageDrawable(getResources().getDrawable(
+						R.drawable.img_defaultanimal));
+	
+				// Instanciation du nom de l'utilisateur
+				txv_name = new TextView(context);
+				txv_name.setText(animal.name);
+				txv_name.setPadding(15, 0, 0, 0);
+				txv_name.setTextColor(getResources().getColor(R.color.grey_color));
+				txv_name.setTypeface(Arimo);
+				txv_name.setTextSize(20);
+				txv_name.setGravity(Gravity.CENTER_VERTICAL);
+	
+				paramTxv = new LinearLayout.LayoutParams(
+						LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+	
+				sizeImvUser = new LinearLayout.LayoutParams(
+						120, 120);
+				
+				addView(imv_user, sizeImvUser);
+				addView(txv_name, paramTxv);
+			}
 		}
 
 	}
@@ -1975,41 +2175,41 @@ public class Profiles extends Activity {
 	/**
 	 * Add items into spinner Type
 	 */
-//	public void addItemsTypeOnSpinner(int idType) {
-//		// TODO Faire l'ajout des type dynamiquement par la suite.
-//		Spinner spinner2 = (Spinner) findViewById(R.id.update_spinner_type_id);
-//		List<String> list = new ArrayList<String>();
-//		list.add("Chien");
-//		list.add("Chat");
-//		list.add("Furet");
-//		list.add("Rongeur et lapin");
-//		list.add("Oiseau");
-//		list.add("Reptile");
-//		list.add("Cheval");
-//		list.add("Poisson");
-//		list.add("Basse-cour");
-//		list.add("Autres");
-//		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-//				android.R.layout.simple_spinner_item, list);
-//		dataAdapter
-//				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//		spinner2.setAdapter(dataAdapter);
-//		spinner2.setSelection(idType, true);
-//	}
+	// public void addItemsTypeOnSpinner(int idType) {
+	// // TODO Faire l'ajout des type dynamiquement par la suite.
+	// Spinner spinner2 = (Spinner) findViewById(R.id.update_spinner_type_id);
+	// List<String> list = new ArrayList<String>();
+	// list.add("Chien");
+	// list.add("Chat");
+	// list.add("Furet");
+	// list.add("Rongeur et lapin");
+	// list.add("Oiseau");
+	// list.add("Reptile");
+	// list.add("Cheval");
+	// list.add("Poisson");
+	// list.add("Basse-cour");
+	// list.add("Autres");
+	// ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+	// android.R.layout.simple_spinner_item, list);
+	// dataAdapter
+	// .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+	// spinner2.setAdapter(dataAdapter);
+	// spinner2.setSelection(idType, true);
+	// }
 
 	/**
 	 * Add items into spinner Type
 	 */
-//	public void addItemsRaceOnSpinner() {
-//		Spinner spinner2 = (Spinner) findViewById(R.id.update_spinner_race_id);
-//		List<String> list = new ArrayList<String>();
-//		list.add("Test");
-//		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-//				android.R.layout.simple_spinner_item, list);
-//		dataAdapter
-//				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//		spinner2.setAdapter(dataAdapter);
-//	}
+	// public void addItemsRaceOnSpinner() {
+	// Spinner spinner2 = (Spinner) findViewById(R.id.update_spinner_race_id);
+	// List<String> list = new ArrayList<String>();
+	// list.add("Test");
+	// ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+	// android.R.layout.simple_spinner_item, list);
+	// dataAdapter
+	// .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+	// spinner2.setAdapter(dataAdapter);
+	// }
 
 	/**
 	 * Add items into spinner Country

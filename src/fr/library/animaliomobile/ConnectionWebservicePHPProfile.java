@@ -160,15 +160,11 @@ public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, Arr
 		String connection = this.connectionType;
 		resultErrorReturn = 1;
 		
-		Log.i("log_tagRecupéreProfileData", "Data : " + data);
 		// Si le webservice concerne le profil
 		if (connection.equals("listObject")){
 			String url = this.domainUrl + "/list-object.php";
 			
-			Log.i("log_tagRecupéreProfile", "listObject : " + listObject);
-			
 			for (int i = 0; i < listObject.length; i++) {
-				Log.i("log_tagRecupéreProfile", "listObject : " + listObject[i]);
 				// On récupére les info du serveur
 				if(listObject[i].equals("listMsg")){
 					// On vide la liste de données à envoyé si existe déjà
