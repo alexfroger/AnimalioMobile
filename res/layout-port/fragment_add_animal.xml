@@ -1,0 +1,130 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="7dp"
+            android:background="@color/border_authDial"
+            android:paddingBottom="5dp" >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/background_authentication_xml"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/txv_add_animal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:paddingTop="@dimen/normal_padding"
+                        android:text="Ajouter un animal"
+                        android:textColor="@color/title_authDial"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/add_an_lastname"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="7dp"
+                        android:gravity="center_vertical|left"
+                        android:hint="Nom*"
+                        android:inputType="text"
+                        android:textColor="@color/textTextField_authDial"
+                        android:textColorHint="@color/hintTextField_authDial" />
+
+                    <EditText
+                        android:id="@+id/add_an_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="7dp"
+                        android:gravity="center_vertical|left"
+                        android:hint="Description"
+                        android:inputType="text"
+                        android:textColor="@color/textTextField_authDial"
+                        android:textColorHint="@color/hintTextField_authDial" />
+
+                    <!-- <Spinner -->
+                    <!-- android:id="@+id/update_spinner_type_id" -->
+                    <!-- android:layout_width="match_parent" -->
+                    <!-- android:layout_height="wrap_content" /> -->
+
+
+                    <!-- <Spinner -->
+                    <!-- android:id="@+id/update_spinner_race_id" -->
+                    <!-- android:layout_width="match_parent" -->
+                    <!-- android:layout_height="wrap_content" /> -->
+
+                    <EditText
+                        android:id="@+id/add_an_birthday"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="7dp"
+                        android:gravity="center_vertical|left"
+                        android:hint="Date de naissance"
+                        android:inputType="date"
+                        android:textColor="@color/textTextField_authDial"
+                        android:textColorHint="@color/hintTextField_authDial" />
+
+                    <EditText
+                        android:id="@+id/add_an_death"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="7dp"
+                        android:gravity="center_vertical|left"
+                        android:hint="Date de décès"
+                        android:inputType="date"
+                        android:textColor="@color/textTextField_authDial"
+                        android:textColorHint="@color/hintTextField_authDial" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="10dp"
+                        android:paddingLeft="60dp"
+                        android:paddingRight="60dp" >
+
+                        <Button
+                            android:id="@+id/btn_add_animal"
+                            style="@style/button_auth"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:text="Ajouter" />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/btn_closed"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/btn_closed" />
+    </RelativeLayout>
+
+</LinearLayout>

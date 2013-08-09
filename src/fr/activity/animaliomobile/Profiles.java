@@ -36,6 +36,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.util.Log;
@@ -68,7 +70,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 import fr.animaliomobile.R;
+import fr.library.animaliomobile.AddAnimalDialog;
 import fr.library.animaliomobile.Animal;
+import fr.library.animaliomobile.ConnectionDialog;
 import fr.library.animaliomobile.ConnectionWebservicePHP;
 import fr.library.animaliomobile.ConnectionWebservicePHPProfile;
 import fr.library.animaliomobile.Friend;
@@ -78,7 +82,7 @@ import fr.library.animaliomobile.Notification;
 import fr.library.animaliomobile.RoundedImageView;
 import fr.library.animaliomobile.TypefaceSpan;
 
-public class Profiles extends Activity {
+public class Profiles extends FragmentActivity{
 	private int result_code;
 	
 	// Button de l'activité courante
@@ -111,7 +115,7 @@ public class Profiles extends Activity {
 	private static ArrayList<NameValuePair> data = new ArrayList<NameValuePair>();
 
 	// Preference
-	private static String idUser;
+	public static String idUser;
 	private static String user_humorID;
 	private static String user_cityID;
 	private static String user_countryID;
@@ -143,7 +147,7 @@ public class Profiles extends Activity {
 	private static Boolean pAnimalDelete;
 	private static String pAnimalDeleteName;
 
-	private Animal infoAnimal;
+	public static Animal infoAnimal;
 	// 0-Messagerie 1-ListeAnimaux 2-ListeAmis 3-ListeNotification
 	// 4-FriendRequest
 	// 5-EnvoyerMessage 6-DeleteFriend 7-UserModification 8-AnimalModification
@@ -210,20 +214,24 @@ public class Profiles extends Activity {
 	private ListView lsv_animals_list;
 	
 	//Custom adapter
-	private CustomAdapterAnimals adapter_animals_list;
+	public static CustomAdapterAnimals adapter_animals_list;
 	
 	//Animal
 	private Boolean isUpdateAnimalProfil = false;
 	private Boolean  isDeleteAnimalProfil = false;
-	private ArrayList<Animal> animals;
+	public static ArrayList<Animal> animals;
 	
 	private ConnectionWebservicePHPProfile calcul;
 	private Thread thread;
 	private Handler handler;
 
 	private Boolean isFirstUseSelected = true;
-	private static Context context;
+	public static Context context;
 
+	//Show add Animal
+	private FragmentManager fm;
+	private AddAnimalDialog addAnimal;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -846,6 +854,8 @@ public class Profiles extends Activity {
 		if(requestCode == result_code) {
 			// Vérifie que le résultat est OK
 			if(resultCode == RESULT_OK) {
+				typeProfil = data.getIntExtra("typeProfil", 0);
+				
 				//Retour Vue profil Animal if update
 				pAnimalUpdate = data.getBooleanExtra("animalUpdate", false);
 				pAnimalUpdateName = data.getStringExtra("animalUpdateName");
@@ -866,6 +876,7 @@ public class Profiles extends Activity {
 					
 					// On affiche le résultat
 					Toast.makeText(getApplicationContext(), "Modification effectuée", Toast.LENGTH_SHORT).show();
+					typeProfil = data.getIntExtra("typeProfil", 0);
 				}
 				
 				//Enleve l'animal au retour
@@ -878,6 +889,7 @@ public class Profiles extends Activity {
 					Toast.makeText(getApplicationContext(),
 							"L'animal " + pAnimalDeleteName + " à été supprimé",
 							Toast.LENGTH_LONG).show();
+					typeProfil = data.getIntExtra("typeProfil", 0);
 				}
 			}
 		}
@@ -1352,7 +1364,7 @@ public class Profiles extends Activity {
 
 		try {
 			// On ajoute les message que l'on à reçu
-			for (int i = 0; i < arrayListAnimals.length(); i++) {
+			for (int i = 0; i < arrayListMsg1.length(); i++) {
 				JSONObject infoWebserviveReturn = arrayListMsg1
 						.getJSONObject(i);
 
@@ -1442,6 +1454,7 @@ public class Profiles extends Activity {
 						intent.putExtra("animalPosition", position);
 						startActivityForResult(intent, 0);
 					} else {// Sinon on active l'ajout d'un animal
+						showAnimalAddDialog();
 					}
 				} catch (Exception e) {
 					Log.e("log_ListObjectAnimal",
@@ -1587,7 +1600,7 @@ public class Profiles extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main_action_bar, menu);
+		getMenuInflater().inflate(R.menu.home_action_bar, menu);
 		String actionBarName = "";
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			ActionBar actionBar = getActionBar();
@@ -1618,7 +1631,11 @@ public class Profiles extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
+			Log.i("log_typeProfil", "typeProfil : " + typeProfil);
 			switch (typeProfil) {
+				case 0:
+					onBackPressed();
+				break;
 				case 3:
 					// Création de l'intent
 					Intent intent = new Intent();
@@ -1627,6 +1644,7 @@ public class Profiles extends Activity {
 					intent.putExtra("animalUpdate", isUpdateAnimalProfil);
 					intent.putExtra("animalUpdateName", infoAnimal.name);
 					intent.putExtra("animalPosition", pAnimalPosition);
+					intent.putExtra("typeProfil", 0);
 
 					// On retourne le résultat avec l'intent
 					setResult(RESULT_OK, intent);
@@ -1635,13 +1653,6 @@ public class Profiles extends Activity {
 				break;
 			}
 			// Comportement du bouton "Logo"
-			return true;
-		case R.id.menu_refresh:
-			// Comportement du bouton "Actualiser"
-			Intent i = new Intent(getApplicationContext(), Profiles.class);
-			i.putExtra("typeProfil", typeProfil);
-			startActivity(i);
-			finish();
 			return true;
 		case R.id.menu_settings:
 			// Comportement du bouton "Paramètres"
@@ -1853,7 +1864,7 @@ public class Profiles extends Activity {
 	}
 
 	// Adapter de la ListView contenant les animaux
-	class CustomAdapterAnimals extends BaseAdapter {
+	public class CustomAdapterAnimals extends BaseAdapter {
 		private Context context;
 		private List<Animal> animals;
 
@@ -2362,7 +2373,16 @@ public class Profiles extends Activity {
 				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		upd_ville.setAdapter(dataAdapter);
 	}
-
+	
+	/**
+	 * Display the connection popup (using ConnectionDialog)
+	 */
+	private void showAnimalAddDialog() {
+		fm = getSupportFragmentManager();
+		addAnimal = new AddAnimalDialog();
+		addAnimal.show(fm, "fragment_add_animal");
+	}
+	
 	private class ViewHolder {
 		ImageView imageWho;
 		ImageView imageWhom;

@@ -137,15 +137,6 @@ public class Authentication extends FragmentActivity{
 		connectionDialog.show(fm, "fragment_authentication_connection");
 	}
 	
-	/**
-	 * Display the registration popup (using ConnectionDialog)
-	 */
-	private void showRegistrationDialog() {
-		fm = getSupportFragmentManager();
-		registrationDialog = new RegistrationDialog();
-		registrationDialog.show(fm, "fragment_authentication_registration");
-	}
-	
 	//	Create Listener event
     OnClickListener eventClick = new OnClickListener() {
 		@Override

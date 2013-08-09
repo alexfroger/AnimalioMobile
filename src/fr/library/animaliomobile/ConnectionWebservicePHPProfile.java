@@ -279,7 +279,6 @@ public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, Arr
 			}
 			is.close();
 			result = sb.toString();
-			Log.i("log_Result", "Result : " + result);
 		} catch (Exception e) {
 			Log.e("log_tagConvertProfileConverting", "Error converting result " + e.toString());
 		}
