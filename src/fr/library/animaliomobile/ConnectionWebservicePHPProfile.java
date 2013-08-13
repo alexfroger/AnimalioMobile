@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import org.apache.http.HttpEntity;
@@ -29,6 +32,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -61,7 +66,7 @@ public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, Arr
 	public ScrollView layScrollview;
 	private ProgressDialog pd;
 	private ArrayList<JSONArray> arrayInfoWebservice = new ArrayList<JSONArray>();
-	public String domainUrl = "http://m.animalio.fr/";
+	public static String domainUrl = "http://m.animalio.fr/";
 	HttpRequestRetryHandler myRetryHandler; // Récupérateur de réponse HTTP
 	public ArrayList<NameValuePair> data = new ArrayList<NameValuePair>();
 	public int resultErrorReturn;
@@ -78,6 +83,8 @@ public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, Arr
 	
 	private static String idUser;
 	private static String user_cityID;
+	private int typeProfil = 0;
+	private int friendId;
 
 
 	/**
@@ -108,6 +115,23 @@ public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, Arr
 		this.loaderType = _loaderType;
 		this.connectionType = _connectionType;
 		this.context = _context;
+	}
+	
+	/**
+	 * Constuctor of Animalio Webservice 
+	 * 
+	 * @param _loaderType
+	 * @param _connectionType
+	 * @param _context
+	 * @param _typeProfil
+	 */
+	public ConnectionWebservicePHPProfile(int _loaderType, String _connectionType,
+			Context _context, int _typeProfil, int _friendId) {
+		this.loaderType = _loaderType;
+		this.connectionType = _connectionType;
+		this.context = _context;
+		this.typeProfil = _typeProfil;
+		this.friendId = _friendId;
 	}
 	
 	/**
@@ -154,7 +178,11 @@ public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, Arr
 		SharedPreferences preferences = PreferenceManager
 					.getDefaultSharedPreferences(this.context);
 		
-		idUser = preferences.getString("idUser", "");
+		if(typeProfil == 0){
+			idUser = preferences.getString("idUser", "");
+		}else{
+			idUser = String.valueOf(friendId);
+		}
 		user_cityID = preferences.getString("cityID", "");
 		
 		String connection = this.connectionType;
@@ -230,7 +258,7 @@ public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, Arr
 			
 			arrayInfoWebservice.add(getServerData(data, url));
 			
-			Log.i("log_tagRecupéreProfile", "listObjectOther : " + arrayInfoWebservice);
+			//Log.i("log_tagRecupéreProfile", "listObjectOther : " + arrayInfoWebservice);
 		}
 		
 		return arrayInfoWebservice;
@@ -279,6 +307,7 @@ public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, Arr
 			}
 			is.close();
 			result = sb.toString();
+			//Log.i("log_result", "result : " + result);
 		} catch (Exception e) {
 			Log.e("log_tagConvertProfileConverting", "Error converting result " + e.toString());
 		}
@@ -371,5 +400,24 @@ public class ConnectionWebservicePHPProfile extends AsyncTask<Void, Integer, Arr
 				Toast.LENGTH_LONG);
 		t.setGravity(Gravity.BOTTOM, 0, 40);
 		t.show();
+	}
+	
+	public static Bitmap downloadImage(String urlOfImage) {
+
+		Bitmap bitmap = null;
+
+		try {
+			URL urlImage = new URL(domainUrl + urlOfImage);
+			HttpURLConnection connection = (HttpURLConnection) urlImage.openConnection();
+			InputStream inputStream = connection.getInputStream();
+			bitmap = BitmapFactory.decodeStream(inputStream);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return bitmap;
+
 	}
 }

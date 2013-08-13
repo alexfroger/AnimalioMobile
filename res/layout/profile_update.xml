@@ -44,6 +44,7 @@
                 android:layout_gravity="center"
                 android:gravity="center_vertical|left"
                 android:inputType="text"
+                android:imeOptions="actionDone"
                 android:layout_marginBottom="5dp"
                 android:hint="Nom"/>
             
@@ -64,6 +65,7 @@
                 android:layout_gravity="center"
                 android:gravity="center_vertical|left"
                 android:inputType="text"
+                android:imeOptions="actionDone"
                 android:layout_marginBottom="5dp"
                 android:hint="Prénom" />
             
@@ -88,6 +90,7 @@
                 android:layout_gravity="center"
                 android:gravity="center_vertical|left"
                 android:inputType="text"
+                android:imeOptions="actionDone"
                 android:layout_marginBottom="5dp"
                 android:hint="Email"/>
             
@@ -108,6 +111,7 @@
                 android:layout_gravity="center"
                 android:gravity="center_vertical|left"
                 android:inputType="text"
+                android:imeOptions="actionDone"
                 android:layout_marginBottom="5dp"
                 android:hint="Pseudo"/>
             
@@ -192,6 +196,7 @@
                 android:layout_gravity="center"
                 android:gravity="center_vertical|left"
                 android:inputType="phone"
+                android:imeOptions="actionDone"
                 android:layout_marginBottom="5dp"
                 android:hint="Numéro fixe" />
             
@@ -213,7 +218,7 @@
                 android:gravity="center_vertical|left"
                 android:inputType="phone"
                 android:layout_marginBottom="5dp"
-                android:imeOptions="actionGo"
+                android:imeOptions="actionDone"
                 android:hint="Numéro mobile"/>
             
            

@@ -13,7 +13,7 @@
     <string name="create_account">Créer un compte</string>
     <string name="connect">Se connecter</string>
     <string name="title_activity_spinner">SpinnerActivity</string>
-    <string name="title_activity_members_list">MembersList</string>
+    <string name="title_activity_members_list">Membres</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
@@ -29,8 +29,8 @@
 
     <!-- pop-up connexion -->
     <string name="title_popup_connexion">CONNEXION</string>
-    <string name="hint_email">Votre email</string>
-    <string name="hint_password">Votre mot de passe</string>
+    <string name="hint_email">Email / Pseudo*</string>
+    <string name="hint_password">Mot de passe*</string>
     <string name="pwd_forget">Mot de passe oublié</string>
 
     <!-- pop-up Mot de passe oublié -->

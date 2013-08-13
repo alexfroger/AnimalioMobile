@@ -10,6 +10,8 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 import fr.activity.animaliomobile.Authentication;
 import fr.animaliomobile.R;
 
@@ -99,22 +102,31 @@ public class ConnectionDialog extends DialogFragment {
 				getDialog().cancel();
 			}
 			if (v == btnConnection) {
-				// On vide la liste de données à envoyé si existe déjà
-				data.clear();
-
-				// On ajoute les valeurs
-				data.add(new BasicNameValuePair("email_pseudo", emailPseudo
-						.getText().toString()));
-				data.add(new BasicNameValuePair("password", password.getText()
-						.toString()));
-
-				// Instancie la connection au webservice en thread
-				if (ConnectionWebservicePHP.haveNetworkConnection(v.getContext())) { // Si connexion existe
-					ConnectionWebservicePHP calcul = new ConnectionWebservicePHP(
-							1, "Authentication", v.getContext(), data);
-					calcul.execute();
-				} else { // Sinon toast de problème
-					ConnectionWebservicePHP.haveNetworkConnectionError(v.getContext());
+				if (emailPseudo.getText().toString().equals("")
+						|| password.getText().toString().equals("")) {
+					Toast t = Toast.makeText(v.getContext(),
+							"Veuillez remplir les champs obligatoires",
+							Toast.LENGTH_LONG);
+					t.setGravity(Gravity.BOTTOM, 0, 40);
+					t.show();
+				} else {
+					// On vide la liste de données à envoyé si existe déjà
+					data.clear();
+	
+					// On ajoute les valeurs
+					data.add(new BasicNameValuePair("email_pseudo", emailPseudo
+							.getText().toString()));
+					data.add(new BasicNameValuePair("password", password.getText()
+							.toString()));
+	
+					// Instancie la connection au webservice en thread
+					if (ConnectionWebservicePHP.haveNetworkConnection(v.getContext())) {
+						ConnectionWebservicePHP calcul = new ConnectionWebservicePHP(
+								1, "Authentication", v.getContext(), data);
+						calcul.execute();
+					} else { // Sinon toast de problème
+						ConnectionWebservicePHP.haveNetworkConnectionError(v.getContext());
+					}
 				}
 			}
 		}

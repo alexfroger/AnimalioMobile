@@ -1,5 +1,10 @@
 package fr.activity.animaliomobile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,6 +34,8 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -74,17 +81,21 @@ import fr.library.animaliomobile.AddAnimalDialog;
 import fr.library.animaliomobile.Animal;
 import fr.library.animaliomobile.ConnectionDialog;
 import fr.library.animaliomobile.ConnectionWebservicePHP;
+import fr.library.animaliomobile.ConnectionWebservicePHPPicture;
 import fr.library.animaliomobile.ConnectionWebservicePHPProfile;
+import fr.library.animaliomobile.DownloadImage;
+import fr.library.animaliomobile.FormattedDateFr;
 import fr.library.animaliomobile.Friend;
 import fr.library.animaliomobile.InstallSQLiteBase;
 import fr.library.animaliomobile.Message;
 import fr.library.animaliomobile.Notification;
+import fr.library.animaliomobile.Picture;
 import fr.library.animaliomobile.RoundedImageView;
 import fr.library.animaliomobile.TypefaceSpan;
 
-public class Profiles extends FragmentActivity{
+public class Profiles extends FragmentActivity {
 	private int result_code;
-	
+
 	// Button de l'activité courante
 	private Button btn_animals_list;
 	private Button btn_friends_list;
@@ -99,6 +110,8 @@ public class Profiles extends FragmentActivity{
 	private Button btn_galerie;
 	private Button btn_profil_update;
 	private Button btn_upd_animal;
+	
+	private Bitmap profilImg;
 
 	// Button bar de bas
 	private Button btn_members;
@@ -138,7 +151,7 @@ public class Profiles extends FragmentActivity{
 
 	private static int userProvinceId;
 
-	//Bundle
+	// Bundle
 	private static int pAnimalId;
 	private static String pAnimalName;
 	private static int pAnimalPosition;
@@ -146,6 +159,12 @@ public class Profiles extends FragmentActivity{
 	private static String pAnimalUpdateName;
 	private static Boolean pAnimalDelete;
 	private static String pAnimalDeleteName;
+
+	private static int pFriendId;
+	private static String pFriendName;
+	private static int pFriendPosition;
+	private static Boolean pFriendDelete;
+	private static String pFriendDeleteName;
 
 	public static Animal infoAnimal;
 	// 0-Messagerie 1-ListeAnimaux 2-ListeAmis 3-ListeNotification
@@ -190,8 +209,10 @@ public class Profiles extends FragmentActivity{
 	private Spinner upd_dep;
 	private Spinner upd_ville;
 
-	private Calendar myCalendar;
-	private DatePickerDialog.OnDateSetListener date;
+	public static Calendar myCalendar;
+	public static DatePickerDialog.OnDateSetListener dateUpdbirthday;
+	public static DatePickerDialog.OnDateSetListener dateUpdAnbirthday;
+	public static DatePickerDialog.OnDateSetListener dateUpdAnDeath;
 
 	private Thread splashTread;
 
@@ -209,29 +230,34 @@ public class Profiles extends FragmentActivity{
 	private JSONArray arrayListUserCity;
 	private JSONArray arrayAnimalInfo;
 	private JSONArray arrayListDeleteAnimal;
+	private JSONArray arrayListDeleteUserFriend;
 
-	//ListView
+	// Animal
 	private ListView lsv_animals_list;
-	
-	//Custom adapter
 	public static CustomAdapterAnimals adapter_animals_list;
-	
-	//Animal
-	private Boolean isUpdateAnimalProfil = false;
-	private Boolean  isDeleteAnimalProfil = false;
 	public static ArrayList<Animal> animals;
-	
+
+	// Friend
+	private ListView lsv_friends_list;
+	public static CustomAdapterFriends adapter_friends_list;
+	private ArrayList<Friend> friends;
+
+	private Boolean isUpdateProfil = false;
+	private Boolean isDeleteProfil = false;
+
 	private ConnectionWebservicePHPProfile calcul;
+	private ConnectionWebservicePHPPicture uploadImage;
 	private Thread thread;
+	private Thread thread1;
 	private Handler handler;
 
 	private Boolean isFirstUseSelected = true;
 	public static Context context;
 
-	//Show add Animal
+	// Show add Animal
 	private FragmentManager fm;
 	private AddAnimalDialog addAnimal;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -267,12 +293,15 @@ public class Profiles extends FragmentActivity{
 		// On récupère les variables passer par une autre vue
 		Bundle extra = getIntent().getExtras();
 		typeProfil = extra.getInt("typeProfil");
+
 		pAnimalId = extra.getInt("animalId");
 		pAnimalName = extra.getString("animalName");
-		
-		// imv_profil = (RoundedImageView)findViewById(R.id.imv_profil);
-		// imv_profil.setImageDrawable(getResources().getDrawable(R.drawable.ic_profil_undefined));
 
+		pFriendId = extra.getInt("friendId");
+		pFriendName = extra.getString("friendName");
+
+		imv_profil = (RoundedImageView)findViewById(R.id.imv_profil);
+//		imv_profil.setImageDrawable(getResources().getDrawable(R.drawable.ic_profil_undefined));
 		imv_cover = (ImageView) findViewById(R.id.imv_cover);
 		imv_cover.setImageDrawable(getResources().getDrawable(
 				R.drawable.profil_test));
@@ -283,9 +312,10 @@ public class Profiles extends FragmentActivity{
 		Lobster = Typeface.createFromAsset(getApplicationContext().getAssets(),
 				"Lobster.otf");
 
+		// On instancie le formattage des dates pour les != formulaires
 		myCalendar = Calendar.getInstance();
 
-		date = new DatePickerDialog.OnDateSetListener() {
+		dateUpdbirthday = new DatePickerDialog.OnDateSetListener() {
 			@Override
 			public void onDateSet(DatePicker view, int year, int monthOfYear,
 					int dayOfMonth) {
@@ -301,27 +331,47 @@ public class Profiles extends FragmentActivity{
 			}
 		};
 
-		// Si connexion existe on charge le contenu
+		dateUpdAnbirthday = new DatePickerDialog.OnDateSetListener() {
+			@Override
+			public void onDateSet(DatePicker view, int year, int monthOfYear,
+					int dayOfMonth) {
+				myCalendar.set(Calendar.YEAR, year);
+				myCalendar.set(Calendar.MONTH, monthOfYear);
+
+				myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+				String myFormat = "dd-MM-yyyy"; // In which you need put here
+				SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+				edt_upd_an_birthday.setText(sdf.format(myCalendar.getTime()));
+			}
+		};
+
+		dateUpdAnDeath = new DatePickerDialog.OnDateSetListener() {
+			@Override
+			public void onDateSet(DatePicker view, int year, int monthOfYear,
+					int dayOfMonth) {
+				myCalendar.set(Calendar.YEAR, year);
+				myCalendar.set(Calendar.MONTH, monthOfYear);
+
+				myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+				String myFormat = "dd-MM-yyyy"; // In which you need put here
+				SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+				edt_upd_an_death.setText(sdf.format(myCalendar.getTime()));
+			}
+		};
+
+		vf_profil = (ViewFlipper) findViewById(R.id.vf_profil);
+		param_lsv = new ListView.LayoutParams(LayoutParams.MATCH_PARENT,
+				LayoutParams.MATCH_PARENT);
+
+		// Si connexion existe on charge le contenu en fonction du profil
 		if (ConnectionWebservicePHP.haveNetworkConnection(this)) {
 			switch (typeProfil) {
 			case 0: // Profil utilisateur
 				result_code = 0;
-				/*
-				 * Instanciation des éléments du ViewFlipper
-				 */
-				// View layoutListMsg = createLayout("Envoyer un message");
-				// vf_profil.addView(layoutListMsg, param_lsv);
-				// positionChild[0]=0;
-
-				// On vide la liste de données à envoyé si existe déjà
-				data.clear();
-
-				// On ajoute les valeurs
-				data.add(new BasicNameValuePair("id_user", idUser));
-				data.add(new BasicNameValuePair("list_name", "listMsg"));
-				data.add(new BasicNameValuePair("nb_msg_min", "0"));
-				data.add(new BasicNameValuePair("nb_msg_max", "20"));
-
 				/*
 				 * Création des boutons
 				 */
@@ -355,7 +405,7 @@ public class Profiles extends FragmentActivity{
 				calcul = new ConnectionWebservicePHPProfile(1, "listObject",
 						this);
 				calcul.execute();
-
+				
 				handler = new Handler();
 
 				thread = new Thread() {
@@ -381,14 +431,14 @@ public class Profiles extends FragmentActivity{
 										.getInt("province_id");
 								userCityDefaut = arrayListReturn.get(4);
 							} catch (InterruptedException e) {
-								Log.i("log_ArrayReturn",
+								Log.e("log_ArrayReturn",
 										"InterruptedException : "
 												+ e.toString());
 							} catch (ExecutionException e) {
-								Log.i("log_ArrayReturn",
+								Log.e("log_ArrayReturn",
 										"ExecutionException : " + e.toString());
 							} catch (JSONException e) {
-								Log.i("log_ArrayReturn",
+								Log.e("log_ArrayReturn",
 										"ExecutionException : " + e.toString());
 							}
 
@@ -396,23 +446,14 @@ public class Profiles extends FragmentActivity{
 
 								@Override
 								public void run() {
-									try {
-										// On récupére les infos array retourner
-										// et
+									try {			
+										
 										// on ajoute les elements à la vue
-										vf_profil = (ViewFlipper) findViewById(R.id.vf_profil);
-										ListView.LayoutParams param_lsv = new ListView.LayoutParams(
-												LayoutParams.MATCH_PARENT,
-												LayoutParams.MATCH_PARENT);
-
 										vf_profil.addView(
 												createListMsg(arrayListMsg),
 												param_lsv);
 										positionChild[0] = 0;
 
-										Log.i("log_arrayListAnimals",
-												"arrayListAnimals : "
-														+ arrayListAnimals);
 										vf_profil
 												.addView(
 														createListAnimals(arrayListAnimals),
@@ -475,20 +516,8 @@ public class Profiles extends FragmentActivity{
 										// upd_dep.setOnItemSelectedListener(selectClick);
 
 										// Formattage de la date de naissance
-										Date dateFormat = null;
-										try {
-											dateFormat = new SimpleDateFormat(
-													"yyyy-MM-dd")
-													.parse(user_birthday);
-										} catch (ParseException e1) {
-											Log.e("log_profilModif",
-													"Date Formatted : "
-															+ user_birthday);
-											e1.printStackTrace();
-										}
-										String birthdayFormmated = new SimpleDateFormat(
-												"dd-MM-yyyy")
-												.format(dateFormat);
+										String birthdayFormmated = FormattedDateFr
+												.FormattedDateToFr(user_birthday);
 
 										upd_lastname.setText(user_lastname);
 										upd_firstname.setText(user_firstname);
@@ -525,7 +554,7 @@ public class Profiles extends FragmentActivity{
 														if (event.getAction() == KeyEvent.ACTION_UP) {
 															new DatePickerDialog(
 																	v.getContext(),
-																	date,
+																	dateUpdbirthday,
 																	myCalendar
 																			.get(Calendar.YEAR),
 																	myCalendar
@@ -538,13 +567,15 @@ public class Profiles extends FragmentActivity{
 													}
 
 												});
+										DownloadImage openDownload = new DownloadImage(Profiles.this, imv_profil, user_avatarName);
+										openDownload.downloadRoundedImageView();
 										// End vue modification
 									} catch (Exception e) {
-										Log.i("log_Thread", "Thread : " + e.toString());
+										Log.e("log_Thread",
+												"Thread : " + e.toString());
 									}
 								}
 							});
-
 						} else {
 							handler.postDelayed(this, 100);
 						}
@@ -591,7 +622,9 @@ public class Profiles extends FragmentActivity{
 
 				break;
 			case 2: // Profil ami
+				result_code = 2;
 
+				pFriendPosition = extra.getInt("friendPosition");
 				/*
 				 * Création des boutons
 				 */
@@ -621,30 +654,97 @@ public class Profiles extends FragmentActivity{
 				btn_delete_friend.setVisibility(View.VISIBLE);
 				btn_delete_friend.setOnClickListener(eventClick);
 
-				/*
-				 * Création des éléments du ViewFlipper
-				 */
+				// On recupere les informations
+				calcul = new ConnectionWebservicePHPProfile(1, "listObject",
+						this, typeProfil, pFriendId);
+				calcul.execute();
 
-				vf_profil
-						.addView(createLayout("Envoyer un message"), param_lsv);
-				positionChild[5] = 0;
+				handler = new Handler();
 
-				// vf_profil.addView(createListAnimals(), param_lsv);
-				// positionChild[1]=1;
-				//
-				// vf_profil.addView(createListFriends(), param_lsv);
-				// positionChild[2]= 2;
-				//
-				// vf_profil.addView(createListNotifications(), param_lsv);
-				// positionChild[3]=3;
-				//
-				// vf_profil.addView(createModification(), param_lsv);
-				// positionChild[6] = 4;
+				thread = new Thread() {
+					@Override
+					public void run() {
+						if (calcul.isFinish == true) {
+
+							try {
+								// Récupere les information du profil
+								// 0 => "listMsg", 1 =>listAnimals, 2
+								// =>AnimalInfo,
+								// 3 =>listFriend, 4 =>updateProfil
+								arrayListReturn = new ArrayList<JSONArray>();
+
+								arrayListMsg = new JSONArray();
+								arrayListAnimals = new JSONArray();
+								arrayListFriend = new JSONArray();
+								arrayListProvince = new JSONArray();
+
+								arrayListReturn = calcul.get();
+
+								arrayListMsg = arrayListReturn.get(0);
+								arrayListAnimals = arrayListReturn.get(1);
+								arrayListFriend = arrayListReturn.get(2);
+
+								arrayListProvince = arrayListReturn.get(3);
+								JSONObject infoWebserviveReturn = arrayListProvince
+										.getJSONObject(0);
+								userProvinceId = infoWebserviveReturn
+										.getInt("province_id");
+								userCityDefaut = arrayListReturn.get(4);
+
+							} catch (InterruptedException e) {
+								Log.e("log_ArrayReturn",
+										"InterruptedException : "
+												+ e.toString());
+							} catch (ExecutionException e) {
+								Log.e("log_ArrayReturn",
+										"ExecutionException : " + e.toString());
+							} catch (JSONException e) {
+								Log.e("log_ArrayReturn",
+										"ExecutionException : " + e.toString());
+							}
+
+							runOnUiThread(new Runnable() {
+
+								@Override
+								public void run() {
+									try {
+										// on ajoute les elements à la vue
+										vf_profil
+												.addView(
+														createListAnimals(arrayListAnimals),
+														param_lsv);
+										positionChild[2] = 1;
+
+										vf_profil
+												.addView(
+														createListFriends(arrayListFriend),
+														param_lsv);
+										positionChild[3] = 2;
+
+										vf_profil.addView(
+												createListNotifications(),
+												param_lsv);
+										positionChild[4] = 3;
+
+									} catch (Exception e) {
+										Log.e("log_Thread",
+												"Thread : " + e.toString());
+									}
+								}
+							});
+
+						} else {
+							handler.postDelayed(this, 100);
+						}
+					}
+				};
+				thread.start();
+
 				break;
 			case 3: // Profil animal
 				result_code = 3;
-				
-				//Get return bundle
+
+				// Get return bundle
 				pAnimalPosition = extra.getInt("animalPosition");
 				/*
 				 * Création des boutons
@@ -695,6 +795,7 @@ public class Profiles extends FragmentActivity{
 										animalInfo.getInt("user_id"),
 										animalInfo.getInt("animal_race_id"),
 										animalInfo.getString("animal_name"),
+										animalInfo.getString("avatar_animal_name"),
 										animalInfo
 												.getString("animal_description"),
 										animalInfo.getString("animal_birthday"),
@@ -702,10 +803,6 @@ public class Profiles extends FragmentActivity{
 										animalInfo.getString("created_at"),
 										animalInfo.getString("updated_at"));
 
-								Log.i("log_Animal",
-										"Animal : "
-												+ animalInfo
-														.getString("animal_name"));
 							} catch (InterruptedException e) {
 								Log.e("log_ArrayReturn3",
 										"InterruptedExceptio3n : "
@@ -760,9 +857,14 @@ public class Profiles extends FragmentActivity{
 									btn_upd_animal
 											.setOnClickListener(eventClick);
 
+									String AnbirthdayFormmated = FormattedDateFr
+											.FormattedDateToFr(infoAnimal.birthday);
+									String AnDeathFormmated = FormattedDateFr
+											.FormattedDateToFr(infoAnimal.death);
+
 									edt_upd_an_birthday
-											.setText(infoAnimal.birthday);
-									edt_upd_an_death.setText(infoAnimal.death);
+											.setText(AnbirthdayFormmated);
+									edt_upd_an_death.setText(AnDeathFormmated);
 									edt_upd_an_lastname
 											.setText(infoAnimal.name);
 									edt_upd_an_description
@@ -776,7 +878,7 @@ public class Profiles extends FragmentActivity{
 													if (event.getAction() == KeyEvent.ACTION_UP) {
 														new DatePickerDialog(
 																v.getContext(),
-																date,
+																dateUpdAnbirthday,
 																myCalendar
 																		.get(Calendar.YEAR),
 																myCalendar
@@ -798,7 +900,7 @@ public class Profiles extends FragmentActivity{
 													if (event.getAction() == KeyEvent.ACTION_UP) {
 														new DatePickerDialog(
 																v.getContext(),
-																date,
+																dateUpdAnDeath,
 																myCalendar
 																		.get(Calendar.YEAR),
 																myCalendar
@@ -846,56 +948,83 @@ public class Profiles extends FragmentActivity{
 		getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+		final Intent dataf = data;
 		// Vérification du code de retour
-		if(requestCode == result_code) {
+		if (requestCode == result_code) {
 			// Vérifie que le résultat est OK
-			if(resultCode == RESULT_OK) {
+			if (resultCode == RESULT_OK) {
 				typeProfil = data.getIntExtra("typeProfil", 0);
-				
-				//Retour Vue profil Animal if update
+
+				// Retour Vue profil Animal if update
 				pAnimalUpdate = data.getBooleanExtra("animalUpdate", false);
 				pAnimalUpdateName = data.getStringExtra("animalUpdateName");
-				
-				//Retour Vue profil Animal if delete
+
+				// Retour Vue profil Animal if delete
 				pAnimalDelete = data.getBooleanExtra("animalDelete", false);
 				pAnimalDeleteName = data.getStringExtra("animalDeleteName");
 
-				//Les 2 premiers cas
+				// Les 2 premiers cas
 				pAnimalPosition = data.getIntExtra("animalPosition", 0);
-				
-				//Changement d'information au retour d'activity si exist
-				if(pAnimalUpdate){
-					Animal animalChange = (Animal) lsv_animals_list.getItemAtPosition(pAnimalPosition);
+
+				// Retour Vue profil Friend if delete
+				pFriendDelete = data.getBooleanExtra("friendDelete", false);
+				pFriendDeleteName = data.getStringExtra("friendDeleteName");
+				pFriendPosition = data.getIntExtra("friendPosition", 0);
+
+				// Changement d'information au retour d'activity si exist
+				if (pAnimalUpdate) {
+					Animal animalChange = (Animal) lsv_animals_list
+							.getItemAtPosition(pAnimalPosition);
 					animalChange.name = pAnimalUpdateName;
-					//On affecte le changement
+					// On affecte le changement
 					adapter_animals_list.notifyDataSetChanged();
-					
+
 					// On affiche le résultat
-					Toast.makeText(getApplicationContext(), "Modification effectuée", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(),
+							"Modification effectuée", Toast.LENGTH_SHORT)
+							.show();
 					typeProfil = data.getIntExtra("typeProfil", 0);
 				}
-				
-				//Enleve l'animal au retour
-				if(pAnimalDelete){
-					//On supprimer l'élément du tableau
+
+				// Enleve l'animal au retour
+				if (pAnimalDelete) {
+					// On supprimer l'élément du tableau
 					animals.remove(pAnimalPosition);
-					//On affecte le changement
+					// On affecte le changement
 					adapter_animals_list.notifyDataSetChanged();
-					
-					Toast.makeText(getApplicationContext(),
+
+					Toast.makeText(
+							getApplicationContext(),
 							"L'animal " + pAnimalDeleteName + " à été supprimé",
 							Toast.LENGTH_LONG).show();
 					typeProfil = data.getIntExtra("typeProfil", 0);
+				}
+
+				// Enleve l'amis au retour
+				if (pFriendDelete) {
+					// On supprimer l'élément du tableau
+					friends.remove(pFriendPosition);
+					adapter_friends_list = new CustomAdapterFriends(this,
+							friends);
+					lsv_friends_list.setAdapter(adapter_friends_list);
+					// On affecte le changement
+
+					// adapter_friends_list.notifyDataSetChanged(); //Doesn't
+					// work!!
+
+					Toast.makeText(getApplicationContext(),
+							"L'amis " + pFriendDeleteName + " à été supprimé",
+							Toast.LENGTH_LONG).show();
+					typeProfil = dataf.getIntExtra("typeProfil", 0);
 				}
 			}
 		}
 
 	}
-	
+
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
@@ -930,7 +1059,22 @@ public class Profiles extends FragmentActivity{
 		public void onClick(View v) {
 
 			if (v == btn_msg) {
-				vf_profil.setDisplayedChild(positionChild[0]);
+				switch (typeProfil) {
+				case 2:
+					// Si l'on est dans le profil amis le btn msg permet
+					// l'envoie d'un message
+					// Création de l'intent
+					Intent intent = new Intent(getApplicationContext(),
+							MessagingService.class);
+					intent.putExtra("idFriend", pFriendId);
+					intent.putExtra("friendName", pFriendName);
+
+					startActivity(intent);
+					break;
+				default:
+					vf_profil.setDisplayedChild(positionChild[0]);
+					break;
+				}
 			} else if (v == btn_animals_list) {
 				vf_profil.setDisplayedChild(positionChild[1]);
 			} else if (v == btn_friends_list) {
@@ -940,9 +1084,107 @@ public class Profiles extends FragmentActivity{
 			} else if (v == btn_friends_requests) {
 				vf_profil.setDisplayedChild(positionChild[4]);
 			} else if (v == btn_send_msg) {
-				vf_profil.setDisplayedChild(positionChild[5]);
+				// On recupere les infos de l'item
+				Intent intent = new Intent(getApplicationContext(),
+						MessagingService.class);
+				intent.putExtra("idFriend", pFriendId);
+				intent.putExtra("friendName", pFriendName);
+				startActivity(intent);
 			} else if (v == btn_delete_friend) {
-				vf_profil.setDisplayedChild(positionChild[6]);
+				context = v.getContext();
+				DialogInterface.OnClickListener ecouteurDialog = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int codeBouton) {
+						if (codeBouton == Dialog.BUTTON_POSITIVE) {
+							// Suppression de l'amis
+							// On vide la liste de données à envoyé si existe
+							// déjà
+							data.clear();
+
+							// On ajoute les valeurs
+							data.add(new BasicNameValuePair("id_user", idUser));
+							data.add(new BasicNameValuePair("id_friend", String
+									.valueOf(pFriendId)));
+							data.add(new BasicNameValuePair("list_name",
+									"deleteUserFriend"));
+
+							if (ConnectionWebservicePHPProfile
+									.haveNetworkConnection(context)) {
+								ConnectionWebservicePHPProfile calcul = new ConnectionWebservicePHPProfile(
+										1, "listObjectOther", context, data);
+								calcul.execute();
+								try {
+									arrayListReturn = calcul.get();
+									arrayListDeleteUserFriend = arrayListReturn
+											.get(0);
+
+									Log.i("log_tagUserFriend",
+											"arrayListDeleteUserFriend : "
+													+ arrayListDeleteUserFriend);
+									JSONObject infoWebserviveReturn;
+									try {
+										infoWebserviveReturn = arrayListDeleteUserFriend
+												.getJSONObject(0);
+
+										if (infoWebserviveReturn.getInt("isOk") == 0) {
+											// Erreur de suppression de l'animal
+											Toast.makeText(
+													context,
+													"Impossible de supprimer cette ami",
+													Toast.LENGTH_SHORT).show();
+										} else {
+											isDeleteProfil = true;
+											// Supprimé avec succès on redirige
+											// vers la vue précèdente
+											// Création de l'intent
+											Intent intent = new Intent();
+
+											// On rajoute le nom saisie dans
+											// l'intent
+											intent.putExtra("friendDelete",
+													isDeleteProfil);
+											intent.putExtra("friendDeleteName",
+													pFriendName);
+											intent.putExtra("friendPosition",
+													pFriendPosition);
+
+											// On retourne le résultat avec
+											// l'intent
+											setResult(RESULT_OK, intent);
+											// On termine cette activité
+											finish();
+										}
+									} catch (JSONException e) {
+										Log.e("log_deleteUserFriend",
+												"JSONException :"
+														+ e.toString());
+									}
+								} catch (InterruptedException e) {
+									Log.e("log_deleteUserFriend",
+											"InterruptedException :"
+													+ e.toString());
+								} catch (ExecutionException e) {
+									Log.e("log_deleteUserFriend",
+											"ExecutionException :"
+													+ e.toString());
+								}
+							} else { // Sinon toast de problème
+								ConnectionWebservicePHPProfile
+										.haveNetworkConnectionError(context);
+							}
+						}
+						if (codeBouton == Dialog.BUTTON_NEGATIVE) {
+							// On ferme la fenêtre
+							dialog.cancel();
+						}
+					}
+				};
+
+				AlertDialog.Builder ad = new AlertDialog.Builder(v.getContext());
+				ad.setTitle("Suppression de " + pFriendName);
+				ad.setPositiveButton("Comfirmer", ecouteurDialog);
+				ad.setNegativeButton("Annuler", ecouteurDialog);
+				ad.show();
 			} else if (v == btn_user_modification) {
 				vf_profil.setDisplayedChild(positionChild[7]);
 			} else if (v == btn_animal_modification) {
@@ -953,8 +1195,9 @@ public class Profiles extends FragmentActivity{
 					@Override
 					public void onClick(DialogInterface dialog, int codeBouton) {
 						if (codeBouton == Dialog.BUTTON_POSITIVE) {
-							//Suppression de l'animal
-							// On vide la liste de données à envoyé si existe déjà
+							// Suppression de l'animal
+							// On vide la liste de données à envoyé si existe
+							// déjà
 							data.clear();
 
 							// On ajoute les valeurs
@@ -963,50 +1206,63 @@ public class Profiles extends FragmentActivity{
 									.valueOf(infoAnimal.id)));
 							data.add(new BasicNameValuePair("list_name",
 									"deleteUserAnimal"));
-							
-							if (ConnectionWebservicePHPProfile.haveNetworkConnection(context)) {
+
+							if (ConnectionWebservicePHPProfile
+									.haveNetworkConnection(context)) {
 								ConnectionWebservicePHPProfile calcul = new ConnectionWebservicePHPProfile(
 										1, "listObjectOther", context, data);
 								calcul.execute();
 								try {
 									arrayListReturn = calcul.get();
-									arrayListDeleteAnimal = arrayListReturn.get(0);
+									arrayListDeleteAnimal = arrayListReturn
+											.get(0);
 
 									JSONObject infoWebserviveReturn;
 									try {
-										infoWebserviveReturn = arrayListDeleteAnimal.getJSONObject(0);
+										infoWebserviveReturn = arrayListDeleteAnimal
+												.getJSONObject(0);
 
 										if (infoWebserviveReturn.getInt("isOk") == 0) {
 											// Erreur de suppression de l'animal
-											Toast.makeText(context,
+											Toast.makeText(
+													context,
 													"L'animal n'as pas pu être supprimé",
 													Toast.LENGTH_LONG).show();
 										} else {
-											isDeleteAnimalProfil = true;
-											//Supprimé avec succès on redirige vers la vue précèdente
+											isDeleteProfil = true;
+											// Supprimé avec succès on redirige
+											// vers la vue précèdente
 											// Création de l'intent
 											Intent intent = new Intent();
 
-											// On rajoute le nom saisie dans l'intent
-											intent.putExtra("animalDelete", isDeleteAnimalProfil);
-											intent.putExtra("animalDeleteName", infoAnimal.name);
-											intent.putExtra("animalPosition", pAnimalPosition);
-											
-											// On retourne le résultat avec l'intent
+											// On rajoute le nom saisie dans
+											// l'intent
+											intent.putExtra("animalDelete",
+													isDeleteProfil);
+											intent.putExtra("animalDeleteName",
+													infoAnimal.name);
+											intent.putExtra("animalPosition",
+													pAnimalPosition);
+
+											// On retourne le résultat avec
+											// l'intent
 											setResult(RESULT_OK, intent);
 											// On termine cette activité
 											finish();
 										}
 									} catch (JSONException e) {
 										Log.e("log_deleteUserAnimal",
-												"JSONException :" + e.toString());
+												"JSONException :"
+														+ e.toString());
 									}
 								} catch (InterruptedException e) {
 									Log.e("log_deleteUserAnimal",
-											"InterruptedException :" + e.toString());
+											"InterruptedException :"
+													+ e.toString());
 								} catch (ExecutionException e) {
 									Log.e("log_deleteUserAnimal",
-											"ExecutionException :" + e.toString());
+											"ExecutionException :"
+													+ e.toString());
 								}
 							} else { // Sinon toast de problème
 								ConnectionWebservicePHPProfile
@@ -1014,7 +1270,7 @@ public class Profiles extends FragmentActivity{
 							}
 						}
 						if (codeBouton == Dialog.BUTTON_NEGATIVE) {
-							//On ferme la fenêtre
+							// On ferme la fenêtre
 							dialog.cancel();
 						}
 					}
@@ -1091,13 +1347,13 @@ public class Profiles extends FragmentActivity{
 											.getString("created_at");
 									infoAnimal.updatedAt = infoWebserviveReturn
 											.getString("updated_at");
-									
+
 									Toast.makeText(v.getContext(),
 											"Profil mis à jour avec succès",
 											Toast.LENGTH_LONG).show();
-									
-									//On passe la variable d'update à true
-									isUpdateAnimalProfil = true;
+
+									// On passe la variable d'update à true
+									isUpdateProfil = true;
 									// Formattage de la date de naissance et
 									// décès
 									Date dateFormatBirthday = null;
@@ -1367,15 +1623,19 @@ public class Profiles extends FragmentActivity{
 			for (int i = 0; i < arrayListMsg1.length(); i++) {
 				JSONObject infoWebserviveReturn = arrayListMsg1
 						.getJSONObject(i);
-
+				
+				Log.i("log_infoWebserviveReturn", "infoWebserviveReturn : "
+						+ infoWebserviveReturn);
 				if (!infoWebserviveReturn.isNull("user_id_to")) {
 					Message message1 = new Message(
 							infoWebserviveReturn.getInt("user_id_to"),
 							infoWebserviveReturn.getString("nickname"),
-							infoWebserviveReturn.getString("message"));
+							infoWebserviveReturn.getString("message"),
+							infoWebserviveReturn.getString("avatar_name")
+							);
 					messages.add(message1);
 				} else { // Aucun message de creer
-					Message message0 = new Message(0, "Aucun message", " ");
+					Message message0 = new Message(0, "Aucun message", "", "");
 					messages.add(message0);
 				}
 			}
@@ -1409,9 +1669,14 @@ public class Profiles extends FragmentActivity{
 		animals = new ArrayList<Animal>();
 		try {
 			// Création d'une ligne ou on peut ajouter un animal
-			Animal animal0 = new Animal(0, "Ajouter un animal");
-			animals.add(animal0);
-
+			Animal animal0;
+			if (typeProfil == 2) {
+				animal0 = new Animal(0, "Aucun animal", "");
+				animals.add(animal0);
+			} else {
+				animal0 = new Animal(0, "Ajouter un animal", "");
+				animals.add(animal0);
+			}
 			// On ajoute les animaux que l'on à déjà créer
 			for (int i = 0; i < arrayListAnimal1.length(); i++) {
 				JSONObject infoWebserviveReturn = arrayListAnimal1
@@ -1420,7 +1685,8 @@ public class Profiles extends FragmentActivity{
 				if (!infoWebserviveReturn.isNull("id_animal")) {
 					Animal animal1 = new Animal(
 							infoWebserviveReturn.getInt("id_animal"),
-							infoWebserviveReturn.getString("animal_name"));
+							infoWebserviveReturn.getString("animal_name"),
+							infoWebserviveReturn.getString("animal_avatar_name"));
 					animals.add(animal1);
 				}
 			}
@@ -1430,8 +1696,7 @@ public class Profiles extends FragmentActivity{
 							+ e.toString());
 		}
 
-		adapter_animals_list = new CustomAdapterAnimals(
-				this, animals);
+		adapter_animals_list = new CustomAdapterAnimals(this, animals);
 		lsv_animals_list.setAdapter(adapter_animals_list);
 		// Ajout d'un onclick listener sur chaque element
 		lsv_animals_list.setOnItemClickListener(new OnItemClickListener() {
@@ -1439,7 +1704,8 @@ public class Profiles extends FragmentActivity{
 					int position, long id) {
 				// On recupere les infos de l'item
 				try {
-					Animal res = (Animal) lsv_animals_list.getItemAtPosition(position);
+					Animal res = (Animal) lsv_animals_list
+							.getItemAtPosition(position);
 					Intent intent = new Intent(Profiles.context, Profiles.class);
 					if (typeProfil == 0) {
 						intent.putExtra("typeProfil", 3);
@@ -1485,8 +1751,8 @@ public class Profiles extends FragmentActivity{
 	}
 
 	ListView createListFriends(JSONArray arrayListFriend1) {
-		final ListView lsv_friends_list = new ListView(this);
-		ArrayList<Friend> friends = new ArrayList<Friend>();
+		lsv_friends_list = new ListView(this);
+		friends = new ArrayList<Friend>();
 
 		try {
 			// On ajoute les animaux que l'on à déjà créer
@@ -1498,10 +1764,11 @@ public class Profiles extends FragmentActivity{
 					Friend friend1 = new Friend(
 							infoWebserviveReturn.getInt("friend_id"),
 							infoWebserviveReturn.getString("nickname"),
+							infoWebserviveReturn.getString("avatar_name"),
 							infoWebserviveReturn.getInt("on_mobile"));
 					friends.add(friend1);
 				} else {
-					Friend friend1 = new Friend(0, "Pas encore d'amis", 0);
+					Friend friend1 = new Friend(0, "Pas encore d'amis", "", 0);
 					friends.add(friend1);
 				}
 			}
@@ -1510,18 +1777,34 @@ public class Profiles extends FragmentActivity{
 					+ e.toString());
 		}
 
-		CustomAdapterFriends adapter_friends_list = new CustomAdapterFriends(
-				this, friends);
+		adapter_friends_list = new CustomAdapterFriends(this, friends);
 		lsv_friends_list.setAdapter(adapter_friends_list);
 		// Ajout d'un onclick listener sur chaque element
 		lsv_friends_list.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				// A AJOUTER UN TEST POUR VERIFIER S'IL S'AGIT D'UN AMI OU NON
-				Intent intent = new Intent(getApplicationContext(),
-						Profiles.class);
-				intent.putExtra("typeProfil", 2);
-				startActivity(intent);
+
+				switch (typeProfil) {
+				case 2:
+					break;
+				default:
+					Friend res = (Friend) lsv_friends_list
+							.getItemAtPosition(position);
+
+					if (res.id != 0) {
+						// Si l'amis n'as pas d'amis
+						Intent intent = new Intent(getApplicationContext(),
+								Profiles.class);
+
+						intent.putExtra("typeProfil", 2);
+						intent.putExtra("friendId", res.id);
+						intent.putExtra("friendName", res.nickname);
+						intent.putExtra("friendPosition", position);
+
+						startActivityForResult(intent, 0);
+					}
+					break;
+				}
 			}
 		});
 		return lsv_friends_list;
@@ -1611,6 +1894,7 @@ public class Profiles extends FragmentActivity{
 			case 1: // Profil membre
 				break;
 			case 2: // Profil ami
+				actionBarName = pFriendName;
 				break;
 			case 3: // Profil animal
 				actionBarName = pAnimalName;
@@ -1629,27 +1913,37 @@ public class Profiles extends FragmentActivity{
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		// Création de l'intent
+		Intent intent;
+
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			Log.i("log_typeProfil", "typeProfil : " + typeProfil);
 			switch (typeProfil) {
-				case 0:
-					onBackPressed();
+			case 2:
+				intent = new Intent();
+				// On rajoute le nom saisie dans l'intent
+				intent.putExtra("typeProfil", 0);
+
+				// On retourne le résultat avec l'intent
+				setResult(RESULT_OK, intent);
+				// On termine cette activité
+				finish();
 				break;
-				case 3:
-					// Création de l'intent
-					Intent intent = new Intent();
+			case 3:
+				intent = new Intent();
+				// On rajoute le nom saisie dans l'intent
+				intent.putExtra("animalUpdate", isUpdateProfil);
+				intent.putExtra("animalUpdateName", infoAnimal.name);
+				intent.putExtra("animalPosition", pAnimalPosition);
+				intent.putExtra("typeProfil", 0);
 
-					// On rajoute le nom saisie dans l'intent
-					intent.putExtra("animalUpdate", isUpdateAnimalProfil);
-					intent.putExtra("animalUpdateName", infoAnimal.name);
-					intent.putExtra("animalPosition", pAnimalPosition);
-					intent.putExtra("typeProfil", 0);
-
-					// On retourne le résultat avec l'intent
-					setResult(RESULT_OK, intent);
-					// On termine cette activité
-					finish();
+				// On retourne le résultat avec l'intent
+				setResult(RESULT_OK, intent);
+				// On termine cette activité
+				finish();
+				break;
+			default:
+				onBackPressed();
 				break;
 			}
 			// Comportement du bouton "Logo"
@@ -1663,8 +1957,7 @@ public class Profiles extends FragmentActivity{
 
 			// On créé l'Intent qui va nous permettre d'afficher l'autre
 			// Activity
-			Intent intent = new Intent(getApplicationContext(),
-					Authentication.class);
+			intent = new Intent(getApplicationContext(), Authentication.class);
 			// On supprime l'activity de login sinon
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK
 					| Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -1690,82 +1983,126 @@ public class Profiles extends FragmentActivity{
 			setId(friend.id);
 			setOrientation(LinearLayout.HORIZONTAL);
 
-			// Instanciation des différents layout de l'adapter
-			RelativeLayout mainLayout = new RelativeLayout(context);
-			mainLayout.setId(666);
-			LinearLayout subLayout = new LinearLayout(context);
+			ImageView imv_user;
+			TextView txv_name;
+			RelativeLayout.LayoutParams paramTxv1;
+			LinearLayout.LayoutParams paramTxv;
+			LinearLayout.LayoutParams sizeImvUser;
 
-			// Instanciation de l'image utilisateur
-			ImageView imv_user = new ImageView(context);
-			imv_user.setImageDrawable(getResources().getDrawable(
-					R.drawable.img_defaultuser));
-			imv_user.setId(777);
+			switch (typeProfil) {
+			case 2:
+				// Instanciation de l'image utilisateur
+				imv_user = new ImageView(context);
+				imv_user.setImageDrawable(getResources().getDrawable(
+						R.drawable.img_defaultuser));
 
-			// Instanciation du nom de l'utilisateur
-			TextView txv_name = new TextView(context);
-			txv_name.setText(friend.name);
-			txv_name.setPadding(15, 0, 0, 0);
-			txv_name.setTextColor(getResources().getColor(R.color.grey_color));
-			txv_name.setTypeface(Arimo);
-			txv_name.setTextSize(20);
+				//On charge l'image si existe
+				DownloadImage openDownloadImage = new DownloadImage(Profiles.this, imv_user, friend.avatar_name);
+				openDownloadImage.downloadImageView();
+				
+				// Instanciation du nom de l'utilisateur
+				txv_name = new TextView(context);
+				txv_name.setText(friend.nickname);
+				txv_name.setPadding(15, 0, 0, 0);
+				txv_name.setTextColor(getResources().getColor(
+						R.color.grey_color));
+				txv_name.setTypeface(Arimo);
+				txv_name.setTextSize(20);
+				txv_name.setGravity(Gravity.CENTER_VERTICAL);
 
-			// Instanciation des images messages et connecté
-			ImageView isConnected = new ImageView(context);
-			if (friend.status == 2) {
-				isConnected.setImageDrawable(getResources().getDrawable(
-						R.drawable.oncomputer));
-			} else if (friend.status == 1) {
-				isConnected.setImageDrawable(getResources().getDrawable(
-						R.drawable.onapp));
-			} else {
-				isConnected.setImageDrawable(getResources().getDrawable(
-						R.drawable.blank));
-			}
+				paramTxv = new LinearLayout.LayoutParams(
+						LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
 
-			isConnected.setPadding(0, 10, 10, 0);
-			ImageView imv_message = new ImageView(context);
-			imv_message.setImageDrawable(getResources().getDrawable(
-					R.drawable.imv_message));
-			imv_message.setPadding(0, 0, 10, 0);
+				sizeImvUser = new LinearLayout.LayoutParams(120, 120);
 
-			imv_message.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(getApplicationContext(),
-							MessagingService.class);
-					intent.putExtra("idFriend", friend.id);
-					intent.putExtra("friendName", friend.name);
-					startActivity(intent);
+				addView(imv_user, sizeImvUser);
+				addView(txv_name, paramTxv);
+				break;
+
+			default:
+				// Instanciation des différents layout de l'adapter
+				RelativeLayout mainLayout = new RelativeLayout(context);
+				mainLayout.setId(666);
+				LinearLayout subLayout = new LinearLayout(context);
+
+				// Instanciation de l'image utilisateur
+				imv_user = new ImageView(context);
+				imv_user.setImageDrawable(getResources().getDrawable(
+						R.drawable.img_defaultuser));
+				imv_user.setId(777);
+				
+				//On charge l'image si existe
+				DownloadImage openDownloadImage1 = new DownloadImage(Profiles.this, imv_user, friend.avatar_name);
+				openDownloadImage1.downloadImageView();
+				
+				// Instanciation du nom de l'utilisateur
+				txv_name = new TextView(context);
+				txv_name.setText(friend.nickname);
+				txv_name.setPadding(15, 0, 0, 0);
+				txv_name.setTextColor(getResources().getColor(
+						R.color.grey_color));
+				txv_name.setTypeface(Arimo);
+				txv_name.setTextSize(20);
+
+				// Instanciation des images messages et connecté
+				ImageView isConnected = new ImageView(context);
+				if (friend.onMobile == 2) {
+					isConnected.setImageDrawable(getResources().getDrawable(
+							R.drawable.oncomputer));
+				} else if (friend.onMobile == 1) {
+					isConnected.setImageDrawable(getResources().getDrawable(
+							R.drawable.onapp));
+				} else {
+					isConnected.setImageDrawable(getResources().getDrawable(
+							R.drawable.blank));
 				}
-			});
 
-			subLayout.setOrientation(LinearLayout.VERTICAL);
-			subLayout.setGravity(Gravity.CENTER);
+				isConnected.setPadding(0, 10, 10, 0);
+				ImageView imv_message = new ImageView(context);
+				imv_message.setImageDrawable(getResources().getDrawable(
+						R.drawable.imv_message));
+				imv_message.setPadding(0, 0, 10, 0);
 
-			RelativeLayout.LayoutParams paramTxv = new RelativeLayout.LayoutParams(
-					LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-			paramTxv.addRule(RelativeLayout.RIGHT_OF, imv_user.getId());
-			paramTxv.addRule(RelativeLayout.CENTER_VERTICAL, mainLayout.getId());
-			LinearLayout.LayoutParams wrap_0 = new LinearLayout.LayoutParams(
-					LayoutParams.WRAP_CONTENT, 0);
-			RelativeLayout.LayoutParams paramSubLayout = new RelativeLayout.LayoutParams(
-					LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-			paramSubLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,
-					mainLayout.getId());
-			paramSubLayout.addRule(RelativeLayout.CENTER_VERTICAL,
-					mainLayout.getId());
-			LinearLayout.LayoutParams sizeImvUser = new LinearLayout.LayoutParams(
-					120, 120);
+				imv_message.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						Intent intent = new Intent(getApplicationContext(),
+								MessagingService.class);
+						intent.putExtra("idFriend", friend.id);
+						intent.putExtra("friendName", friend.nickname);
+						startActivity(intent);
+					}
+				});
 
-			subLayout.setWeightSum(2);
-			wrap_0.weight = 1;
-			subLayout.addView(isConnected, wrap_0);
-			subLayout.addView(imv_message, wrap_0);
+				subLayout.setOrientation(LinearLayout.VERTICAL);
+				subLayout.setGravity(Gravity.CENTER);
 
-			mainLayout.addView(imv_user, sizeImvUser);
-			mainLayout.addView(txv_name, paramTxv);
-			mainLayout.addView(subLayout, paramSubLayout);
-			addView(mainLayout);
+				paramTxv1 = new RelativeLayout.LayoutParams(
+						LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+				paramTxv1.addRule(RelativeLayout.RIGHT_OF, imv_user.getId());
+				paramTxv1.addRule(RelativeLayout.CENTER_VERTICAL,
+						mainLayout.getId());
+				LinearLayout.LayoutParams wrap_0 = new LinearLayout.LayoutParams(
+						LayoutParams.WRAP_CONTENT, 0);
+				RelativeLayout.LayoutParams paramSubLayout = new RelativeLayout.LayoutParams(
+						LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+				paramSubLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,
+						mainLayout.getId());
+				paramSubLayout.addRule(RelativeLayout.CENTER_VERTICAL,
+						mainLayout.getId());
+				sizeImvUser = new LinearLayout.LayoutParams(120, 120);
+
+				subLayout.setWeightSum(2);
+				wrap_0.weight = 1;
+				subLayout.addView(isConnected, wrap_0);
+				subLayout.addView(imv_message, wrap_0);
+
+				mainLayout.addView(imv_user, sizeImvUser);
+				mainLayout.addView(txv_name, paramTxv1);
+				mainLayout.addView(subLayout, paramSubLayout);
+				addView(mainLayout);
+				break;
+			}
 
 		}
 
@@ -1811,51 +2148,56 @@ public class Profiles extends FragmentActivity{
 			super(context);
 			setId(animal.id);
 			setOrientation(LinearLayout.HORIZONTAL);
-			
+
 			ImageView imv_user;
 			TextView txv_name;
 			LinearLayout.LayoutParams paramTxv;
 			LinearLayout.LayoutParams sizeImvUser;
-			
-			if(animal.id == 0){
+
+			if (animal.id == 0) {
 				// Instanciation de l'image utilisateur
 				imv_user = new ImageView(context);
 				imv_user.setImageDrawable(getResources().getDrawable(
 						R.drawable.img_defaultanimal));
-	
+
 				// Instanciation du nom de l'utilisateur
 				txv_name = new TextView(context);
 				txv_name.setText(animal.name);
 				txv_name.setPadding(0, 0, 0, 15);
-				txv_name.setTextColor(getResources().getColor(R.color.grey_color));
+				txv_name.setTextColor(getResources().getColor(
+						R.color.grey_color));
 				txv_name.setTypeface(Lobster, Typeface.BOLD);
 				txv_name.setTextSize(20);
 				txv_name.setGravity(Gravity.CENTER_HORIZONTAL);
-				
+
 				paramTxv = new LinearLayout.LayoutParams(
 						LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 				addView(txv_name, paramTxv);
-			}else{
+			} else {
 				// Instanciation de l'image utilisateur
 				imv_user = new ImageView(context);
 				imv_user.setImageDrawable(getResources().getDrawable(
 						R.drawable.img_defaultanimal));
-	
+
+				//On charge l'image si existe
+				DownloadImage openDownloadImage = new DownloadImage(Profiles.this, imv_user, animal.avatarName);
+				openDownloadImage.downloadImageView();
+				
 				// Instanciation du nom de l'utilisateur
 				txv_name = new TextView(context);
 				txv_name.setText(animal.name);
 				txv_name.setPadding(15, 0, 0, 0);
-				txv_name.setTextColor(getResources().getColor(R.color.grey_color));
+				txv_name.setTextColor(getResources().getColor(
+						R.color.grey_color));
 				txv_name.setTypeface(Arimo);
 				txv_name.setTextSize(20);
 				txv_name.setGravity(Gravity.CENTER_VERTICAL);
-	
+
 				paramTxv = new LinearLayout.LayoutParams(
 						LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-	
-				sizeImvUser = new LinearLayout.LayoutParams(
-						120, 120);
-				
+
+				sizeImvUser = new LinearLayout.LayoutParams(120, 120);
+
 				addView(imv_user, sizeImvUser);
 				addView(txv_name, paramTxv);
 			}
@@ -1912,7 +2254,11 @@ public class Profiles extends FragmentActivity{
 			ImageView imv_user = new ImageView(context);
 			imv_user.setImageDrawable(getResources().getDrawable(
 					R.drawable.img_defaultuser));
-
+			
+			//On charge l'image si existe
+			DownloadImage openDownloadImage = new DownloadImage(Profiles.this, imv_user, message.avatar_name);
+			openDownloadImage.downloadImageView();
+			
 			// Instanciation du nom du destinataire
 			TextView txv_name = new TextView(context);
 			txv_name.setText(message.name);
@@ -2305,9 +2651,6 @@ public class Profiles extends FragmentActivity{
 			boolean isFirstUse) {
 		List<String> list = new ArrayList<String>();
 
-		Log.i("log_addItemsCityOnSpinner", "idProvinceSelected : "
-				+ idProvinceSelected);
-
 		String provinceCourante;
 		try {
 			provinceCourante = upd_dep.getItemAtPosition(idProvinceSelected)
@@ -2325,7 +2668,7 @@ public class Profiles extends FragmentActivity{
 				infoWebserviveReturn = userCityDefaut.getJSONObject(0);
 				list.add(infoWebserviveReturn.getString("city_name"));
 			} catch (JSONException e) {
-				Log.i("log_userCityDefaut", "JSONException : " + e.toString());
+				Log.e("log_userCityDefaut", "JSONException : " + e.toString());
 			}
 		} else {
 			// On charge les nouvelles données
@@ -2373,7 +2716,7 @@ public class Profiles extends FragmentActivity{
 				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		upd_ville.setAdapter(dataAdapter);
 	}
-	
+
 	/**
 	 * Display the connection popup (using ConnectionDialog)
 	 */
@@ -2382,7 +2725,7 @@ public class Profiles extends FragmentActivity{
 		addAnimal = new AddAnimalDialog();
 		addAnimal.show(fm, "fragment_add_animal");
 	}
-	
+
 	private class ViewHolder {
 		ImageView imageWho;
 		ImageView imageWhom;
@@ -2394,4 +2737,45 @@ public class Profiles extends FragmentActivity{
 		TextView nbComm;
 		TextView nbLike;
 	}
+	
+//	private void downloadImage(final RoundedImageView view, final String imgUrl) {
+//		final String domainUrl = "http://m.animalio.fr/pictures/";
+//		Thread thread2;
+//		
+//		thread2 = new Thread() {
+//			Bitmap bitmap1 = null;
+//			Boolean getError = false;
+//			@Override
+//			public void run() {
+//				try {
+//					URL urlImage = new URL(domainUrl + imgUrl);
+//					HttpURLConnection connection = (HttpURLConnection) urlImage.openConnection();
+//					InputStream inputStream = connection.getInputStream();
+//					
+//					bitmap1 = BitmapFactory.decodeStream(inputStream);
+//				} catch (MalformedURLException e) {
+//					getError = true;
+//					Log.e("log_avatarUpload",
+//							"MalformedURLException : " + e.toString());
+//				} catch (IOException e) {
+//					getError = true;
+//					Log.e("log_avatarUpload",
+//							"IOException : " + e.toString());
+//				}   	
+//			
+//				runOnUiThread(new Runnable() {
+//					@Override
+//					public void run() {
+//						if(getError){
+//							//Si il y a une erreur on affiche une image indisponible
+//							view.setImageDrawable(getResources().getDrawable(R.drawable.img_indisponible));
+//						}else{
+//							view.setImageBitmap(bitmap1);
+//						}
+//					}
+//				});
+//			}
+//		};
+//		thread2.start();	
+//    }
 }

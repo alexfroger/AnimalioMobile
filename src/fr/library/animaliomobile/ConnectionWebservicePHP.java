@@ -244,7 +244,6 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 					for (int i = 0; i < this.arrayInfoWebservice.length(); i++) {
 						JSONObject infoWebserviveReturn = this.arrayInfoWebservice
 								.getJSONObject(i);
-						Log.i("log_int", "int : " + nbMsgMin);
 						if (infoWebserviveReturn.getString("user_id").equals(idUserCurrent)) {
 							LinearLayout lay_msgSender1 = new LinearLayout(this.context);
 							lay_msgSender1.setId(nbMsgMin+1);
@@ -397,6 +396,8 @@ public class ConnectionWebservicePHP extends AsyncTask<Void, Integer, Boolean> {
 				JSONArray infoServerData = getServerData(this.data, url);
 				JSONObject infoWebserviveReturn = infoServerData
 						.getJSONObject(0);
+				
+				Log.i("log_infoWebserviveReturn", "infoWebserviveReturn : " + infoWebserviveReturn);
 				// Parse les données JSON
 				// Si la connection est correcte
 				if (infoWebserviveReturn.getInt("isOk") == 1) { 
