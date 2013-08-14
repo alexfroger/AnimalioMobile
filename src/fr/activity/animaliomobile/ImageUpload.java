@@ -1,12 +1,17 @@
 package fr.activity.animaliomobile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -43,6 +48,8 @@ public class ImageUpload extends Activity {
 	private Button btn_take_picture;
 	SharedPreferences preferences;
 	private Bitmap bitmap;
+	private Boolean isUpload = false;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -151,6 +158,7 @@ public class ImageUpload extends Activity {
 					orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
 				} catch (IOException e1) {
 					Log.e("log_ImgUploadOrientation", "Orientation : " + e1.toString());
+					isUpload = false;
 				}
 
 	            switch (orientation) 
@@ -180,6 +188,7 @@ public class ImageUpload extends Activity {
 				    out.close();
 
 				    btn_save_picture.setVisibility(View.VISIBLE);
+				    isUpload = true;
 				}catch(Exception e){
 					Toast t = Toast.makeText(Home.context,
 							"La photo n'a pû être sauvegardée.",
@@ -187,6 +196,7 @@ public class ImageUpload extends Activity {
 					t.setGravity(Gravity.TOP, 0, 90);
 					t.show();
 					btn_save_picture.setVisibility(View.INVISIBLE);
+					isUpload = false;
 				}			
 			}
 		}else if(requestCode == 2 && resultCode == RESULT_OK){
@@ -196,34 +206,25 @@ public class ImageUpload extends Activity {
 			options.inSampleSize = 2;
 
 			Uri selectedImage = data.getData();
-            String[] filePathColumn = { MediaStore.Images.Media.DATA };
-            Cursor cursor = getContentResolver().query(selectedImage,filePathColumn, null, null, null);
-            cursor.moveToFirst();
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
-            cursor.close();
 			
-			bitmap = BitmapFactory.decodeFile(picturePath.toString(), options);
-
-			try{
-			    OutputStream out = new FileOutputStream(mFichier.toString());
-			    if(bitmap.compress(Bitmap.CompressFormat.JPEG,90,out)){
-			    	imageView.setImageBitmap(bitmap);
-			    }
-			    out.flush();
-			    out.close();
-
-			    btn_save_picture.setVisibility(View.VISIBLE);
-			}catch(Exception e){
+			Bitmap yourSelectedImage;
+			InputStream  imageStream;
+			try {
+				imageStream = getContentResolver().openInputStream(selectedImage);
+				yourSelectedImage = BitmapFactory.decodeStream(imageStream, null, options);
+				imageView.setImageBitmap(yourSelectedImage);
+				btn_save_picture.setVisibility(View.VISIBLE);
+				isUpload = true;
+			} catch (FileNotFoundException e1) {
 				Toast t = Toast.makeText(Home.context,
 						"La photo n'a pû être sauvegardée.",
 						Toast.LENGTH_SHORT);
 				t.setGravity(Gravity.TOP, 0, 90);
 				t.show();
 				btn_save_picture.setVisibility(View.INVISIBLE);
-				
-				Log.e("log_ImgUpload", "Upload : " + picturePath);
-			}			
+				Log.e("log_FileNotFoundException", "FileNotFoundException : " + e1.toString());
+				isUpload = false;
+			}	
 		}
 	}
 
@@ -287,17 +288,38 @@ public class ImageUpload extends Activity {
 					uploadPhoto();
 				}
 				if (v == btn_save_picture) {
-					if(mFichier != null){
+					if(isUpload){
 						// Si connexion existe et que le fichier existe
-						if (ConnectionWebservicePHP.haveNetworkConnection(v.getContext())) {
-							ConnectionWebservicePHP calcul = new ConnectionWebservicePHP(
-									1, "uploadPicture", mFichier, v.getContext());
-							calcul.execute();
-						} else { // Sinon toast de problème
-							ConnectionWebservicePHP.haveNetworkConnectionError(v.getContext());
-						}
+						//MARCHE
+//						if (ConnectionWebservicePHP.haveNetworkConnection(v.getContext())) {
+//							ConnectionWebservicePHP calcul = new ConnectionWebservicePHP(
+//									1, "uploadPicture", mFichier, v.getContext());
+//							calcul.execute();
+//						} else { // Sinon toast de problème
+//							ConnectionWebservicePHP.haveNetworkConnectionError(v.getContext());
+//						}
+						
+						showAssignAs(v.getContext());
 					}
 				}
 			}
 		};
+		
+		public void showAssignAs(final Context context){
+			CharSequence colors[] = new CharSequence[] {"Profil", "Animal", "Profil avatar", "Animal avatar"};
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(context);
+			builder.setTitle("Lié à : ");
+			builder.setItems(colors, new DialogInterface.OnClickListener() {
+			    @Override
+			    public void onClick(DialogInterface dialog, int which) {
+			    	Toast t = Toast.makeText(context,
+							"Faire la liaison",
+							Toast.LENGTH_SHORT);
+					t.setGravity(Gravity.TOP, 0, 90);
+					t.show();
+			    }
+			});
+			builder.show();
+		}
 }

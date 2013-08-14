@@ -124,11 +124,8 @@ public class Gallery extends Activity{
 
 			else if(v==btn_photo){
 				//Display the photo phone application
-				Toast t = Toast.makeText(Home.context,
-						"Faire la redirection vers photo de l'appli",
-						Toast.LENGTH_LONG);
-				t.setGravity(Gravity.BOTTOM, 0, 40);
-				t.show();
+				Intent intent = new Intent(getApplicationContext(), ImageUpload.class);
+				startActivity(intent);
 			}
 		}
 	};

@@ -126,8 +126,9 @@ public class Home extends Activity {
 			if(v==btnHomeGallery){
 
 				// On créé l'Intent qui va nous permettre d'afficher l'activity Gallery
-				Intent intent = new Intent(getApplicationContext(), Gallery.class);
-				startActivity(intent);
+				//Marche pas
+//				Intent intent = new Intent(getApplicationContext(), Gallery.class);
+//				startActivity(intent);
 			}
 			if(v==btnHomeProfil){
 				//Display the Member Fragment Activity
